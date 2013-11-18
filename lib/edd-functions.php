@@ -775,95 +775,6 @@ function shoestrap_edd_header_css() {
 	<?php
 }
 
-/**
- * This template is used to display the profile editor with [edd_profile_editor]
- */
-function shoestrap_edd_shortcode_profile_editor_template() {
-	global $current_user;
-
-	if ( is_user_logged_in() ):
-		$user_id      = get_current_user_id();
-		$first_name   = get_user_meta( $user_id, 'first_name', true );
-		$last_name    = get_user_meta( $user_id, 'last_name', true );
-		$display_name = $current_user->display_name;
-
-		if ( isset( $_GET['updated'] ) && $_GET['updated'] == true && ! edd_get_errors() ): ?>
-		<p class="edd_success"><strong><?php _e( 'Success', 'edd'); ?>:</strong> <?php _e( 'Your profile has been edited successfully.', 'edd' ); ?></p>
-		<?php endif; edd_print_errors(); ?>
-		<form id="edd_profile_editor_form" class="edd_form form-horizontal" role="form" action="<?php echo edd_get_current_page_url(); ?>" method="post">
-			<fieldset>
-				<legend><?php _e( 'Change your Name', 'edd' ); ?></legend>
-
-				<div class="form-group" id="edd_profile_name_wrap">
-					<label class="col-md-3 control-label" for="edd_first_name"><?php _e( 'First Name', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_first_name" id="edd_first_name" class="text edd-input form-control" type="text" value="<?php echo $first_name; ?>" />
-					</div>
-				</div>
-
-				<div class="form-group" id="edd_profile_lastname_wrap">
-					<label for="edd_last_name" class="col-md-3 control-label"><?php _e( 'Last Name', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_last_name" id="edd_last_name" class="form-control text edd-input" type="text" value="<?php echo $last_name; ?>" />
-					</div>
-				</div>
-
-				<div class="form-group" id="edd_profile_display_name_wrap">
-					<label class="col-md-3 control-label" for="edd_display_name"><?php _e( 'Display Name', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<select name="edd_display_name" class="form-control">
-							<?php if ( ! empty( $current_user->first_name ) ): ?>
-							<option <?php selected( $display_name, $current_user->first_name ); ?> value="<?php echo $current_user->first_name; ?>"><?php echo $current_user->first_name; ?></option>
-							<?php endif; ?>
-							<option <?php selected( $display_name, $current_user->user_nicename ); ?> value="<?php echo $current_user->user_nicename; ?>"><?php echo $current_user->user_nicename; ?></option>
-							<?php if ( ! empty( $current_user->last_name ) ): ?>
-							<option <?php selected( $display_name, $current_user->last_name ); ?> value="<?php echo $current_user->last_name; ?>"><?php echo $current_user->last_name; ?></option>
-							<?php endif; ?>
-							<?php if ( ! empty( $current_user->first_name ) && ! empty( $current_user->last_name ) ): ?>
-							<option <?php selected( $display_name, $current_user->first_name . ' ' . $current_user->last_name ); ?> value="<?php echo $current_user->first_name . ' ' . $current_user->last_name; ?>"><?php echo $current_user->first_name . ' ' . $current_user->last_name; ?></option>
-							<option <?php selected( $display_name, $current_user->last_name . ' ' . $current_user->first_name ); ?> value="<?php echo $current_user->last_name . ' ' . $current_user->first_name; ?>"><?php echo $current_user->last_name . ' ' . $current_user->first_name; ?></option>
-							<?php endif; ?>
-						</select>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label for="edd_email" class="col-md-3 control-label"><?php _e( 'Email Address', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_email" id="edd_email" class="form-control text edd-input required" type="email" value="<?php echo $current_user->user_email; ?>" />
-					</div>
-				</div>
-
-				<legend><?php _e( 'Change your Password', 'edd' ); ?></legend>
-				<div class="form-group" id="edd_profile_password_wrap">
-					<label class="col-md-3 control-label" for="edd_user_pass"><?php _e( 'New Password', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_new_user_pass1" id="edd_new_user_pass1" class="form-control password edd-input" type="password"/>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label class="col-md-3 control-label" for="edd_user_pass"><?php _e( 'Re-enter Password', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_new_user_pass2" id="edd_new_user_pass2" class="form-control password edd-input" type="password"/>
-					</div>
-				</div>
-
-				<div class="alert alert-info edd_password_change_notice"><?php _e( 'Please note after changing your password, you must log back in.', 'edd' ); ?></div>
-				<p id="edd_profile_submit_wrap">
-					<input type="hidden" name="edd_profile_editor_nonce" value="<?php echo wp_create_nonce( 'edd-profile-editor-nonce' ); ?>"/>
-					<input type="hidden" name="edd_action" value="edit_user_profile" />
-					<input type="hidden" name="edd_redirect" value="<?php echo esc_url( edd_get_current_page_url() ); ?>" />
-					<input name="edd_profile_editor_submit" id="edd_profile_editor_submit" type="submit" class="edd_submit btn btn-primary btn-lg pull-right" value="<?php _e( 'Save Changes', 'edd' ); ?>"/>
-				</p>
-			</fieldset>
-		</form><!-- #edd_profile_editor_form -->
-		<?php
-	else:
-		echo '<p>' . __( 'You need to login to edit your profile.', 'edd' ) . '</p>';
-		echo edd_login_form();
-	endif;
-}
 
 /**
  * Get Checkout Form
@@ -2158,35 +2069,6 @@ function shoestrap_edd_receipt_shortcode( $atts, $content = null ) {
 }
 remove_shortcode( 'edd_receipt', 'edd_receipt_shortcode' );
 add_shortcode( 'edd_receipt', 'shoestrap_edd_receipt_shortcode' );
-
-/**
- * Profile Editor Shortcode
- *
- * Outputs the EDD Profile Editor to allow users to amend their details from the
- * front-end. This function uses the EDD templating system allowing users to
- * override the default profile editor template. The profile editor template is located
- * under templates/profile-editor.php, however, it can be altered by creating a
- * file called profile-editor.php in the edd_template directory in your active theme's
- * folder. Please visit the EDD Documentation for more information on how the
- * templating system is used.
- *
- * @author Sunny Ratilal
- * @param array $atts Shortcode attributes
- * @param string $content
- * @return $display Output generated from the profile editor
- */
-function shoestrap_edd_profile_editor_shortcode( $atts, $content = null ) {
-	ob_start();
-
-	shoestrap_edd_shortcode_profile_editor_template();
-
-	$display = ob_get_clean();
-
-	return $display;
-}
-remove_shortcode( 'edd_profile_editor', 'edd_profile_editor_shortcode' );
-add_shortcode( 'edd_profile_editor', 'shoestrap_edd_profile_editor_shortcode' );
-
 
 
 $options = get_option( 'shoestrap' );
