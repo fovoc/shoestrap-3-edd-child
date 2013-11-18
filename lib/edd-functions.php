@@ -1518,57 +1518,6 @@ function shoestrap_edd_shopping_cart( $echo = false ) {
 		return ob_get_clean();
 }
 
-/**
- * Get Cart Item Template
- *
- * @param int $cart_key Cart key
- * @param array $item Cart item
- * @param bool $ajax AJAX?
- * @return string Cart item
-*/
-function shoestrap_edd_get_cart_item_template( $cart_key, $item, $ajax = false ) {
-	global $post;
-
-	$id = is_array( $item ) ? $item['id'] : $item;
-	$remove_url = edd_remove_item_url( $cart_key, $post, $ajax );
-	$title      = get_the_title( $id );
-	$options    = !empty( $item['options'] ) ? $item['options'] : array();
-	$price      = edd_get_cart_item_price( $id, $options );
-
-	if ( ! empty( $options ) )
-		$title .= ( edd_has_variable_prices( $item['id'] ) ) ? ' <span class="edd-cart-item-separator">-</span> ' . edd_get_price_name( $id, $item['options'] ) : edd_get_price_name( $id, $item['options'] );
-
-	ob_start();
-
-	shoestrap_edd_widget_cart_item_template();
-
-	$item = ob_get_clean();
-	$item = str_replace( '{item_title}', $title, $item );
-	$item = str_replace( '{item_amount}', edd_currency_filter( edd_format_amount( $price ) ), $item );
-	$item = str_replace( '{cart_item_id}', absint( $cart_key ), $item );
-	$item = str_replace( '{item_id}', absint( $id ), $item );
-	$item = str_replace( '{remove_url}', $remove_url, $item );
-	$subtotal = '';
-
-	if ( $ajax )
-		$subtotal = edd_currency_filter( edd_format_amount( edd_get_cart_amount( false ) ) ) ;
-
-	$item = str_replace( '{subtotal}', $subtotal, $item );
-
-	return apply_filters( 'edd_cart_item', $item, $id );
-}
-
-function shoestrap_edd_widget_cart_item_template() { ?>
-	<li class="edd-cart-item list-group-item">
-		<span class="edd-cart-item-title">{item_title}</span>
-		<span class="edd-cart-item-separator">-</span><span class="edd-cart-item-price">&nbsp;{item_amount}&nbsp;</span>
-		<a href="{remove_url}" data-cart-item="{cart_item_id}" data-download-id="{item_id}" data-action="edd_remove_from_cart" class="edd-remove-from-cart btn btn-danger btn-xs pull-right"><i class="elusive icon-remove"></i></a>
-	</li>
-	<!-- Temporary span to not fire another ajax call -->
-	<span class="temp-subtotal">{subtotal}</span>
-	<?php
-}
-
 function shoestrap_edd_widget_cart_checkout_template() { ?>
 	<li class="cart_item edd_subtotal list-group-item "><h4><?php echo __( 'Subtotal:', 'edd' ). " <span class='subtotal'>" . edd_currency_filter( edd_format_amount( edd_get_cart_amount( false ) ) ); ?></h4></li>
 	<li class="cart_item edd_checkout list-group-item"><a class="btn btn-block btn-success" href="<?php echo edd_get_checkout_uri(); ?>"><?php _e( 'Checkout', 'edd' ); ?></a></li>
