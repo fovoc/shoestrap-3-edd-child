@@ -2,7 +2,7 @@
 // Retrieve all purchases for the current user
 $purchases = edd_get_users_purchases( get_current_user_id(), 20, true, array( 'pending', 'revoked', 'publish', 'failed', 'preapproval', 'refunded' ) );
 if ( $purchases ) : ?>
-	<table id="edd_user_history">
+	<table id="edd_user_history" class="table table-hover table-responsive">
 		<thead>
 			<tr class="edd_purchase_row">
 				<?php do_action('edd_purchase_history_header_before'); ?>
