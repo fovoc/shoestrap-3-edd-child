@@ -11,3 +11,4 @@ require_once get_stylesheet_directory() . '/lib/modules/edd/module.php';
 
 // Load the EDD-Specific functions
 require_once get_stylesheet_directory() . '/lib/edd-functions.php';
+require_once get_stylesheet_directory() . '/lib/edd-widgets.php';
