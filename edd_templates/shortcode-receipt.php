@@ -10,7 +10,7 @@ $cart      = edd_get_payment_meta_cart_details( $payment->ID, true );
 $user      = edd_get_payment_meta_user_info( $payment->ID );
 $status    = edd_get_payment_status( $payment, true );
 ?>
-<table id="edd_purchase_receipt">
+<table id="edd_purchase_receipt" class="table table-striped table-responsive table-bordered">
 	<thead>
 		<?php do_action( 'edd_payment_receipt_before', $payment, $edd_receipt_args ); ?>
 
@@ -108,7 +108,7 @@ $status    = edd_get_payment_status( $payment, true );
 
 	<h3><?php echo apply_filters( 'edd_payment_receipt_products_title', __( 'Products', 'edd' ) ); ?></h3>
 
-	<table id="edd_purchase_receipt_products">
+	<table id="edd_purchase_receipt_products" class="table table-striped table-responsive table-bordered">
 		<thead>
 			<th><?php _e( 'Name', 'edd' ); ?></th>
 			<?php if ( edd_use_skus() ) { ?>
@@ -238,4 +238,4 @@ $status    = edd_get_payment_status( $payment, true );
 		</tfoot>
 
 	</table>
-<?php endif; ?>
+<?php endif;
