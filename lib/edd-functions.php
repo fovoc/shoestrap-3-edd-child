@@ -1475,57 +1475,6 @@ function shoestrap_edd_checkout_cart() {
 }
 
 /**
- * Renders the Shopping Cart
- *
- * @return string Fully formatted cart
-*/
-function shoestrap_edd_shopping_cart( $echo = false ) {
-	global $edd_options;
-
-	ob_start();
-	do_action('edd_before_cart');
-	$display = 'style="display:none;"';
-	$cart_quantity = edd_get_cart_quantity();
-
-	if ( $cart_quantity > 0 )
-	  $display = "";
-
-	?>
-
-	<ul class="edd-cart list-group">
-	<!--dynamic-cached-content-->
-	<?php echo "<li class='list-group-item edd-cart-number-of-items' {$display}><h4>" . __( 'Number of items in cart', 'edd' ) . ': <span class="edd-cart-quantity">' . $cart_quantity . '<span></h4></li>'; ?>
-	<?php
-		$cart_items = edd_get_cart_contents();
-		if( $cart_items ) :
-			foreach( $cart_items as $key => $item ) :
-				echo shoestrap_edd_get_cart_item_template( $key, $item, false );
-			endforeach;
-			shoestrap_edd_widget_cart_checkout_template();
-		else :
-			edd_get_template_part( 'widget', 'cart-empty' );
-		endif;
-	?>
-	<!--/dynamic-cached-content-->
-	</ul>
-	<?php
-
-	do_action( 'edd_after_cart' );
-
-	if ( $echo )
-		echo ob_get_clean();
-	else
-		return ob_get_clean();
-}
-
-function shoestrap_edd_widget_cart_checkout_template() { ?>
-	<li class="cart_item edd_subtotal list-group-item "><h4><?php echo __( 'Subtotal:', 'edd' ). " <span class='subtotal'>" . edd_currency_filter( edd_format_amount( edd_get_cart_amount( false ) ) ); ?></h4></li>
-	<li class="cart_item edd_checkout list-group-item"><a class="btn btn-block btn-success" href="<?php echo edd_get_checkout_uri(); ?>"><?php _e( 'Checkout', 'edd' ); ?></a></li>
-	<?php
-}
-
-
-/**
  * Login Form
  *
  * @global $edd_options
