@@ -2,7 +2,7 @@
 	<button class="sort btn btn-default" data-sort="default"><?php _e( 'Default', 'shoestrap_edd' ); ?></button>
 	<div class="btn-group">
 		<button class="btn btn-default" disabled="disabled"><?php _e( 'Name', 'shoestrap_edd' ); ?></button>
-		<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
@@ -13,7 +13,7 @@
 	</div>
 	<div class="btn-group">
 		<button class="btn btn-default" disabled="disabled"><?php _e( 'Price', 'shoestrap_edd' ); ?></button>
-		<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>

@@ -6,11 +6,15 @@
 $terms = get_terms( 'download_tag' );
 $count = count( $terms );
 if ( $count > 0 ) : ?>
-	<div class="clearfix"></div>
-	<div class="btn-group btn-group-sm pull-right mix-filter-tag">
-		<li class="filter btn btn-default active" data-filter="all"><?php _e( 'All Tags', 'shoestrap_edd' ); ?></li>
+<div class="btn-group mix-filter-tag pull-right">
+	<button type="button" class="btn btn-default filter active" data-filter="all"><?php _e( 'All Tags', 'shoestrap_edd' ); ?></button>
+	<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+		<span class="caret"></span>
+		<span class="sr-only">Toggle Dropdown</span>
+	</button>
+	<ul class="dropdown-menu" role="menu">
 		<?php foreach ( $terms as $term ) : ?>
-			<li class="filter btn btn-default" data-filter="<?php echo $term->term_id; ?>"><?php echo $term->name; ?></li>
+			<li class="filter" data-filter="<?php echo $term->term_id; ?>"><?php echo $term->name; ?></li>
 		<?php endforeach; ?>
-	</div>
-<?php endif;
+	</ul>
+</div><?php endif;
