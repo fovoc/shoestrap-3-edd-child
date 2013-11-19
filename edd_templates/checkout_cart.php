@@ -52,7 +52,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 							<input type="hidden" name="edd-cart-downloads[]" value="<?php echo $item['id']; ?>"/>
 							<input type="hidden" name="edd-cart-download-<?php echo $key; ?>-options" value="<?php esc_attr_e( serialize( $item['options'] ) ); ?>"/>
 						<?php endif; ?>
-						<a href="<?php echo esc_url( edd_remove_item_url( $key, $post ) ); ?>" class="btn pull-right btn-danger"><i class="el-icon-remove"></i></a>
+						<a href="<?php echo esc_url( edd_remove_item_url( $key, $post ) ); ?>" class="btn btn-xs btn-danger"><i class="el-icon-remove"></i></a>
 					</td>
 					<?php do_action( 'edd_checkout_table_body_last', $item ); ?>
 				</tr>
