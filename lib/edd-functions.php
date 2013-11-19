@@ -113,58 +113,6 @@ THESE MUST BE SORTED OUT, MOVED TO THEIR OWN TEMPLATE FILES ETC.
 
 
 
-/**
- * Cart Widget
- *
- * Downloads cart widget class.
- *
- * @since 1.0
- * @return void
-*/
-class shoestrap_edd_cart_widget extends WP_Widget {
-	/** Constructor */
-	function shoestrap_edd_cart_widget() {
-		parent::WP_Widget( false, __( 'Downloads Cart', 'edd' ), array( 'description' => __( 'Display the downloads shopping cart', 'edd' ) ) );
-	}
-
-	/** @see WP_Widget::widget */
-	function widget( $args, $instance ) {
-		extract( $args );
-		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
-
-		global $post, $edd_options;
-
-		echo $before_widget;
-		if ( $title ) {
-			echo $before_title . $title . $after_title;
-		}
-		do_action( 'edd_before_cart_widget' );
-		shoestrap_edd_shopping_cart( true );
-		do_action( 'edd_after_cart_widget' );
-		echo $after_widget;
-	}
-
-	/** @see WP_Widget::update */
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title'] = strip_tags( $new_instance['title'] );
-		$instance['quantity'] = isset( $new_instance['quantity'] ) ? strip_tags( $new_instance['quantity'] ) : '';
-		return $instance;
-	}
-
-	/** @see WP_Widget::form */
-	function form( $instance ) {
-		$title = isset( $instance[ 'title' ] ) ? esc_attr( $instance[ 'title' ] ) : '';
-		?>
-		<p>
-       		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'edd' ); ?></label>
-     		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>"
-          	 name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>"/>
-    		</p>
-    
-   		 <?php
-	}
-}
 
 /**
  * Purchase History Widget
@@ -1445,21 +1393,6 @@ function shoestrap_edd_checkout_form_shortcode( $atts, $content = null ) {
 }
 remove_shortcode( 'download_checkout', 'edd_checkout_form_shortcode' );
 add_shortcode( 'download_checkout', 'shoestrap_edd_checkout_form_shortcode' );
-
-/**
- * Download Cart Shortcode
- *
- * Show the shopping cart.
- *
- * @param array $atts Shortcode attributes
- * @param string $content
- * @return string
- */
-function shoestrap_edd_cart_shortcode( $atts, $content = null ) {
-	return shoestrap_edd_shopping_cart();
-}
-remove_shortcode( 'download_cart', 'edd_cart_shortcode' );
-add_shortcode( 'download_cart', 'shoestrap_edd_cart_shortcode' );
 
 /**
  * Login Shortcode
