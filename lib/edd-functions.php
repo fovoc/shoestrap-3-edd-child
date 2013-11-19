@@ -3,8 +3,9 @@
 /*
  * Add the mixitup template parts and an extra wrapper div
  */
-function shoestrap_edd_before_archive_content() {
+function shoestrap_edd_mixitup_templates() {
 	if ( is_post_type_archive( 'download' ) ) :
+		get_template_part( 'templates/mixitup', 'sorting' );
 		if ( !is_tax( 'download_category' ) ) :
 			get_template_part( 'templates/mixitup', 'download_category' );
 		elseif ( !is_tax( 'download_tag' ) ) :
@@ -13,12 +14,21 @@ function shoestrap_edd_before_archive_content() {
 			get_template_part( 'templates/mixitup', 'download_category' );
 			get_template_part( 'templates/mixitup', 'download_tag' );
 		endif;
-		echo '<div class="clearfix"></div><div class="row product-list">';
+	endif;
+}
+add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
+
+/*
+ * some necessary hacks to make templating work properly
+ */
+function shoestrap_edd_helper_actions() {
+	if ( is_post_type_archive( 'download' ) ) :
+		add_action( 'shoestrap_index_begin', function() { echo '<div class="clearfix"></div><div class="row product-list">'; } );
 		add_action( 'shoestrap_index_end', function() { echo '</div>'; } );
 		add_action( 'shoestrap_content_override', function() { get_template_part( 'templates/content-download' ); } );
 	endif;
 }
-add_action( 'shoestrap_before_the_content', 'shoestrap_edd_before_archive_content', 12 );
+add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_append_purchase_link( $download_id ) {
 	if ( ! get_post_meta( $download_id, '_edd_hide_purchase_link', true ) ) :
@@ -29,39 +39,7 @@ function shoestrap_edd_append_purchase_link( $download_id ) {
 
 function shoestrap_edd_download_article( $id ) {
 	global $post;
-	$download_size  = shoestrap_getVariable( 'shoestrap_edd_products_width' );
-	$show_excerpt   = shoestrap_getVariable( 'shoestrap_edd_show_text_in_lists' );
-	$layout_classes = shoestrap_edd_get_download_class( $download_size );
 
-	// The in-cart class
-	$in_cart = ( function_exists( 'edd_item_in_cart' ) && edd_item_in_cart( $id ) && !edd_has_variable_prices( $id ) ) ? 'in-cart' : '';
-	// The variable-priced class
-	$variable_priced = ( function_exists( 'edd_has_variable_prices' ) && edd_has_variable_prices( $id ) ) ? 'variable-priced' : '';
-
-	// Get a list with categories of each download (MixitUp!)
-	$terms = get_the_terms( $id, 'download_category' );
-	if ( $terms && ! is_wp_error( $terms ) ) :
-		foreach ( $terms as $term ) :
-			$download_categories[] = $term->term_id;
-		endforeach;
-		$categories = join( ' ', $download_categories );
-	endif;
-
-	// Get a list with tags of each download (MixitUp!)
-	$terms = get_the_terms( $id, 'download_tag' );
-	if ( $terms && ! is_wp_error( $terms ) ) :
-		foreach ( $terms as $term ) :
-			$download_tags[] = $term->term_id;
-		endforeach;
-		$tags = join(" ", $download_tags );
-	else :
-		$tags = '';
-	endif;
-
-	return 'itemscope itemtype="http://schema.org/Product" id="edd_download_' . $id . '" ';
-	echo get_post_class( array( $in_cart, $variable_priced, $layout_classes, $categories, $tags ) ) . ' ';
-	return 'data-name="' . get_the_title( $id ) . '" ';
-	return 'data-price="' . shoestrap_min_price_plain( $id, false ) . '"';
 }
 
 
@@ -555,12 +533,6 @@ function shoestrap_min_price_plain( $download_id, $echo = true ) {
 	endif;
 }
 
-/*
- * MixItUp controls for sorting
- */
-function shoestrap_edd_mixitup_sort() { 
-	echo '<div class="btn-group pull-left"><li class="sort btn btn-default active" data-sort="default">Default</li><li class="sort btn btn-default" data-sort="data-name" data-order="desc">Name <i class="elusive icon-arrow-down"></i></li><li class="sort btn btn-default" data-sort="data-name" data-order="asc">Name <i class="elusive icon-arrow-up"></i></li><li class="sort btn btn-default" data-sort="data-price" data-order="desc">Price <i class="elusive icon-arrow-down"></i></li><li class="sort btn btn-default" data-sort="data-price" data-order="asc">Price <i class="elusive icon-arrow-up"></i></li></div>'; 
-}
 
 /*
  * The sub-template for the grid.
@@ -1977,64 +1949,3 @@ $options = get_option( 'shoestrap' );
 if ( $options['shoestrap_edd_navbar_cart'] == 1 ) :
 	add_action( 'shoestrap_inside_nav_begin', 'shoestrap_edd_mini_shopping_cart_echo', 20 );
 endif;
-
-function shoestrap_edd_actions() {
-	$options = get_option( 'shoestrap' );
-	// Load the $wp_query global
-	global $wp_query;
-
-	/*
-	 * Use our modified template for individual downloads in an archive
-	 * only when is_post_type_archive( 'download' ) returns true
-	 * or when viewing a taxonomy that is either download_category or dowload_tag
-	 */
-	if ( is_post_type_archive( 'download' ) || 
-		( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_category' || $wp_query->query_vars['taxonomy'] == 'download_tag' ) ) ||
-		( $options['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) :
-
-		// Register && Enqueue MixItUp
-		wp_register_script('shoestrap_edd_mixitup', plugins_url( 'assets/js/jquery.mixitup.min.js', __FILE__ ), false, null, true);
-		wp_enqueue_script('shoestrap_edd_mixitup');
-
-		// Register && Enqueue jQuery EqualHeights
-		wp_register_script('shoestrap_edd_equalheights', plugins_url( 'assets/js/jquery.equalheights.min.js', __FILE__ ), false, null, true);
-		wp_enqueue_script('shoestrap_edd_equalheights');
-
-		// MixItUp sort controls
-		add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_sort' );
-
-		/*
-		* MixItUp filter controls according current query
-		*/
-		if ( is_post_type_archive( 'download' ) || ( $options['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) :
-			// Here triggers the MixItiUp && EqualHeights
-			add_action( 'wp_footer', function() {
-				echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>';
-			}, 99 );
-		elseif ( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_category' ) ) :
-			// Here triggers the MixItiUp && EqualHeights
-			add_action( 'wp_footer', function() {
-				echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>';
-			}, 99 );
-		elseif ( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_tag' ) ) :
-			// Here triggers the MixItiUp && EqualHeights
-			add_action( 'wp_footer', function() {
-				echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>';
-			}, 99 );
-		endif;
-
-
-		// Styling for MixItUp filtering
-		add_action( 'wp_head', function() {
-			echo '<style>.product-list .mix{opacity: 0;display: none;}</style>';
-		});
-
-		// Add a closing div at the end
-		add_action( 'shoestrap_index_end', function() {
-			echo '</div>';
-		});
-
-	endif;
-}
-// add_action( 'wp', 'shoestrap_edd_actions' );
-// add_action( 'wp_head', 'shoestrap_edd_header_css' );
