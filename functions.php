@@ -42,7 +42,7 @@ function shoestrap_edd_assets() {
 		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
 	endif;
 
-	add_action( 'wp_head', function() { echo '<style>.product-list .mix{opacity: 0;display: none;}</style>'; });
+	add_action( 'wp_head', '<style>.product-list .mix{opacity: 0;display: none;}</style>' );
 }
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
 

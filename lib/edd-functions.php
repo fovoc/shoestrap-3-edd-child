@@ -8,14 +8,8 @@
 function shoestrap_edd_mixitup_templates() {
 	if ( is_post_type_archive( 'download' ) ) :
 		get_template_part( 'templates/mixitup', 'sorting' );
-		if ( !is_tax( 'download_category' ) ) :
-			get_template_part( 'templates/mixitup', 'download_category' );
-		elseif ( !is_tax( 'download_tag' ) ) :
-			get_template_part( 'templates/mixitup', 'download_tag' );
-		else :
-			get_template_part( 'templates/mixitup', 'download_category' );
-			get_template_part( 'templates/mixitup', 'download_tag' );
-		endif;
+		get_template_part( 'templates/mixitup', 'download_category' );
+		get_template_part( 'templates/mixitup', 'download_tag' );
 	endif;
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );

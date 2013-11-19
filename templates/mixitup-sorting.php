@@ -1,4 +1,4 @@
-<div class="pull-left">
+<div class="pull-left mix-sort">
 	<button class="sort btn btn-default" data-sort="default"><?php _e( 'Default', 'shoestrap_edd' ); ?></button>
 	<div class="btn-group">
 		<button class="btn btn-default"><?php _e( 'Name', 'shoestrap_edd' ); ?></button>
