@@ -32,7 +32,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_append_purchase_link( $download_id ) {
 	if ( ! get_post_meta( $download_id, '_edd_hide_purchase_link', true ) ) :
-		echo shoestrap_edd_get_purchase_link( array( 'download_id' => $download_id, 'class' => 'btn btn-block', 'style' => 'btn-primary' ) );
+		echo edd_get_purchase_link( array( 'download_id' => $download_id, 'class' => 'btn btn-block', 'style' => 'btn-primary' ) );
 	endif;
 }
 
@@ -49,151 +49,6 @@ function shoestrap_edd_element_class() {
 	endif;
 
 	return $maindivclass;	
-}
-
-/**
- * Get Purchase Link
- *
- * Builds a Purchase link for a specified download based on arguments passed.
- * This function is used all over EDD to generate the Purchase or Add to Cart
- * buttons. If no arguments are passed, the function uses the defaults that have
- * been set by the plugin. The Purchase link is built for simple and variable
- * pricing and filters are available throughout the function to override
- * certain elements of the function.
- *
- * $download_id = null, $link_text = null, $style = null, $color = null, $class = null
- *
- * @since 1.0
- * @param array $args Arguments for display
- * @return string $purchase_form
- */
-function shoestrap_edd_get_purchase_link( $args = array() ) {
-	global $edd_options, $post;
-
-	if ( ! isset( $edd_options['purchase_page'] ) || $edd_options['purchase_page'] == 0 ) {
-		edd_set_error( 'set_checkout', sprintf( __( 'No checkout page has been configured. Visit <a href="%s">Settings</a> to set one.', 'edd' ), admin_url( 'edit.php?post_type=download&page=edd-settings' ) ) );
-		edd_print_errors();
-		return false;
-	}
-
-	$defaults = apply_filters( 'edd_purchase_link_defaults', array(
-		'download_id' => $post->ID,
-		'price'       => (bool) true,
-		'direct'      => edd_get_download_button_behavior( $post->ID ) == 'direct' ? true : false,
-		'text'        => ! empty( $edd_options[ 'add_to_cart_text' ] ) ? $edd_options[ 'add_to_cart_text' ] : __( 'Purchase', 'edd' ),
-		'style'       => isset( $edd_options[ 'button_style' ] ) 	   ? $edd_options[ 'button_style' ]     : 'button',
-		'color'       => isset( $edd_options[ 'checkout_color' ] ) 	   ? $edd_options[ 'checkout_color' ] 	: 'blue',
-		'class'       => 'edd-submit'
-	) );
-
-	$args = wp_parse_args( $args, $defaults );
-
-	if( 'publish' != get_post_field( 'post_status', $args['download_id'] ) && ! current_user_can( 'edit_product', $args['download_id'] ) ) {
-		return false; // Product not published or user doesn't have permission to view drafts
-	}
-
-	// Override color if color == inherit
-	$args['color'] = ( $args['color'] == 'inherit' ) ? '' : $args['color'];
-
-	$variable_pricing = edd_has_variable_prices( $args['download_id'] );
-	$data_variable    = $variable_pricing ? ' data-variable-price=yes' : 'data-variable-price=no';
-	$type             = edd_single_price_option_mode( $args['download_id'] ) ? 'data-price-mode=multi' : 'data-price-mode=single';
-
-	if ( $args['price'] && $args['price'] !== 'no' && ! $variable_pricing ) {
-		$price = edd_get_download_price( $args['download_id'] );
-
-		if ( 0 == $price ) {
-			$args['text'] = __( 'Free', 'edd' ) . '&nbsp;&ndash;&nbsp;' . $args['text'];
-		} else {
-			$args['text'] = edd_currency_filter( edd_format_amount( $price ) ) . '&nbsp;&ndash;&nbsp;' . $args['text'];
-		}
-	}
-
-	if ( edd_item_in_cart( $args['download_id'] ) && ! $variable_pricing ) {
-		$button_display   = 'style="display:none;"';
-		$checkout_display = '';
-	} else {
-		$button_display   = '';
-		$checkout_display = 'style="display:none;"';
-	}
-
-	$form_id = ! empty( $args['form_id'] ) ? $args['form_id'] : 'edd_purchase_' . $args['download_id'];
-
-	ob_start();
-?>
-	<!--dynamic-cached-content-->
-	<form id="<?php echo $form_id; ?>" class="edd_download_purchase_form row" method="post">
-
-		<?php do_action( 'edd_purchase_link_top', $args['download_id'] ); ?>
-
-		<div class="edd_purchase_submit_wrapper col-lg-6">
-			<?php
-			 if ( edd_is_ajax_enabled() ) {
-				printf(
-					'<a href="#" class="edd-add-to-cart %1$s" data-action="edd_add_to_cart" data-download-id="%3$s" %4$s %5$s %6$s><span class="edd-add-to-cart-label">%2$s</span> <span class="edd-loading"><i class="edd-icon-spinner edd-icon-spin"></i></span></a>',
-					implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
-					esc_attr( $args['text'] ),
-					esc_attr( $args['download_id'] ),
-					esc_attr( $data_variable ),
-					esc_attr( $type ),
-					$button_display
-				);
-			}
-
-			printf(
-				'<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" data-action="edd_add_to_cart" data-download-id="%3$s" %4$s %5$s %6$s/>',
-				implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
-				esc_attr( $args['text'] ),
-				esc_attr( $args['download_id'] ),
-				esc_attr( $data_variable ),
-				esc_attr( $type ),
-				$button_display
-			);
-
-			printf(
-				'<a href="%1$s" class="%2$s %3$s" %4$s>' . __( 'Checkout', 'edd' ) . '</a>',
-				esc_url( edd_get_checkout_uri() ),
-				esc_attr( 'edd_go_to_checkout' ),
-				implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
-				$checkout_display
-			);
-			?>
-
-			<?php if ( edd_is_ajax_enabled() ) : ?>
-				<span class="edd-cart-ajax-alert">
-					<span class="edd-cart-added-alert" style="display: none;">
-						<?php printf(
-								__( '<i class="edd-icon-ok"></i> Added to cart', 'edd' ),
-								'<a href="' . esc_url( edd_get_checkout_uri() ) . '" title="' . __( 'Go to Checkout', 'edd' ) . '">',
-								'</a>'
-							);
-						?>
-					</span>
-				</span>
-			<?php endif; ?>
-			<?php if ( edd_display_tax_rate() && edd_prices_include_tax() ) {
-				echo '<span class="edd_purchase_tax_rate">' . sprintf( __( 'Includes %1$s&#37; tax', 'edd' ), $edd_options['tax_rate'] ) . '</span>';
-			} elseif ( edd_display_tax_rate() && ! edd_prices_include_tax() ) {
-				echo '<span class="edd_purchase_tax_rate">' . sprintf( __( 'Excluding %1$s&#37; tax', 'edd' ), $edd_options['tax_rate'] ) . '</span>';
-			} ?>
-		</div><!--end .edd_purchase_submit_wrapper-->
-
-		<input type="hidden" name="download_id" value="<?php echo esc_attr( $args['download_id'] ); ?>">
-		<?php if( ! empty( $args['direct'] ) ) { ?>
-			<input type="hidden" name="edd_action" class="edd_action_input" value="straight_to_gateway">
-		<?php } else { ?>
-			<input type="hidden" name="edd_action" class="edd_action_input" value="add_to_cart">
-		<?php } ?>
-
-		<?php do_action( 'edd_purchase_link_end', $args['download_id'] ); ?>
-
-	</form><!--end #edd_purchase_<?php echo esc_attr( $args['download_id'] ); ?>-->
-	<!--/dynamic-cached-content-->
-<?php
-	$purchase_form = ob_get_clean();
-
-
-	return apply_filters( 'edd_purchase_download_form', $purchase_form, $args );
 }
 
 
@@ -581,7 +436,7 @@ function shoestrap_edd_subtemplate( $thumbnails = true, $excerpt = true, $full_c
 				if ( edd_has_variable_prices( $post->ID ) ) :
 					echo '<a href="' . get_permalink() . '" class="btn btn-primary">' . __( 'Choose Option', 'shoestrap_edd' ) . '</a>';
 				else :
-					echo shoestrap_edd_get_purchase_link( $button_args );
+					echo edd_get_purchase_link( $button_args );
 				endif;
 
 				echo '</div>';
@@ -639,7 +494,7 @@ function shoestrap_edd_subtemplate( $thumbnails = true, $excerpt = true, $full_c
 				if ( edd_has_variable_prices( $post->ID ) ) :
 					echo '<a href="' . get_permalink() . '" class="btn btn-primary">' . __( 'Choose Option', 'shoestrap_edd' ) . '</a>';
 				else :
-					echo shoestrap_edd_get_purchase_link( $button_args );
+					echo edd_get_purchase_link( $button_args );
 				endif;
 
 				echo '</div>';
