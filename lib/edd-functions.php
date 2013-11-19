@@ -517,41 +517,19 @@ remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
 add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields' );
 
 
-
-
-
-
-/**
-BELOW THIS POINT, EVERYTHING IS A MESS
-THESE MUST BE SORTED OUT, MOVED TO THEIR OWN TEMPLATE FILES ETC.
-*/
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  * Display Products on the Homepage.
  * This will simply alter the query so that EDD Downloads are shown
  * on the Frontpage instead of the list of posts.
  */
 function shoestrap_edd_downloads_on_homepage( $query ) {
-	$option = get_option( 'shoestrap' );
-    if ( $option['shoestrap_edd_frontpage'] == 1 && $query->is_home() && $query->is_main_query() ) {
+    if ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && $query->is_home() && $query->is_main_query() ) {
         $query->set( 'post_type', array( 'download' ) );
         add_action( 'shoestrap_page_header_override', function(){} );
 		return $query;
     }
 }
 add_action( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
-
 
 
 /*
@@ -564,9 +542,8 @@ add_action( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
  * using some clear-left declarations.
  */
 function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
-	$option = get_option( 'shoestrap' );
 	$content_width 	= shoestrap_content_width_px();
-	$breakpoint 	= $option['screen_tablet'];
+	$breakpoint 	= shoestrap_getVariable( 'screen_tablet' );
 
 	$class = 'col-sm-6 col-md-4 mix';
 
@@ -585,9 +562,6 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 
 	return $class;
 }
-
-
-
 
 
 /*
@@ -635,18 +609,13 @@ function shoestrap_edd_price( $el = 'h2' ) {
 }
 
 
-function custom_excerpt_length( $length ) {
-	return 20;
-}
-
 /*
  * Some additional CSS rules that must be added for this plugin
  */
 function shoestrap_edd_header_css() {
-	$option = get_option( 'shoestrap' );
-	$screen_tablet         = filter_var( $option['screen_tablet'], FILTER_SANITIZE_NUMBER_INT );
-	$screen_desktop        = filter_var( $option['screen_desktop'], FILTER_SANITIZE_NUMBER_INT );
-	$screen_large_desktop  = filter_var( $option['screen_large_desktop'], FILTER_SANITIZE_NUMBER_INT );
+	$screen_tablet         = filter_var( shoestrap_getVariable( 'screen_tablet' ), FILTER_SANITIZE_NUMBER_INT );
+	$screen_desktop        = filter_var( shoestrap_getVariable( 'screen_desktop' ), FILTER_SANITIZE_NUMBER_INT );
+	$screen_large_desktop  = filter_var( shoestrap_getVariable( 'screen_large_desktop' ), FILTER_SANITIZE_NUMBER_INT );
 	?>
 	<style>
 	.row.product-list .download { margin-bottom: 2em; }
@@ -672,8 +641,6 @@ function shoestrap_edd_header_css() {
 	</style>
 	<?php
 }
-
-
 
 
 /**
@@ -880,6 +847,7 @@ function shoestrap_edd_get_register_fields() {
 remove_action( 'edd_purchase_form_register_fields', 'edd_get_register_fields' );
 add_action( 'edd_purchase_form_register_fields', 'shoestrap_edd_get_register_fields' );
 
+
 /**
  * Gets the login fields for the login form on the checkout. This function hooks
  * on the edd_purchase_form_login_fields to display the login form if a user already
@@ -956,6 +924,7 @@ function shoestrap_edd_discount_field() {
 remove_action( 'edd_checkout_form_top', 'edd_discount_field', -1 );
 add_action( 'edd_checkout_form_top', 'shoestrap_edd_discount_field', -1 );
 
+
 /**
  * Shows the final purchase total at the bottom of the checkout page
  *
@@ -995,6 +964,7 @@ function shoestrap_edd_checkout_submit() { ?>
 remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_submit', 9999 );
 add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_submit', 9999 );
 
+
 /**
  * Renders the Next button on the Checkout
  *
@@ -1012,6 +982,7 @@ function shoestrap_edd_checkout_button_next() {
 	<input type="submit" name="gateway_submit" id="edd_next_button" class="edd-submit btn btn-primary" value="<?php _e( 'Next', 'edd' ); ?>"/>
 	<?php return apply_filters( 'edd_checkout_button_next', ob_get_clean() );
 }
+
 
 /**
  * Renders the Purchase button on the Checkout
@@ -1033,40 +1004,3 @@ function shoestrap_edd_checkout_button_purchase() {
 	<input type="submit" class="edd-submit btn btn-primary btn-block btn-lg" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
 	<?php return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
 }
-
-
-
-
-
-function shoestrap_edd_get_mini_cart_item_template( $key, $item, $ajax = false ) {
-	global $post;
-
-	$id = is_array( $item ) ? $item['id'] : $item;
-	$title      = get_the_title( $id );
-	$options    = !empty( $item['options'] ) ? $item['options'] : array();
-	$price      = edd_get_cart_item_price( $id, $options );
-
-	if ( ! empty( $options ) )
-		$title .= ( edd_has_variable_prices( $item['id'] ) ) ? ' <span class="edd-cart-item-separator">-</span> ' . edd_get_price_name( $id, $item['options'] ) : edd_get_price_name( $id, $item['options'] );
-
-	ob_start();
-	?>
-	<span class="edd-cart-item-title">{item_title}</span>
-	<span class="edd-cart-item-separator">-</span><span class="edd-cart-item-price">&nbsp;{item_amount}&nbsp;</span>
-	<?php
-
-	$item = ob_get_clean();
-	$item = str_replace( '{item_title}', $title, $item );
-	$item = str_replace( '{item_amount}', edd_currency_filter( edd_format_amount( $price ) ), $item );
-	$item = str_replace( '{cart_item_id}', absint( $key ), $item );
-	$item = str_replace( '{item_id}', absint( $id ), $item );
-	$subtotal = '';
-
-	if ( $ajax )
-		$subtotal = edd_currency_filter( edd_format_amount( edd_get_cart_amount( false ) ) ) ;
-
-	$item = str_replace( '{subtotal}', $subtotal, $item );
-
-	return apply_filters( 'edd_cart_item', $item, $id );
-}
-
