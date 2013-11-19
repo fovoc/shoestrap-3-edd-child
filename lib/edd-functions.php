@@ -10,6 +10,8 @@ function shoestrap_edd_mixitup_templates() {
 		get_template_part( 'templates/mixitup', 'sorting' );
 		get_template_part( 'templates/mixitup', 'download_category' );
 		get_template_part( 'templates/mixitup', 'download_tag' );
+  elseif ( !is_tax( 'download_category' ) || !is_tax( 'download_tag' ) ) :
+    get_template_part( 'templates/mixitup', 'sorting' );
 	endif;
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
@@ -633,6 +635,12 @@ function shoestrap_edd_header_css() {
 		background: rgba(0,0,0,0.6);
 		width: 100%;
 		padding: 15px;
+	}
+	.edd-cart-added-alert {
+		color: whitesmoke;
+	}
+	.mix-sort .dropdown-menu li.sort {
+		cursor: pointer;
 	}
 	</style>
 	<?php
