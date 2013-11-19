@@ -25,3 +25,28 @@ add_action( 'edd_after_download_content', 'shoestrap_edd_append_purchase_link', 
 // and remove the default radio boxes.
 remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
 add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 10, 1 );
+
+
+function shoestrap_edd_assets() {
+	// Register && Enqueue MixItUp
+	wp_register_script('shoestrap_edd_mixitup', get_stylesheet_directory_uri() . '/assets/js/jquery.mixitup.min.js', false, null, true);
+	wp_enqueue_script('shoestrap_edd_mixitup');
+
+	// Register && Enqueue jQuery EqualHeights
+	wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
+	wp_enqueue_script('shoestrap_edd_equalheights');
+
+	if ( is_post_type_archive( 'download' ) || ( $options['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) :
+		// Here triggers the MixItiUp && EqualHeights
+		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
+	elseif ( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_category' ) ) :
+		// Here triggers the MixItiUp && EqualHeights
+		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
+	elseif ( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_tag' ) ) :
+		// Here triggers the MixItiUp && EqualHeights
+		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
+	endif;
+
+	add_action( 'wp_head', function() { echo '<style>.product-list .mix{opacity: 0;display: none;}</style>'; });
+}
+add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
