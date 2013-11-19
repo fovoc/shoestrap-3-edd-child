@@ -41,7 +41,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
  * We use the 'edd_purchase_link_defaults' filter for this.
  */
 function shoestrap_edd_purchase_link_defaults( $args ) {
-	$args['class'] = 'btn btn-block';
+	$args['class'] = 'btn';
 	$args['style'] = 'btn-primary';
 	return $args;
 }
@@ -124,7 +124,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	?>
 
 	<div class="btn-group">
-		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>';
+		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
 		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
 			<i class="el-icon-shopping-cart"></i>
 			<?php _e( 'Checkout', 'edd' ); ?>
@@ -526,6 +526,7 @@ function shoestrap_edd_downloads_on_homepage( $query ) {
     if ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && $query->is_home() && $query->is_main_query() ) {
         $query->set( 'post_type', array( 'download' ) );
         add_action( 'shoestrap_page_header_override', function(){} );
+        add_action( 'shoestrap_content_override', function() { get_template_part( 'templates/content-download' ); } );
 		return $query;
     }
 }
@@ -1004,3 +1005,14 @@ function shoestrap_edd_checkout_button_purchase() {
 	<input type="submit" class="edd-submit btn btn-primary btn-block btn-lg" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
 	<?php return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
 }
+
+
+function shoestrap_edd_add_minicart_to_navbar() {
+	if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) : ?>
+		<div class="pull-right">
+			<?php shoestrap_edd_mini_shopping_cart( 'btn', 'navbar-btn', 'btn-success', 'btn-default' ); ?>
+		</div>
+	<?php
+	endif;
+}
+add_action( 'shoestrap_inside_nav_begin', 'shoestrap_edd_add_minicart_to_navbar' );
