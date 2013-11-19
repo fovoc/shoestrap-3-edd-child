@@ -30,12 +30,12 @@ function shoestrap_edd_helper_actions() {
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
-function shoestrap_edd_append_purchase_link( $download_id ) {
-	if ( ! get_post_meta( $download_id, '_edd_hide_purchase_link', true ) ) :
-		echo edd_get_purchase_link( array( 'download_id' => $download_id, 'class' => 'btn btn-block', 'style' => 'btn-primary' ) );
-	endif;
+function shoestrap_edd_purchase_link_defaults( $args ) {
+	$args['class'] = 'btn btn-block';
+	$args['style'] = 'btn-primary';
+	return $args;
 }
-
+add_filter( 'edd_purchase_link_defaults', 'shoestrap_edd_purchase_link_defaults' );
 
 function shoestrap_edd_element_class() {
 	$style = shoestrap_getVariable( 'shoestrap_edd_box_style' );
@@ -167,11 +167,7 @@ class shoestrap_edd_mini_cart_widget extends WP_Widget {
 }
 
 function sshoestrap_edd_widgets_init() {
-	unregister_widget( 'edd_cart_widget' );
-	register_widget( 'shoestrap_edd_cart_widget' );
 	register_widget( 'shoestrap_edd_mini_cart_widget' );
-	unregister_widget( 'edd_purchase_history_widget' );
-	register_widget( 'shoestrap_edd_purchase_history_widget' );
 }
 add_action('widgets_init', 'sshoestrap_edd_widgets_init');
 

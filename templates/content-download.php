@@ -29,7 +29,7 @@ endif;
 // get the thumbnail URL
 $thumb_url = wp_get_attachment_url( get_post_thumbnail_id() );
 if ( $thumb_url == '' ) :
-	$thumb_url = get_stylesheet_uri() . '/assets/img/empty.png';
+	$thumb_url = get_stylesheet_directory_uri() . '/assets/img/empty.png';
 endif;
 
 $args = array(
@@ -66,16 +66,6 @@ if ( $terms && ! is_wp_error( $terms ) ) :
 else :
 	$tags = '';
 endif;
-
-$button_args = array(
-	'download_id' => $post->ID,
-	'price'       => (bool) true,
-	'direct'      => edd_get_download_button_behavior( $post->ID ) == 'direct' ? true : false,
-	'text'        => ! empty( $edd_options[ 'add_to_cart_text' ] ) ? $edd_options[ 'add_to_cart_text' ] : __( 'Purchase', 'edd' ),
-	'style'       => isset( $edd_options[ 'button_style' ] ) 	   ? $edd_options[ 'button_style' ]     : 'btn',
-	'color'       => isset( $edd_options[ 'checkout_color' ] ) 	   ? $edd_options[ 'checkout_color' ] 	: 'blue',
-	'class'       => 'btn btn-primary edd-submit'
-);
 ?>
 
 <article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?> data-name="<?php echo get_the_title( $post->ID ); ?>" data-price="<?php shoestrap_min_price_plain( $post->ID ); ?>">
@@ -89,7 +79,7 @@ $button_args = array(
 							<?php if ( edd_has_variable_prices( $post->ID ) ) : ?>
 								<a href="<?php echo get_permalink(); ?>" class="btn btn-primary"><?php _e( 'Choose Option', 'shoestrap_edd' ); ?></a>
 							<?php else : ?>
-								<?php echo shoestrap_edd_get_purchase_link( $button_args ); ?>
+								<?php echo edd_get_purchase_link(); ?>
 							<?php endif; ?>
 						</div>
 					</div>
@@ -114,7 +104,7 @@ $button_args = array(
 							<?php if ( edd_has_variable_prices( $post->ID ) ) : ?>
 								<a href="<?php echo get_permalink(); ?>" class="btn btn-primary"><?php _e( 'Choose Option', 'shoestrap_edd' ); ?></a>
 							<?php else : ?>
-								<?php shoestrap_edd_get_purchase_link( $button_args ); ?>
+								<?php edd_get_purchase_link(); ?>
 							<?php endif; ?>
 						</div>
 					</div>

@@ -16,11 +16,6 @@ require_once get_stylesheet_directory() . '/lib/edd-widgets.php';
 // Dequeue default EDD styles
 remove_action( 'wp_enqueue_scripts', 'edd_register_styles' );
 
-// Remove the default purchase link from the end of single downloads
-// and add our custom one.
-remove_action( 'edd_after_download_content', 'edd_append_purchase_link' );
-add_action( 'edd_after_download_content', 'shoestrap_edd_append_purchase_link', 30 );
-
 // Add the custom variables pricing dropdown before the purchase link
 // and remove the default radio boxes.
 remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
@@ -36,7 +31,7 @@ function shoestrap_edd_assets() {
 	wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
 	wp_enqueue_script('shoestrap_edd_equalheights');
 
-	if ( is_post_type_archive( 'download' ) || ( $options['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) :
+	if ( is_post_type_archive( 'download' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Here triggers the MixItiUp && EqualHeights
 		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
 	elseif ( isset( $wp_query->query_vars['taxonomy'] ) && ( $wp_query->query_vars['taxonomy'] == 'download_category' ) ) :

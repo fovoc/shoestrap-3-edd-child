@@ -64,11 +64,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 
 		shoestrap_edd_price();	
 
-		if ( edd_has_variable_prices( $post->ID ) == 1 ) {
-			echo shoestrap_edd_get_purchase_link( $button_args );
-		} else {
-			echo edd_get_purchase_link( $button_args );
-		}
+		echo edd_get_purchase_link( $button_args );
 		?>
 		<table class="table table-striped table-bordered" style="margin-top: 2em;">
 			<?php
