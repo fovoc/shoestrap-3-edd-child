@@ -1,14 +1,14 @@
 <?php
 
 /*
- * MixItUp controls for filtering t
+ * MixItUp controls for filtering tags
  */
 $terms = get_terms( 'download_tag' );
 $count = count( $terms );
 if ( $count > 0 ) : ?>
 <div class="btn-group mix-filter-tag pull-right">
 	<button type="button" class="btn btn-default filter active" data-filter="all"><?php _e( 'All Tags', 'shoestrap_edd' ); ?></button>
-	<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>
 	</button>
