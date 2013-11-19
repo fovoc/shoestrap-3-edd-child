@@ -7,6 +7,9 @@ $show_excerpt   = shoestrap_getVariable( 'shoestrap_edd_show_text_in_lists' );
 $content_width 	= shoestrap_content_width_px();
 $breakpoint     = shoestrap_getVariable( 'screen_tablet' );
 $show_excerpt   = shoestrap_getVariable( 'shoestrap_edd_show_text_in_lists' );
+$in_cart        = '';
+$categories     = '';
+$tags           = '';
 
 // get the layout classes
 $mix_class      = 'mix';
