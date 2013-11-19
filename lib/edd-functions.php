@@ -482,51 +482,6 @@ function shoestrap_edd_header_css() {
 
 
 /**
- * Get Checkout Form
- *
- * @since 1.0
- * @global $edd_options Array of all the EDD options
- * @global $user_ID ID of current logged in user
- * @global $post Current Post Object
- * @return string
- */
-function shoestrap_edd_checkout_form() {
-	global $edd_options, $user_ID, $post;
-
-	$payment_mode = edd_get_chosen_gateway();
-	$form_action  = esc_url( edd_get_checkout_uri( 'payment-mode=' . $payment_mode ) );
-
-	ob_start();
-
-	echo '<div id="edd_checkout_wrap">';
-
-	if ( edd_get_cart_contents() ) :
-		shoestrap_edd_checkout_cart(); ?>
-
-		<div id="edd_checkout_form_wrap" class="edd_clearfix">
-			<?php do_action( 'edd_before_purchase_form' ); ?>
-			<form id="edd_purchase_form" class="form-horizontal" action="<?php echo $form_action; ?>" method="POST">
-				<?php
-				do_action( 'edd_checkout_form_top' );
-
-				if ( edd_show_gateways() )
-					do_action( 'edd_payment_mode_select'  );
-				else
-					do_action( 'edd_purchase_form' );
-
-				do_action( 'edd_checkout_form_bottom' ); ?>
-			</form>
-			<?php do_action( 'edd_after_purchase_form' ); ?>
-		</div><!--end #edd_checkout_form_wrap-->
-	<?php else:
-		do_action( 'edd_cart_empty' );
-	endif;
-
-	echo '</div><!--end #edd_checkout_wrap-->';
-	return ob_get_clean();
-}
-
-/**
  * Renders the Purchase Form, hooks are provided to add to the purchase form.
  * The default Purchase Form rendered deisplays a list of the enabled payment
  * gateways, a user registration form (if enable) and a credit card info form
@@ -1298,16 +1253,7 @@ function shoestrap_edd_purchase_history() {
 remove_shortcode( 'purchase_history', 'edd_purchase_history' );
 add_shortcode( 'purchase_history', 'shoestrap_edd_purchase_history' );
 
-/**
- * Checkout Form Shortcode
- *
- * Show the checkout form.
- */
-function shoestrap_edd_checkout_form_shortcode( $atts, $content = null ) {
-	return shoestrap_edd_checkout_form();
-}
-remove_shortcode( 'download_checkout', 'edd_checkout_form_shortcode' );
-add_shortcode( 'download_checkout', 'shoestrap_edd_checkout_form_shortcode' );
+
 
 /**
  * Login Shortcode
