@@ -59,7 +59,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 			'text'        => !empty( $edd_options[ 'add_to_cart_text' ] )  ? $edd_options[ 'add_to_cart_text' ] : __( 'Purchase', 'edd' ),
 			'style'       => isset( $edd_options[ 'button_style' ] ) 	   ? $edd_options[ 'button_style' ]     : 'btn',
 			'color'       => isset( $edd_options[ 'checkout_color' ] ) 	   ? $edd_options[ 'checkout_color' ] 	: 'blue',
-			'class'       => 'btn btn-primary btn-lg btn-block edd-submit'
+			'class'       => 'btn btn-danger btn-block btn-lg edd-submit'
 		);
 
 		shoestrap_edd_price();	

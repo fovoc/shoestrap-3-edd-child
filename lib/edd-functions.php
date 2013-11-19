@@ -78,7 +78,7 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 
 	do_action( 'edd_before_price_options', $download_id ); ?>
 	
-	<div class="edd_price_options col-lg-6">
+	<div class="edd_price_options">
 		<?php if ( $prices ) :
 			echo '<select class="form-control" name="edd_options[price_id][]">';
 
@@ -595,7 +595,7 @@ function shoestrap_edd_price( $el = 'h2' ) {
 		echo __( 'Free', 'shoestrap-edd' );
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
-		_e( 'From Free', 'shoestrap_edd' );
+		_e( 'Free', 'shoestrap_edd' );
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) ) :
 		_e( 'From ', 'shoestrap_edd' );
