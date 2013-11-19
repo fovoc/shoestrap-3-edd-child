@@ -636,6 +636,12 @@ function shoestrap_edd_header_css() {
 		width: 100%;
 		padding: 15px;
 	}
+	.edd-cart-added-alert {
+		color: whitesmoke;
+	}
+	.mix-sort .dropdown-menu li.sort {
+		cursor: pointer;
+	}
 	</style>
 	<?php
 }
