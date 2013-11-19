@@ -68,7 +68,7 @@ else :
 endif;
 ?>
 
-<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?> data-name="<?php echo get_the_title( $post->ID ); ?>" data-price="<?php shoestrap_min_price_plain( $post->ID ); ?>">
+<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?> data-name="<?php echo get_the_title( $post->ID ); ?>" data-price="<?php shoestrap_edd_min_price_plain( $post->ID ); ?>">
 	<div class="equal">
 		<div class="<?php echo shoestrap_edd_element_class(); ?>">
 			<?php

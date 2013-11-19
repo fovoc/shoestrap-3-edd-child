@@ -173,6 +173,27 @@ add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
 
 
 
+/*
+ * Custom function to get minimum price as plain number
+ */
+function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
+	if ( edd_has_variable_prices( $download_id ) ) {
+		$prices = edd_get_variable_prices( $download_id );
+		// Return the lowest price
+		$price_float = 0;
+      foreach ($prices as $key => $value)
+        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
+          $price_float = (float)$prices[ $key ]['amount'];
+          $price = edd_sanitize_amount( $price_float );
+	} else {
+		$price = edd_get_download_price( $download_id );
+	}
+	if ( $echo == false ) :
+		return $price;
+	else :
+		echo $price;
+	endif;
+}
 
 
 
@@ -247,27 +268,6 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 	return $class;
 }
 
-/*
- * Custom function to get minimum price as plain number
- */
-function shoestrap_min_price_plain( $download_id, $echo = true ) {
-	if ( edd_has_variable_prices( $download_id ) ) {
-		$prices = edd_get_variable_prices( $download_id );
-		// Return the lowest price
-		$price_float = 0;
-      foreach ($prices as $key => $value)
-        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
-          $price_float = (float)$prices[ $key ]['amount'];
-          $price = edd_sanitize_amount( $price_float );
-	} else {
-		$price = edd_get_download_price( $download_id );
-	}
-	if ( $echo == false ) :
-		return $price;
-	else :
-		echo $price;
-	endif;
-}
 
 
 /*
