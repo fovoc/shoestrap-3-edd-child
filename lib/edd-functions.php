@@ -195,6 +195,18 @@ function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
 	endif;
 }
 
+/*
+ * Remove EDD Specs for the bottom of the content.
+ * This only applied when the "EDD Software Specs" is installed.
+ * We are removing the default version because we're adding these in the meta widget.
+ */
+if ( class_exists( 'EDD_Software_Specs' ) ) :
+function remove_edd_software_specs_from_content() {
+	global $EDD_Software_Specs;
+	remove_action( 'edd_after_download_content', array( $EDD_Software_Specs, 'specs' ), 30 );
+}
+add_action( 'wp', 'remove_edd_software_specs_from_content', 10 );
+endif;
 
 
 
@@ -270,18 +282,6 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 
 
 
-/*
- * Remove EDD Specs for the bottom of the content.
- * This only applied when the "EDD Software Specs" is installed.
- * We are removing the default version so that we may add our custom version later on.
- */
-if ( class_exists( 'EDD_Software_Specs' ) ) :
-function remove_edd_software_specs_from_content() {
-	global $EDD_Software_Specs;
-	remove_action( 'edd_after_download_content', array( $EDD_Software_Specs, 'specs' ), 30 );
-}
-add_action( 'edd_after_download_content', 'remove_edd_software_specs_from_content', 10 );
-endif;
 
 
 /*
@@ -367,58 +367,6 @@ function shoestrap_edd_header_css() {
 	<?php
 }
 
-
-/**
- * Renders the Purchase Form, hooks are provided to add to the purchase form.
- * The default Purchase Form rendered deisplays a list of the enabled payment
- * gateways, a user registration form (if enable) and a credit card info form
- * if credit cards are enabled
- *
- * @since 1.4
- * @global $edd_options Array of all the EDD options
- * @return string
- */
-function shoestrap_edd_show_purchase_form() {
-	global $edd_options;
-
-	$payment_mode = edd_get_chosen_gateway();
-	do_action( 'edd_purchase_form_top' );
-
-	if ( edd_can_checkout() ) :
-		do_action( 'edd_purchase_form_before_register_login' );
-
-		if( isset( $edd_options['show_register_form'] ) && ! is_user_logged_in() && ! isset( $_GET['login'] ) ) : ?>
-			<div id="edd_checkout_login_register">
-				<?php do_action( 'edd_purchase_form_register_fields' ); ?>
-			</div>
-		<?php elseif ( isset( $edd_options['show_register_form'] ) && ! is_user_logged_in() && isset( $_GET['login'] ) ) : ?>
-			<div id="edd_checkout_login_register">
-				<?php do_action( 'edd_purchase_form_login_fields' ); ?>
-			</div>
-		<?php endif; ?>
-
-		<?php if( ( !isset( $_GET['login'] ) && is_user_logged_in() ) || !isset( $edd_options['show_register_form'] ) ) :
-			do_action( 'edd_purchase_form_after_user_info' );
-		endif;
-
-		do_action( 'edd_purchase_form_before_cc_form' );
-
-		// Load the credit card form and allow gateways to load their own if they wish
-		if ( has_action( 'edd_' . $payment_mode . '_cc_form' ) )
-			do_action( 'edd_' . $payment_mode . '_cc_form' );
-		else
-			do_action( 'edd_cc_form' );
-
-		do_action( 'edd_purchase_form_after_cc_form' );
-	else :
-		// Can't checkout
-		do_action( 'edd_purchase_form_no_access' );
-	endif;
-
-	do_action( 'edd_purchase_form_bottom' );
-}
-remove_action( 'edd_purchase_form', 'edd_show_purchase_form' );
-add_action( 'edd_purchase_form', 'shoestrap_edd_show_purchase_form' );
 
 /**
  * Shows the User Info fields in the Personal Info box, more fields can be added
