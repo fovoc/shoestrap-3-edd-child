@@ -1,7 +1,9 @@
 <?php
 
+
 /*
- * Add the mixitup template parts and an extra wrapper div
+ * Add the mixitup template parts and an extra wrapper div.
+ * We have divided mixitup in 3 template parts to make this easier.
  */
 function shoestrap_edd_mixitup_templates() {
 	if ( is_post_type_archive( 'download' ) ) :
@@ -18,8 +20,11 @@ function shoestrap_edd_mixitup_templates() {
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
 
+
 /*
- * some necessary hacks to make templating work properly
+ * some necessary hacks to make templating work properly.
+ * These include overriding the content, as well as adding some additional
+ * <div> elements for mixitup.
  */
 function shoestrap_edd_helper_actions() {
 	if ( is_post_type_archive( 'download' ) ) :
@@ -30,12 +35,18 @@ function shoestrap_edd_helper_actions() {
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
+
+/*
+ * Specify the defaults for purchase links.
+ * We use the 'edd_purchase_link_defaults' filter for this.
+ */
 function shoestrap_edd_purchase_link_defaults( $args ) {
 	$args['class'] = 'btn btn-block';
 	$args['style'] = 'btn-primary';
 	return $args;
 }
 add_filter( 'edd_purchase_link_defaults', 'shoestrap_edd_purchase_link_defaults' );
+
 
 function shoestrap_edd_element_class() {
 	$style = shoestrap_getVariable( 'shoestrap_edd_box_style' );
@@ -94,6 +105,77 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 }
 
 
+/*
+ * A mini cart. SImply displays number of products and a link.
+ */
+function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
+	global $edd_options;
+	ob_start();
+
+	$display = 'style="display:none;"';
+	$cart_quantity = edd_get_cart_quantity();
+
+	if ( $cart_quantity > 0 ) :
+		$display = "";
+	endif;
+
+	$btn_classes = $global_btn_class . ' ' . $price_class . ' ' . $size_class;
+	$a_classes   = $global_btn_class . ' ' . $btn_class . ' ' . $size_class;
+	?>
+
+	<div class="btn-group">
+		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>';
+		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
+			<i class="el-icon-shopping-cart"></i>
+			<?php _e( 'Checkout', 'edd' ); ?>
+		</a>
+	</div>
+	<?php echo ob_get_clean();
+}
+
+
+
+/**
+ * Discounts short code
+ *
+ * Displays a list of all the active discounts. The active discounts can be configured
+ * from the Discount Codes admin screen.
+ *
+ * @param array $atts Shortcode attributes
+ * @param string $content
+ * @uses edd_get_discounts()
+ * @return string $discounts_lists List of all the active discount codes
+ */
+function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
+	$discounts = edd_get_discounts();
+
+	$discounts_list = '<ul id="edd_discounts_list" class="list-group">';
+
+	if ( ! empty( $discounts ) && edd_has_active_discounts() ) :
+		foreach ( $discounts as $discount ) :
+			if ( edd_is_discount_active( $discount->ID ) ) :
+				$discounts_list .= '<li class="edd_discount list-group-item">';
+					$discounts_list .= '<span class="edd_discount_name">' . edd_get_discount_code( $discount->ID ) . '</span>';
+					$discounts_list .= '<span class="edd_discount_amount pull-right label label-success">' . edd_format_discount_rate( edd_get_discount_type( $discount->ID ), edd_get_discount_amount( $discount->ID ) ) . '</span>';
+				$discounts_list .= '</li>';
+			endif;
+		endforeach;
+	else :
+		$discounts_list .= '<li class="edd_discount list-group-item">' . __( 'No discounts found', 'edd' ) . '</li>';
+	endif;
+
+	$discounts_list .= '</ul>';
+
+	return $discounts_list;
+}
+remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
+add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
+
+
+
+
+
+
 
 
 
@@ -115,61 +197,6 @@ THESE MUST BE SORTED OUT, MOVED TO THEIR OWN TEMPLATE FILES ETC.
 
 
 
-/**
- * Mini Cart Widget
- *
- * Downloads cart widget class.
- *
- * @since 1.0
- * @return void
-*/
-class shoestrap_edd_mini_cart_widget extends WP_Widget {
-	/** Constructor */
-	function shoestrap_edd_mini_cart_widget() {
-		parent::WP_Widget( false, __( 'Mini Downloads Cart', 'edd' ), array( 'description' => __( 'Display the downloads shopping cart in a minimal format', 'edd' ) ) );
-	}
-
-	/** @see WP_Widget::widget */
-	function widget( $args, $instance ) {
-		extract( $args );
-		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
-
-		global $post, $edd_options;
-
-		echo $before_widget;
-		if ( $title ) {
-			echo $before_title . $title . $after_title;
-		}
-		shoestrap_edd_mini_shopping_cart( true );
-		echo $after_widget;
-	}
-
-	/** @see WP_Widget::update */
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title'] = strip_tags( $new_instance['title'] );
-		$instance['quantity'] = isset( $new_instance['quantity'] ) ? strip_tags( $new_instance['quantity'] ) : '';
-		return $instance;
-	}
-
-	/** @see WP_Widget::form */
-	function form( $instance ) {
-		$title = isset( $instance[ 'title' ] ) ? esc_attr( $instance[ 'title' ] ) : '';
-		?>
-		<p>
-       		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'edd' ); ?></label>
-     		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>"
-          	 name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>"/>
-    		</p>
-    
-   		 <?php
-	}
-}
-
-function sshoestrap_edd_widgets_init() {
-	register_widget( 'shoestrap_edd_mini_cart_widget' );
-}
-add_action('widgets_init', 'sshoestrap_edd_widgets_init');
 
 /*
  * Display Products on the Homepage.
@@ -1166,35 +1193,6 @@ function shoestrap_edd_login_form( $redirect = '' ) {
 }
 
 
-function shoestrap_edd_mini_shopping_cart_echo() {
-	echo '<div class="pull-right">';
-	shoestrap_edd_mini_shopping_cart( true, 'btn', 'navbar-btn', 'btn-primary', 'btn-default disabled', false );
-	echo '</div>';
-}
-/**
- * Renders the Shopping Cart
- *
- * @return string Fully formatted cart
-*/
-function shoestrap_edd_mini_shopping_cart( $echo = false, $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
-	global $edd_options;
-	ob_start();
-
-	$display = 'style="display:none;"';
-	$cart_quantity = edd_get_cart_quantity();
-	if ( $cart_quantity > 0 )
-		$display = "";
-	?>
-
-	<div class="btn-group">
-		<?php
-		echo '<button id="nav-cart-quantity" type="button" class="' . $global_btn_class . ' ' . $price_class . ' ' . $size_class . '">' . $cart_quantity. '</button>';
-		echo '<a class="' . $global_btn_class . ' ' . $btn_class . ' ' . $size_class . '" href="' . edd_get_checkout_uri() . '"><i class="elusive icon-shopping-cart"></i> ' . __( 'Checkout', 'edd' ) . '</a>';
-	if ( $echo )
-		echo ob_get_clean();
-	else
-		return ob_get_clean();
-}
 
 function shoestrap_edd_get_mini_cart_item_template( $key, $item, $ajax = false ) {
 	global $post;
@@ -1272,49 +1270,3 @@ function shoestrap_edd_login_form_shortcode( $atts, $content = null ) {
 remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
 add_shortcode( 'edd_login', 'shoestrap_edd_login_form_shortcode' );
 
-/**
- * Discounts short code
- *
- * Displays a list of all the active discounts. The active discounts can be configured
- * from the Discount Codes admin screen.
- *
- * @param array $atts Shortcode attributes
- * @param string $content
- * @uses edd_get_discounts()
- * @return string $discounts_lists List of all the active discount codes
- */
-function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
-	$discounts = edd_get_discounts();
-
-	$discounts_list = '<ul id="edd_discounts_list" class="list-group">';
-
-	if ( ! empty( $discounts ) && edd_has_active_discounts() ) {
-
-		foreach ( $discounts as $discount ) {
-
-			if ( edd_is_discount_active( $discount->ID ) ) {
-
-				$discounts_list .= '<li class="edd_discount list-group-item">';
-
-					$discounts_list .= '<span class="edd_discount_name">' . edd_get_discount_code( $discount->ID ) . '</span>';
-					$discounts_list .= '<span class="edd_discount_amount pull-right label label-success">' . edd_format_discount_rate( edd_get_discount_type( $discount->ID ), edd_get_discount_amount( $discount->ID ) ) . '</span>';
-
-				$discounts_list .= '</li>';
-			}
-		}
-	} else {
-		$discounts_list .= '<li class="edd_discount list-group-item">' . __( 'No discounts found', 'edd' ) . '</li>';
-	}
-
-	$discounts_list .= '</ul>';
-
-	return $discounts_list;
-}
-remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
-add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
-
-$options = get_option( 'shoestrap' );
-
-if ( $options['shoestrap_edd_navbar_cart'] == 1 ) :
-	add_action( 'shoestrap_inside_nav_begin', 'shoestrap_edd_mini_shopping_cart_echo', 20 );
-endif;

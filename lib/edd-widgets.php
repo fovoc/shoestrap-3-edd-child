@@ -206,7 +206,60 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 	}
 }
 
+
+/**
+ * Mini Cart Widget
+ *
+ * Downloads cart widget class.
+ *
+ * @since 1.0
+ * @return void
+*/
+class shoestrap_edd_mini_cart_widget extends WP_Widget {
+	/** Constructor */
+	function shoestrap_edd_mini_cart_widget() {
+		parent::WP_Widget( false, __( 'Mini Downloads Cart', 'edd' ), array( 'description' => __( 'Display the downloads shopping cart in a minimal format', 'edd' ) ) );
+	}
+
+	/** @see WP_Widget::widget */
+	function widget( $args, $instance ) {
+		extract( $args );
+		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
+
+		global $post, $edd_options;
+
+		echo $before_widget;
+		if ( $title ) {
+			echo $before_title . $title . $after_title;
+		}
+		shoestrap_edd_mini_shopping_cart();
+		echo $after_widget;
+	}
+
+	/** @see WP_Widget::update */
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['quantity'] = isset( $new_instance['quantity'] ) ? strip_tags( $new_instance['quantity'] ) : '';
+		return $instance;
+	}
+
+	/** @see WP_Widget::form */
+	function form( $instance ) {
+		$title = isset( $instance[ 'title' ] ) ? esc_attr( $instance[ 'title' ] ) : '';
+		?>
+		<p>
+       		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'edd' ); ?></label>
+     		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>"
+          	 name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>"/>
+    		</p>
+    
+   		 <?php
+	}
+}
+
 function shoestrap_edd_widgets_init() {
-	register_widget('Shoestrap_EDD_Download_Meta');
+	register_widget( 'Shoestrap_EDD_Download_Meta' );
+	register_widget( 'shoestrap_edd_mini_cart_widget' );
 }
 add_action('widgets_init', 'shoestrap_edd_widgets_init');
