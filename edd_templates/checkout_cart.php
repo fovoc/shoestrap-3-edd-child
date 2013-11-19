@@ -85,7 +85,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 		<?php if( edd_use_taxes() ) : ?>
 			<tr class="edd_cart_footer_row edd_cart_subtotal_row"<?php if ( ! edd_is_cart_taxed() ) echo ' style="display:none;"'; ?>>
 				<?php do_action( 'edd_checkout_table_subtotal_first' ); ?>
-				<th colspan="3" class="edd_cart_subtotal">
+				<th colspan="4" class="edd_cart_subtotal">
 					<?php _e( 'Subtotal', 'edd' ); ?>:&nbsp;<span class="edd_cart_subtotal"><?php echo edd_cart_subtotal(); ?></span>
 				</th>
 				<?php do_action( 'edd_checkout_table_subtotal_last' ); ?>
@@ -94,7 +94,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 
 				<tr class="edd_cart_footer_row edd_cart_tax_row"<?php if( ! edd_is_cart_taxed() ) echo ' style="display:none;"'; ?>>
 					<?php do_action( 'edd_checkout_table_tax_first' ); ?>
-					<th colspan="3" class="edd_cart_tax">
+					<th colspan="4" class="edd_cart_tax">
 						<?php _e( 'Tax', 'edd' ); ?>:&nbsp;<span class="edd_cart_tax_amount" data-tax="<?php echo edd_get_cart_tax( false ); ?>"><?php echo esc_html( edd_cart_tax() ); ?></span>
 					</th>
 					<?php do_action( 'edd_checkout_table_tax_last' ); ?>
@@ -106,7 +106,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 
 		<tr class="edd_cart_footer_row edd_cart_discount_row" <?php if( ! edd_cart_has_discounts() )  echo ' style="display:none;"'; ?>>
 			<?php do_action( 'edd_checkout_table_discount_first' ); ?>
-			<th colspan="3" class="edd_cart_discount">
+			<th colspan="4" class="edd_cart_discount">
 				<?php edd_cart_discounts_html(); ?>
 			</th>
 			<?php do_action( 'edd_checkout_table_discount_last' ); ?>
@@ -114,7 +114,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 
 		<tr class="edd_cart_footer_row">
 			<?php do_action( 'edd_checkout_table_footer_first' ); ?>
-			<th colspan="3" class="edd_cart_total"><?php _e( 'Total', 'edd' ); ?>: <span class="edd_cart_amount" data-subtotal="<?php echo edd_get_cart_total(); ?>" data-total="<?php echo edd_get_cart_total(); ?>"><?php edd_cart_total(); ?></span></th>
+			<th colspan="4" class="edd_cart_total"><?php _e( 'Total', 'edd' ); ?>: <span class="edd_cart_amount" data-subtotal="<?php echo edd_get_cart_total(); ?>" data-total="<?php echo edd_get_cart_total(); ?>"><?php edd_cart_total(); ?></span></th>
 			<?php do_action( 'edd_checkout_table_footer_last' ); ?>
 		</tr>
 	</tfoot>
