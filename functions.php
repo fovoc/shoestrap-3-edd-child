@@ -45,3 +45,10 @@ function shoestrap_edd_assets() {
 	add_action( 'wp_head', function() { echo '<style>.product-list .mix{opacity: 0;display: none;}</style>'; });
 }
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
+
+
+// Script to increase the total cart quantity in navbar-cart
+function shoestrap_edd_increase_navbar_cart_quantity(){
+	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
+}
+add_action('wp_head','shoestrap_edd_increase_navbar_cart_quantity');

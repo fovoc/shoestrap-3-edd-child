@@ -106,7 +106,7 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 
 
 /*
- * A mini cart. SImply displays number of products and a link.
+ * A mini cart. Simply displays number of products and a link.
  */
 function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
 	global $edd_options;
@@ -132,7 +132,6 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	</div>
 	<?php echo ob_get_clean();
 }
-
 
 
 /**
@@ -195,6 +194,7 @@ function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
 	endif;
 }
 
+
 /*
  * Remove EDD Specs for the bottom of the content.
  * This only applied when the "EDD Software Specs" is installed.
@@ -209,6 +209,312 @@ add_action( 'wp', 'remove_edd_software_specs_from_content', 10 );
 endif;
 
 
+/**
+ * Outputs the default credit card address fields
+ *
+ * @since 1.0
+ * @return void
+ */
+function shoestrap_edd_default_cc_address_fields() {
+	$logged_in = is_user_logged_in();
+
+	if( $logged_in )
+		$user_address = get_user_meta( get_current_user_id(), '_edd_user_address', true );
+
+	$line1 = $logged_in && ! empty( $user_address['line1'] ) ? $user_address['line1'] : '';
+	$line2 = $logged_in && ! empty( $user_address['line2'] ) ? $user_address['line2'] : '';
+	$city  = $logged_in && ! empty( $user_address['city']  ) ? $user_address['city']  : '';
+	$zip   = $logged_in && ! empty( $user_address['zip']   ) ? $user_address['zip']   : '';
+	ob_start(); ?>
+
+	<fieldset id="edd_cc_address" class="cc-address">
+		<span><legend><?php _e( 'Billing Details', 'edd' ); ?></legend></span>
+		<?php do_action( 'edd_cc_billing_top' ); ?>
+		<div class="form-group" id="edd-card-address-wrap">
+			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing Address', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The primary billing address for your credit card.', 'edd' ); ?></span>
+				<input type="text" name="card_address" class="form-control card-address edd-input required" placeholder="<?php _e( 'Address line 1', 'edd' ); ?>" value="<?php echo $line1; ?>"/>
+			</div>
+		</div>
+
+		<div class="form-group" id="edd-card-address-2-wrap">
+			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Address Line 2 (optional)', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your billing address.', 'edd' ); ?></span>
+				<input type="text" name="card_address_2" class="form-control card-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd' ); ?>" value="<?php echo $line2; ?>"/>
+			</div>
+		</div>
+
+		<div class="form-group" id="edd-card-city-wrap">
+			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing City', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The city for your billing address.', 'edd' ); ?></span>
+				<input type="text" name="card_city" class="form-control card-city edd-input required" placeholder="<?php _e( 'City', 'edd' ); ?>" value="<?php echo $city; ?>"/>
+			</div>
+		</div>
+
+		<div class="form-group" id="edd-card-zip-wrap">
+			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Zip / Postal Code', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The zip or postal code for your billing address.', 'edd' ); ?></span>
+				<input type="text" size="4" name="card_zip" class="form-control card-zip edd-input required" placeholder="<?php _e( 'Zip / Postal code', 'edd' ); ?>"/>
+			</div>
+		</div>
+
+		<div class="form-group" id="edd-card-country-wrap">
+			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Country', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The country for your billing address.', 'edd' ); ?></span>
+				<select name="billing_country" id="billing_country" class="form-control billing_country edd-select required">
+					<?php
+
+					$selected_country = edd_get_shop_country();
+
+					if( $logged_in && ! empty( $user_address['country'] ) )
+						$selected_country = $user_address['country'];
+
+					$countries = edd_get_country_list();
+					foreach( $countries as $country_code => $country ) {
+					  echo '<option value="' . $country_code . '"' . selected( $country_code, $selected_country, false ) . '>' . $country . '</option>';
+					}
+					?>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group" id="edd-card-state-wrap">
+			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing State / Province', 'edd' ); ?></label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'The state or province for your billing address.', 'edd' ); ?></span>
+				<?php
+				$selected_state = edd_get_shop_state();
+				$states         = edd_get_shop_states();
+
+				if( $logged_in && ! empty( $user_address['state'] ) )
+					$selected_state = $user_address['state'];
+
+				if( ! empty( $states ) ) : ?>
+					<select name="card_state" id="card_state" class="card_state edd-select required">
+						<?php foreach( $states as $state_code => $state ) {
+							echo '<option value="' . $state_code . '"' . selected( $state_code, $selected_state, false ) . '>' . $state . '</option>';
+						} ?>
+					</select>
+				<?php else : ?>
+					<input type="text" size="6" name="card_state" id="card_state" class="card_state edd-input" placeholder="<?php _e( 'State / Province', 'edd' ); ?>"/>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<?php do_action( 'edd_cc_billing_bottom' ); ?>
+
+	</fieldset>
+	<?php echo ob_get_clean();
+}
+remove_action( 'edd_after_cc_fields', 'edd_default_cc_address_fields' );
+add_action( 'edd_after_cc_fields', 'shoestrap_edd_default_cc_address_fields' );
+
+
+/**
+ * Renders the billing address fields for cart taxation
+ *
+ * @since 1.6
+ * @return void
+ */
+function shoestrap_edd_checkout_tax_fields() {
+	if( edd_cart_needs_tax_address_fields() && edd_get_cart_total() )
+		shoestrap_edd_default_cc_address_fields();
+}
+remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_tax_fields', 999 );
+add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_tax_fields', 999 );
+
+
+
+/**
+ * Login Form
+ *
+ * @global $edd_options
+ * @global $post
+ * @param string $redirect Redirect page URL
+ * @return string Login form
+*/
+function shoestrap_edd_login_form( $redirect = '' ) {
+	global $edd_options, $post;
+
+	if ( $redirect == '' )
+		$redirect = edd_get_current_page_url();
+
+	ob_start();
+
+	if ( ! is_user_logged_in() ) {
+		// Show any error messages after form submission
+		edd_print_errors(); ?>
+		<form id="edd_login_form" class="edd_form form-horizontal" action="" method="post" role="form">
+			<fieldset>
+				<legend><?php _e( 'Log into Your Account', 'edd' ); ?></legend>
+				<?php do_action('edd_checkout_login_fields_before');?>
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="edd_user_Login"><?php _e( 'Username', 'edd' ); ?></label>
+					<div class="col-md-9">
+						<input name="edd_user_login" id="edd_user_login" class="form-control required" type="email" title="<?php _e( 'Username', 'edd' ); ?>"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="edd_user_pass"><?php _e( 'Password', 'edd' ); ?></label>
+					<div class="col-md-9">
+						<input name="edd_user_pass" id="edd_user_pass" class="form-control password required" type="password"/>
+					</div>
+				</div>
+				<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>"/>
+				<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>"/>
+				<input type="hidden" name="edd_action" value="user_login"/>
+				<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>"/>
+				<a class="btn btn-link btn-sm btn-block" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
+					<?php _e( 'Lost Password?', 'edd' ); ?>
+				</a>
+				<?php do_action( 'edd_checkout_login_fields_after' );?>
+			</fieldset>
+		</form>
+	<?php
+	} else {
+		echo '<p class="edd-logged-in">' . __( 'You are already logged in', 'edd' ) . '</p>';
+	}
+	return ob_get_clean();
+}
+
+
+/**
+ * Login Shortcode
+ *
+ * Shows a login form allowing users to users to log in. This function simply
+ * calls the edd_login_form function to display the login form.
+ *
+ * @param array $atts Shortcode attributes
+ * @param string $content
+ * @uses edd_login_form()
+ * @return string
+ */
+function shoestrap_edd_login_form_shortcode( $atts, $content = null ) {
+	extract( shortcode_atts( array(
+			'redirect' => '',
+		), $atts, 'edd_login' )
+	);
+	return shoestrap_edd_login_form( $redirect );
+}
+remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
+add_shortcode( 'edd_login', 'shoestrap_edd_login_form_shortcode' );
+
+
+/**
+ * Renders the payment mode form by getting all the enabled payment gateways and
+ * outputting them as radio buttons for the user to choose the payment gateway. If
+ * a default payment gateway has been chosen from the EDD Settings, it will be
+ * automatically selected.
+ *
+ * @since 1.2.2
+ * @return void
+ */
+function shoestrap_edd_payment_mode_select() {
+	$gateways = edd_get_enabled_payment_gateways();
+	$page_URL = edd_get_current_page_url();
+	do_action('edd_payment_mode_top');
+
+	if( !edd_is_ajax_enabled() ) echo '<form class="form-horizontal" role="form" id="edd_payment_mode" action="' . $page_URL . '" method="GET">'; ?>
+		<fieldset id="edd_payment_mode_select">
+			<?php do_action( 'edd_payment_mode_before_gateways_wrap' ); ?>
+			<div id="edd-payment-mode-wrap">
+				<span class="edd-payment-mode-label">
+					<?php _e( 'Select Payment Method', 'edd' ); ?>
+				</span>
+				<br/>
+				<?php do_action( 'edd_payment_mode_before_gateways' );
+
+				foreach ( $gateways as $gateway_id => $gateway ) :
+					$checked = checked( $gateway_id, edd_get_default_gateway(), false );
+					echo '<label for="edd-gateway-' . esc_attr( $gateway_id ) . '" class="edd-gateway-option" id="edd-gateway-option-' . esc_attr( $gateway_id ) . '">';
+					echo '<input type="radio" name="payment-mode" class="edd-gateway" id="edd-gateway-' . esc_attr( $gateway_id ) . '" value="' . esc_attr( $gateway_id ) . '"' . $checked . '>' . esc_html( $gateway['checkout_label'] ) . '</option>';
+					echo '</label>';
+				endforeach;
+
+				do_action( 'edd_payment_mode_after_gateways' ); ?>
+			</div>
+			<?php do_action( 'edd_payment_mode_after_gateways_wrap' ); ?>
+		</fieldset>
+
+		<fieldset id="edd_payment_mode_submit" class="edd-no-js">
+			<p id="edd-next-submit-wrap"><?php echo shoestrap_edd_checkout_button_next(); ?></p>
+		</fieldset>
+	<?php if( !edd_is_ajax_enabled() ) echo '</form>'; ?>
+
+	<div id="edd_purchase_form_wrap"></div><!-- the checkout fields are loaded into this-->
+	<?php do_action('edd_payment_mode_bottom');
+}
+remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
+add_action( 'edd_payment_mode_select', 'shoestrap_edd_payment_mode_select' );
+
+
+
+/**
+ * Shows the User Info fields in the Personal Info box, more fields can be added
+ * via the hooks provided.
+ *
+ * @since 1.3.3
+ * @return void
+ */
+function shoestrap_edd_user_info_fields() {
+	if ( is_user_logged_in() )
+		$user_data = get_userdata( get_current_user_id() );
+	?>
+	<fieldset id="edd_checkout_user_info">
+		<span><legend><?php echo apply_filters( 'edd_checkout_personal_info_text', __( 'Personal Info', 'edd' ) ); ?></legend></span>
+		<?php do_action( 'edd_purchase_form_before_email' ); ?>
+
+		<div class="form-group" id="edd-email-wrap">
+			<label class="edd-label col-md-3 control-label" for="edd-email">
+				<?php _e( 'Email Address', 'edd' ); ?>
+				<?php if( edd_field_is_required( 'edd_email' ) ) { ?>
+					<span class="edd-required-indicator">*</span>
+				<?php } ?>
+			</label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></span>
+				<input class="form-control edd-input required" type="email" name="edd_email" placeholder="<?php _e( 'Email address', 'edd' ); ?>" id="edd-email" value="<?php echo is_user_logged_in() ? $user_data->user_email : ''; ?>"/>
+			</div>
+		</div>
+
+		<?php do_action( 'edd_purchase_form_after_email' ); ?>
+
+		<div class="form-group" id="edd-first-name-wrap">
+			<label class="col-md-3 control-label edd-label" for="edd-first">
+				<?php _e( 'First Name', 'edd' ); ?>
+				<?php if( edd_field_is_required( 'edd_first' ) ) { ?>
+					<span class="edd-required-indicator">*</span>
+				<?php } ?>
+			</label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></span>
+				<input class="form-control edd-input required" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->first_name : ''; ?>"/>
+			</div>
+		</div>
+		<div class="form-group" id="edd-last-name-wrap">
+			<label class="col-md-3 control-label edd-label" for="edd-last">
+				<?php _e( 'Last Name', 'edd' ); ?>
+				<?php if( edd_field_is_required( 'edd_last' ) ) { ?>
+					<span class="edd-required-indicator">*</span>
+				<?php } ?>
+			</label>
+			<div class="col-md-9">
+				<span class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></span>
+				<input class="form-control edd-input" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->last_name : ''; ?>"/>
+			</div>
+		</div>
+
+		<?php do_action( 'edd_purchase_form_user_info' ); ?>
+	</fieldset>
+	<?php
+}
+remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
+add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields' );
 
 
 
@@ -368,67 +674,7 @@ function shoestrap_edd_header_css() {
 }
 
 
-/**
- * Shows the User Info fields in the Personal Info box, more fields can be added
- * via the hooks provided.
- *
- * @since 1.3.3
- * @return void
- */
-function shoestrap_edd_user_info_fields() {
-	if ( is_user_logged_in() )
-		$user_data = get_userdata( get_current_user_id() );
-	?>
-	<fieldset id="edd_checkout_user_info">
-		<span><legend><?php echo apply_filters( 'edd_checkout_personal_info_text', __( 'Personal Info', 'edd' ) ); ?></legend></span>
-		<?php do_action( 'edd_purchase_form_before_email' ); ?>
 
-		<div class="form-group" id="edd-email-wrap">
-			<label class="edd-label col-md-3 control-label" for="edd-email">
-				<?php _e( 'Email Address', 'edd' ); ?>
-				<?php if( edd_field_is_required( 'edd_email' ) ) { ?>
-					<span class="edd-required-indicator">*</span>
-				<?php } ?>
-			</label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></span>
-				<input class="form-control edd-input required" type="email" name="edd_email" placeholder="<?php _e( 'Email address', 'edd' ); ?>" id="edd-email" value="<?php echo is_user_logged_in() ? $user_data->user_email : ''; ?>"/>
-			</div>
-		</div>
-
-		<?php do_action( 'edd_purchase_form_after_email' ); ?>
-
-		<div class="form-group" id="edd-first-name-wrap">
-			<label class="col-md-3 control-label edd-label" for="edd-first">
-				<?php _e( 'First Name', 'edd' ); ?>
-				<?php if( edd_field_is_required( 'edd_first' ) ) { ?>
-					<span class="edd-required-indicator">*</span>
-				<?php } ?>
-			</label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></span>
-				<input class="form-control edd-input required" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->first_name : ''; ?>"/>
-			</div>
-		</div>
-		<div class="form-group" id="edd-last-name-wrap">
-			<label class="col-md-3 control-label edd-label" for="edd-last">
-				<?php _e( 'Last Name', 'edd' ); ?>
-				<?php if( edd_field_is_required( 'edd_last' ) ) { ?>
-					<span class="edd-required-indicator">*</span>
-				<?php } ?>
-			</label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></span>
-				<input class="form-control edd-input" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->last_name : ''; ?>"/>
-			</div>
-		</div>
-
-		<?php do_action( 'edd_purchase_form_user_info' ); ?>
-	</fieldset>
-	<?php
-}
-remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
-add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields' );
 
 /**
  * Renders the credit card info form.
@@ -445,7 +691,7 @@ function shoestrap_edd_get_cc_form() {
 		<span><legend><?php _e( 'Credit Card Info', 'edd' ); ?></legend></span>
 		<?php if( is_ssl() ) : ?>
 			<div class="alert alert-success" id="edd_secure_site_wrapper">
-				<h3><i class="elusive icon-lock"></i><?php _e( 'This is a secure SSL encrypted payment.', 'edd' ); ?></h3>>
+				<h3><i class="el-icon-lock"></i><?php _e( 'This is a secure SSL encrypted payment.', 'edd' ); ?></h3>>
 			</div>
 		<?php endif; ?>
 		<div class="form-group" id="edd-card-number-wrap">
@@ -510,124 +756,6 @@ function shoestrap_edd_get_cc_form() {
 remove_action( 'edd_cc_form', 'edd_get_cc_form' );
 add_action( 'edd_cc_form', 'shoestrap_edd_get_cc_form' );
 
-/**
- * Outputs the default credit card address fields
- *
- * @since 1.0
- * @return void
- */
-function shoestrap_edd_default_cc_address_fields() {
-	$logged_in = is_user_logged_in();
-
-	if( $logged_in )
-		$user_address = get_user_meta( get_current_user_id(), '_edd_user_address', true );
-
-	$line1 = $logged_in && ! empty( $user_address['line1'] ) ? $user_address['line1'] : '';
-	$line2 = $logged_in && ! empty( $user_address['line2'] ) ? $user_address['line2'] : '';
-	$city  = $logged_in && ! empty( $user_address['city']  ) ? $user_address['city']  : '';
-	$zip   = $logged_in && ! empty( $user_address['zip']   ) ? $user_address['zip']   : '';
-	ob_start(); ?>
-
-	<fieldset id="edd_cc_address" class="cc-address">
-		<span><legend><?php _e( 'Billing Details', 'edd' ); ?></legend></span>
-		<?php do_action( 'edd_cc_billing_top' ); ?>
-		<div class="form-group" id="edd-card-address-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing Address', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The primary billing address for your credit card.', 'edd' ); ?></span>
-				<input type="text" name="card_address" class="form-control card-address edd-input required" placeholder="<?php _e( 'Address line 1', 'edd' ); ?>" value="<?php echo $line1; ?>"/>
-			</div>
-		</div>
-
-		<div class="form-group" id="edd-card-address-2-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Address Line 2 (optional)', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your billing address.', 'edd' ); ?></span>
-				<input type="text" name="card_address_2" class="form-control card-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd' ); ?>" value="<?php echo $line2; ?>"/>
-			</div>
-		</div>
-
-		<div class="form-group" id="edd-card-city-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing City', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The city for your billing address.', 'edd' ); ?></span>
-				<input type="text" name="card_city" class="form-control card-city edd-input required" placeholder="<?php _e( 'City', 'edd' ); ?>" value="<?php echo $city; ?>"/>
-			</div>
-		</div>
-
-		<div class="form-group" id="edd-card-zip-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Zip / Postal Code', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The zip or postal code for your billing address.', 'edd' ); ?></span>
-				<input type="text" size="4" name="card_zip" class="form-control card-zip edd-input required" placeholder="<?php _e( 'Zip / Postal code', 'edd' ); ?>"/>
-			</div>
-		</div>
-
-		<div class="form-group" id="edd-card-country-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Country', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The country for your billing address.', 'edd' ); ?></span>
-				<select name="billing_country" id="billing_country" class="form-control billing_country edd-select required">
-					<?php
-
-					$selected_country = edd_get_shop_country();
-
-					if( $logged_in && ! empty( $user_address['country'] ) )
-						$selected_country = $user_address['country'];
-
-					$countries = edd_get_country_list();
-					foreach( $countries as $country_code => $country ) {
-					  echo '<option value="' . $country_code . '"' . selected( $country_code, $selected_country, false ) . '>' . $country . '</option>';
-					}
-					?>
-				</select>
-			</div>
-		</div>
-
-		<div class="form-group" id="edd-card-state-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing State / Province', 'edd' ); ?></label>
-			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The state or province for your billing address.', 'edd' ); ?></span>
-				<?php
-				$selected_state = edd_get_shop_state();
-				$states         = edd_get_shop_states();
-
-				if( $logged_in && ! empty( $user_address['state'] ) )
-					$selected_state = $user_address['state'];
-
-				if( ! empty( $states ) ) : ?>
-					<select name="card_state" id="card_state" class="card_state edd-select required">
-						<?php foreach( $states as $state_code => $state ) {
-							echo '<option value="' . $state_code . '"' . selected( $state_code, $selected_state, false ) . '>' . $state . '</option>';
-						} ?>
-					</select>
-				<?php else : ?>
-					<input type="text" size="6" name="card_state" id="card_state" class="card_state edd-input" placeholder="<?php _e( 'State / Province', 'edd' ); ?>"/>
-				<?php endif; ?>
-			</div>
-		</div>
-
-		<?php do_action( 'edd_cc_billing_bottom' ); ?>
-
-	</fieldset>
-	<?php echo ob_get_clean();
-}
-remove_action( 'edd_after_cc_fields', 'edd_default_cc_address_fields' );
-add_action( 'edd_after_cc_fields', 'shoestrap_edd_default_cc_address_fields' );
-
-
-/**
- * Renders the billing address fields for cart taxation
- *
- * @since 1.6
- * @return void
- */
-function shoestrap_edd_checkout_tax_fields() {
-	if( edd_cart_needs_tax_address_fields() && edd_get_cart_total() )
-		shoestrap_edd_default_cc_address_fields();
-}
-remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_tax_fields', 999 );
-add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_tax_fields', 999 );
 
 
 /**
@@ -794,52 +922,7 @@ function shoestrap_edd_get_login_fields() {
 remove_action( 'edd_purchase_form_login_fields', 'edd_get_login_fields' );
 add_action( 'edd_purchase_form_login_fields', 'shoestrap_edd_get_login_fields' );
 
-/**
- * Renders the payment mode form by getting all the enabled payment gateways and
- * outputting them as radio buttons for the user to choose the payment gateway. If
- * a default payment gateway has been chosen from the EDD Settings, it will be
- * automatically selected.
- *
- * @since 1.2.2
- * @return void
- */
-function shoestrap_edd_payment_mode_select() {
-	$gateways = edd_get_enabled_payment_gateways();
-	$page_URL = edd_get_current_page_url();
-	do_action('edd_payment_mode_top');
 
-	if( !edd_is_ajax_enabled() ) echo '<form class="form-horizontal" role="form" id="edd_payment_mode" action="' . $page_URL . '" method="GET">'; ?>
-		<fieldset id="edd_payment_mode_select">
-			<?php do_action( 'edd_payment_mode_before_gateways_wrap' ); ?>
-			<div id="edd-payment-mode-wrap">
-				<span class="edd-payment-mode-label">
-					<?php _e( 'Select Payment Method', 'edd' ); ?>
-				</span>
-				<br/>
-				<?php do_action( 'edd_payment_mode_before_gateways' );
-
-				foreach ( $gateways as $gateway_id => $gateway ) :
-					$checked = checked( $gateway_id, edd_get_default_gateway(), false );
-					echo '<label for="edd-gateway-' . esc_attr( $gateway_id ) . '" class="edd-gateway-option" id="edd-gateway-option-' . esc_attr( $gateway_id ) . '">';
-					echo '<input type="radio" name="payment-mode" class="edd-gateway" id="edd-gateway-' . esc_attr( $gateway_id ) . '" value="' . esc_attr( $gateway_id ) . '"' . $checked . '>' . esc_html( $gateway['checkout_label'] ) . '</option>';
-					echo '</label>';
-				endforeach;
-
-				do_action( 'edd_payment_mode_after_gateways' ); ?>
-			</div>
-			<?php do_action( 'edd_payment_mode_after_gateways_wrap' ); ?>
-		</fieldset>
-
-		<fieldset id="edd_payment_mode_submit" class="edd-no-js">
-			<p id="edd-next-submit-wrap"><?php echo shoestrap_edd_checkout_button_next(); ?></p>
-		</fieldset>
-	<?php if( !edd_is_ajax_enabled() ) echo '</form>'; ?>
-
-	<div id="edd_purchase_form_wrap"></div><!-- the checkout fields are loaded into this-->
-	<?php do_action('edd_payment_mode_bottom');
-}
-remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
-add_action( 'edd_payment_mode_select', 'shoestrap_edd_payment_mode_select' );
 
 /**
  * Renders the Discount Code field which allows users to enter a discount code.
@@ -952,57 +1035,6 @@ function shoestrap_edd_checkout_button_purchase() {
 }
 
 
-/**
- * Login Form
- *
- * @global $edd_options
- * @global $post
- * @param string $redirect Redirect page URL
- * @return string Login form
-*/
-function shoestrap_edd_login_form( $redirect = '' ) {
-	global $edd_options, $post;
-
-	if ( $redirect == '' )
-		$redirect = edd_get_current_page_url();
-
-	ob_start();
-
-	if ( ! is_user_logged_in() ) {
-		// Show any error messages after form submission
-		edd_print_errors(); ?>
-		<form id="edd_login_form" class="edd_form form-horizontal" action="" method="post" role="form">
-			<fieldset>
-				<legend><?php _e( 'Log into Your Account', 'edd' ); ?></legend>
-				<?php do_action('edd_checkout_login_fields_before');?>
-				<div class="form-group">
-					<label class="col-md-3 control-label" for="edd_user_Login"><?php _e( 'Username', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_user_login" id="edd_user_login" class="form-control required" type="email" title="<?php _e( 'Username', 'edd' ); ?>"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label" for="edd_user_pass"><?php _e( 'Password', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input name="edd_user_pass" id="edd_user_pass" class="form-control password required" type="password"/>
-					</div>
-				</div>
-				<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>"/>
-				<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>"/>
-				<input type="hidden" name="edd_action" value="user_login"/>
-				<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>"/>
-				<a class="btn btn-link btn-sm btn-block" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
-					<?php _e( 'Lost Password?', 'edd' ); ?>
-				</a>
-				<?php do_action( 'edd_checkout_login_fields_after' );?>
-			</fieldset>
-		</form>
-	<?php
-	} else {
-		echo '<p class="edd-logged-in">' . __( 'You are already logged in', 'edd' ) . '</p>';
-	}
-	return ob_get_clean();
-}
 
 
 
@@ -1037,48 +1069,4 @@ function shoestrap_edd_get_mini_cart_item_template( $key, $item, $ajax = false )
 
 	return apply_filters( 'edd_cart_item', $item, $id );
 }
-
-// Script to increase the total cart quantity in navbar-cart
-function shoestrap_edd_increase_navbar_cart_quantity(){
-	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
-}
-add_action('wp_head','shoestrap_edd_increase_navbar_cart_quantity');
-
-/**
- * Purchase History Shortcode
- *
- * Displays a user's purchsae history.
- */
-function shoestrap_edd_purchase_history() {
-	if ( is_user_logged_in() ) {
-		ob_start();
-		edd_get_template_part( 'history', 'purchases' );
-		return ob_get_clean();
-	}
-}
-remove_shortcode( 'purchase_history', 'edd_purchase_history' );
-add_shortcode( 'purchase_history', 'shoestrap_edd_purchase_history' );
-
-
-
-/**
- * Login Shortcode
- *
- * Shows a login form allowing users to users to log in. This function simply
- * calls the edd_login_form function to display the login form.
- *
- * @param array $atts Shortcode attributes
- * @param string $content
- * @uses edd_login_form()
- * @return string
- */
-function shoestrap_edd_login_form_shortcode( $atts, $content = null ) {
-	extract( shortcode_atts( array(
-			'redirect' => '',
-		), $atts, 'edd_login' )
-	);
-	return shoestrap_edd_login_form( $redirect );
-}
-remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
-add_shortcode( 'edd_login', 'shoestrap_edd_login_form_shortcode' );
 
