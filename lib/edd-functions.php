@@ -619,6 +619,7 @@ function shoestrap_edd_header_css() {
 	$screen_large_desktop  = filter_var( shoestrap_getVariable( 'screen_large_desktop' ), FILTER_SANITIZE_NUMBER_INT );
 	?>
 	<style>
+	.dropdown-menu li.sort { padding-left: 10px; }
 	.row.product-list .download { margin-bottom: 2em; }
 	<?php if ( !is_singular( 'download' ) ) : ?>
 		.widget_shoestrap_edd { display: none; }
@@ -642,6 +643,7 @@ function shoestrap_edd_header_css() {
 	</style>
 	<?php
 }
+add_action( 'wp_head', 'shoestrap_edd_header_css' );
 
 
 /**
