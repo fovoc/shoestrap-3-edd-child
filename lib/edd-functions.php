@@ -37,12 +37,6 @@ function shoestrap_edd_append_purchase_link( $download_id ) {
 }
 
 
-function shoestrap_edd_download_article( $id ) {
-	global $post;
-
-}
-
-
 function shoestrap_edd_element_class() {
 	$style = shoestrap_getVariable( 'shoestrap_edd_box_style' );
 
@@ -56,6 +50,7 @@ function shoestrap_edd_element_class() {
 
 	return $maindivclass;	
 }
+
 /**
  * Get Purchase Link
  *
@@ -1888,61 +1883,6 @@ function shoestrap_edd_downloads_query( $atts, $content = null ) {
 }
 remove_shortcode( 'downloads', 'edd_downloads_query' );
 add_shortcode( 'downloads', 'shoestrap_edd_downloads_query' );
-
-/**
- * Receipt Shortcode
- *
- * Shows an order receipt.
- *
- * @param array $atts Shortcode attributes
- * @param string $content
- * @return string
- */
-function shoestrap_edd_receipt_shortcode( $atts, $content = null ) {
-	global $edd_receipt_args;
-
-	$edd_receipt_args = shortcode_atts( array(
-		'error'           => __( 'Sorry, trouble retrieving payment receipt.', 'edd' ),
-		'price'           => true,
-		'discount'        => true,
-		'products'        => true,
-		'date'            => true,
-		'notes'           => true,
-		'payment_key'     => true,
-		'payment_method'  => true,
-		'payment_id'      => true
-	), $atts, 'edd_receipt' );
-
-	$session = edd_get_purchase_session();
-	if ( isset( $_GET[ 'payment_key' ] ) ) {
-		$payment_key = urldecode( $_GET[ 'payment_key' ] );
-	} else if ( $session ) {
-		$payment_key = $session[ 'purchase_key' ];
-	}
-
-	// No key found
-	if ( ! isset( $payment_key ) )
-		return $edd_receipt_args[ 'error' ];
-
-	$edd_receipt_args[ 'id' ] = edd_get_purchase_id_by_key( $payment_key );
-	$user_id = edd_get_payment_user_id( $edd_receipt_args[ 'id' ] );
-
-	// Not the proper user
-	if ( ( is_user_logged_in() && $user_id != get_current_user_id() ) || ( $user_id > 0 && ! is_user_logged_in() ) ) {
-		return $edd_receipt_args[ 'error' ];
-	}
-
-	ob_start();
-
-	shoestrap_edd_receipt_template();
-
-	$display = ob_get_clean();
-
-	return $display;
-}
-remove_shortcode( 'edd_receipt', 'edd_receipt_shortcode' );
-add_shortcode( 'edd_receipt', 'shoestrap_edd_receipt_shortcode' );
-
 
 $options = get_option( 'shoestrap' );
 
