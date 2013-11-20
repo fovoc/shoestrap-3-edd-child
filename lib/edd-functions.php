@@ -521,12 +521,9 @@ add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields
 function shoestrap_edd_downloads_on_homepage( $query ) {
     if ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && $query->is_home() && $query->is_main_query() ) {
         $query->set( 'post_type', array( 'download' ) );
-        add_action( 'shoestrap_page_header_override', function(){} );
-        add_action( 'shoestrap_content_override', function() { get_template_part( 'templates/content-download' ); } );
-		return $query;
     }
 }
-add_action( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
+add_filter( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
 
 
 /*
