@@ -11,7 +11,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 			<?php endif; ?>
 			<th class="edd_cart_item_name"><?php _e( 'Item Name', 'edd' ); ?></th>
 			<th class="edd_cart_item_price"><?php _e( 'Item Price', 'edd' ); ?></th>
-			<th class="edd_cart_actions"><?php _e( 'Actions', 'edd' ); ?></th>
+			<th class="edd_cart_actions text-right"><?php _e( 'Actions', 'edd' ); ?></th>
 			<?php do_action( 'edd_checkout_table_header_last' ); ?>
 		</tr>
 	</thead>
