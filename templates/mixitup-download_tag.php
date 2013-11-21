@@ -13,6 +13,6 @@ if ( $count > 0 ) : ?>
 		<span class="sr-only">Toggle Dropdown</span>
 	</button>
 	<ul class="dropdown-menu" role="menu">
-		<?php shoestrap_edd_downloads_terms_query_helper( 'download_tag', true ); ?>
+		<?php shoestrap_edd_downloads_terms_filters( 'download_tag', true ); ?>
 	</ul>
 </div><?php endif;

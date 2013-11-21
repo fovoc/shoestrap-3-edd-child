@@ -99,7 +99,12 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 }
 
 
-function shoestrap_edd_downloads_terms_query_helper( $vocabulary, $echo = false ) {
+/*
+ * This function is a mini loop that will go through all the items currently displayed
+ * Retrieve their terms, and then return the list items required by mixitup
+ * to be properly displayed inside the filters.
+ */
+function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 	global $post;
 	$tags = array();
 	$output = '';
