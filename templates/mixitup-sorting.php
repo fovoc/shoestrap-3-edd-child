@@ -7,8 +7,8 @@
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li class="sort" data-sort="data-name" data-order="desc"> <?php _e( 'Descending', 'shoestrap_edd' ); ?> <i class="el-icon-chevron-down"></i></li>
-			<li class="sort" data-sort="data-name" data-order="asc"> <?php _e( 'Ascending', 'shoestrap_edd' ); ?> <i class="el-icon-chevron-up"></i></li>
+			<li class="sort" data-sort="data-name" data-order="desc"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></li>
+			<li class="sort" data-sort="data-name" data-order="asc"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></li>
 		</ul>
 	</div>
 	<div class="btn-group">
@@ -18,8 +18,8 @@
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li class="sort" data-sort="data-price" data-order="desc"> <?php _e( 'Descending', 'shoestrap_edd' ); ?> <i class="el-icon-chevron-down"></i></li>
-			<li class="sort" data-sort="data-price" data-order="asc"> <?php _e( 'Ascending', 'shoestrap_edd' ); ?> <i class="el-icon-chevron-up"></i></li>
+			<li class="sort" data-sort="data-price" data-order="desc"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></li>
+			<li class="sort" data-sort="data-price" data-order="asc"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></li>
 		</ul>
 	</div>
 </div>

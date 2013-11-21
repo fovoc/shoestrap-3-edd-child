@@ -673,7 +673,7 @@ function shoestrap_edd_header_css() {
 	$screen_large_desktop  = filter_var( shoestrap_getVariable( 'screen_large_desktop' ), FILTER_SANITIZE_NUMBER_INT );
 	?>
 	<style>
-	.dropdown-menu li.sort { padding-left: 10px; }
+	.dropdown-menu li.sort, .dropdown-menu, li.filter { padding-left: .5em; }
 	.row.product-list .download { margin-bottom: 2em; }
 	.download-image { position: relative; }
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
