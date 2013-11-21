@@ -1,5 +1,36 @@
 <?php
 
+// Dequeue default EDD styles
+remove_action( 'wp_enqueue_scripts', 'edd_register_styles' );
+
+// Add the custom variables pricing dropdown before the purchase link
+// and remove the default radio boxes.
+remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
+add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 10, 1 );
+
+
+function shoestrap_edd_assets() {
+	// Register && Enqueue jQuery EqualHeights
+	wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
+	wp_enqueue_script('shoestrap_edd_equalheights');
+
+	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
+		// Register && Enqueue MixItUp
+		wp_register_script('shoestrap_edd_mixitup', get_stylesheet_directory_uri() . '/assets/js/jquery.mixitup.min.js', false, null, true);
+		wp_enqueue_script('shoestrap_edd_mixitup');
+		// Here triggers the MixItiUp && EqualHeights
+		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
+	endif;
+
+}
+add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
+
+// Script to increase the total cart quantity in navbar-cart
+function shoestrap_edd_increase_navbar_cart_quantity(){
+	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
+}
+add_action('wp_head','shoestrap_edd_increase_navbar_cart_quantity');
+
 
 /*
  * Add the mixitup template parts and an extra wrapper div.
@@ -644,31 +675,12 @@ function shoestrap_edd_header_css() {
 	<style>
 	.dropdown-menu li.sort { padding-left: 10px; }
 	.row.product-list .download { margin-bottom: 2em; }
-	<?php if ( !is_singular( 'download' ) ) : ?>
-		.widget_shoestrap_edd { display: none; }
-	<?php endif; ?>
-	.download-image {
-		position: relative;
-	}
-	.download-image:hover .overlay {
-		bottom: 0;
-		visibility: visible;
-	}
-	.download-image .overlay {
-		display: block;
-		position: absolute;
-		right: 0;
-		visibility: hidden;
-		background: rgba(0,0,0,0.6);
-		width: 100%;
-		padding: 15px;
-	}
-	.edd-cart-added-alert {
-		color: whitesmoke;
-	}
-	.mix-sort .dropdown-menu li.sort {
-		cursor: pointer;
-	}
+	.download-image { position: relative; }
+	.download-image:hover .overlay { bottom: 0; visibility: visible; }
+	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
+	.edd-cart-added-alert { color: whitesmoke; }
+	.mix-sort .dropdown-menu li.sort { cursor: pointer; }
+	.product-list .mix{opacity: 0;display: none;}
 	</style>
 	<?php
 }
