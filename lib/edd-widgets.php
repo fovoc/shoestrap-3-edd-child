@@ -20,6 +20,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
+	if ( is_singular( 'download' ) ) :
 		$cache = wp_cache_get( 'widget_shoestrap_edd', 'widget' );
 		if ( !is_array( $cache ) ) :
 			$cache = array();
@@ -188,6 +189,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 		echo $after_widget;
 		$cache[$args['widget_id']] = ob_get_flush();
 		wp_cache_set( 'widget_shoestrap_edd', $cache, 'widget' );
+	endif;
 	}
 
 	function update( $new_instance, $old_instance ) {
