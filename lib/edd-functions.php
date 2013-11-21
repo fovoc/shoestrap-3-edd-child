@@ -29,7 +29,7 @@ add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
 function shoestrap_edd_increase_navbar_cart_quantity(){
 	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
 }
-add_action('wp_head','shoestrap_edd_increase_navbar_cart_quantity');
+add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
 
 
 /*
@@ -67,7 +67,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
  */
 function shoestrap_edd_purchase_link_defaults( $args ) {
 	$args['class'] = 'btn';
-	$args['style'] = 'btn-primary';
+	$args['style'] = 'btn-primary btn-block btn-lg';
 	return $args;
 }
 add_filter( 'edd_purchase_link_defaults', 'shoestrap_edd_purchase_link_defaults' );
