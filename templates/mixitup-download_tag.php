@@ -13,8 +13,6 @@ if ( $count > 0 ) : ?>
 		<span class="sr-only">Toggle Dropdown</span>
 	</button>
 	<ul class="dropdown-menu" role="menu">
-		<?php foreach ( $terms as $term ) : ?>
-			<li class="filter" data-filter="<?php echo $term->term_id; ?>"><?php echo $term->name; ?></li>
-		<?php endforeach; ?>
+		<?php shoestrap_edd_downloads_terms_query_helper( 'download_tag', true ); ?>
 	</ul>
 </div><?php endif;

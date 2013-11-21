@@ -6,12 +6,10 @@
  * We have divided mixitup in 3 template parts to make this easier.
  */
 function shoestrap_edd_mixitup_templates() {
-	if ( is_post_type_archive( 'download' ) ) :
+	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/mixitup', 'sorting' );
 		get_template_part( 'templates/mixitup', 'download_category' );
 		get_template_part( 'templates/mixitup', 'download_tag' );
-  elseif ( !is_tax( 'download_category' ) || !is_tax( 'download_tag' ) ) :
-    get_template_part( 'templates/mixitup', 'sorting' );
 	endif;
 }
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
@@ -98,6 +96,33 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 		?>
 	</div>
 	<?php do_action( 'edd_after_price_options', $download_id );
+}
+
+
+function shoestrap_edd_downloads_terms_query_helper( $vocabulary, $echo = false ) {
+	global $post;
+	$tags = array();
+	$output = '';
+	while (have_posts()) : the_post();
+		$terms = wp_get_post_terms( $post->ID, $vocabulary );
+		foreach ( $terms as $term ) :
+			$tags[] = $term->term_id;
+		endforeach;
+	endwhile;
+
+	$tags = array_unique( $tags );
+
+	foreach ( $tags as $tagid ) :
+		$tag = get_term( $tagid, $vocabulary );
+		$tagname = $tag->name;
+		$output .= '<li class="filter" data-filter="' . $tagid . '">' . $tagname . '</li>';
+	endforeach;
+
+	if ( $echo ) :
+		echo $output;
+	else :
+		return $output;
+	endif;
 }
 
 
