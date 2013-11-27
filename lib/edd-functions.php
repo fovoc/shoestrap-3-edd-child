@@ -46,10 +46,11 @@ function shoestrap_edd_mixitup_templates() {
 		get_template_part( 'templates/mixitup', 'sorting' );
 		get_template_part( 'templates/mixitup', 'download_category' );
 		get_template_part( 'templates/mixitup', 'download_tag' );
+		echo '<div class="clearfix"></div>';
 	endif;
 }
 endif;
-add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
+add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 9 );
 
 
 /*
