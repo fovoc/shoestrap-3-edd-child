@@ -9,6 +9,7 @@ remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 )
 add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 10, 1 );
 
 
+if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
 	// Register && Enqueue jQuery EqualHeights
 	wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
@@ -21,14 +22,17 @@ function shoestrap_edd_assets() {
 		// Here triggers the MixItiUp && EqualHeights
 		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
 	endif;
-
 }
+endif;
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
 
+
+if ( !function_exists( 'shoestrap_edd_increase_navbar_cart_quantity' ) ) :
 // Script to increase the total cart quantity in navbar-cart
 function shoestrap_edd_increase_navbar_cart_quantity(){
 	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
 }
+endif;
 add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
 
 
@@ -36,6 +40,7 @@ add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
  * Add the mixitup template parts and an extra wrapper div.
  * We have divided mixitup in 3 template parts to make this easier.
  */
+if ( !function_exists( 'shoestrap_edd_mixitup_templates' ) ) :
 function shoestrap_edd_mixitup_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/mixitup', 'sorting' );
@@ -43,6 +48,7 @@ function shoestrap_edd_mixitup_templates() {
 		get_template_part( 'templates/mixitup', 'download_tag' );
 	endif;
 }
+endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
 
 
@@ -51,6 +57,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 12 );
  * These include overriding the content, as well as adding some additional
  * <div> elements for mixitup.
  */
+if ( !function_exists( 'shoestrap_edd_helper_actions' ) ) :
 function shoestrap_edd_helper_actions() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		add_action( 'shoestrap_index_begin', function() { echo '<div class="clearfix"></div><div class="row product-list">'; } );
@@ -58,6 +65,7 @@ function shoestrap_edd_helper_actions() {
 		add_action( 'shoestrap_content_override', function() { get_template_part( 'templates/content-download' ); } );
 	endif;
 }
+endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
@@ -65,14 +73,17 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
  * Specify the defaults for purchase links.
  * We use the 'edd_purchase_link_defaults' filter for this.
  */
+if ( !function_exists( 'shoestrap_edd_purchase_link_defaults' ) ) :
 function shoestrap_edd_purchase_link_defaults( $args ) {
 	$args['class'] = 'btn';
 	$args['style'] = 'btn-primary btn-block btn-lg';
 	return $args;
 }
+endif;
 add_filter( 'edd_purchase_link_defaults', 'shoestrap_edd_purchase_link_defaults' );
 
 
+if ( !function_exists( 'shoestrap_edd_element_class' ) ) :
 function shoestrap_edd_element_class() {
 	$style = shoestrap_getVariable( 'shoestrap_edd_box_style' );
 
@@ -86,12 +97,14 @@ function shoestrap_edd_element_class() {
 
 	return $maindivclass;	
 }
+endif;
 
 
 /*
  * The Original price variables for EDD downloads is displayed as radio input.
  * The below function replaces that with a dropdown.
  */
+if ( !function_exists( 'shoestrap_edd_purchase_variable_pricing' ) ) :
 function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 	$variable_pricing = edd_has_variable_prices( $download_id );
 	if ( ! $variable_pricing ) :
@@ -128,6 +141,7 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 	</div>
 	<?php do_action( 'edd_after_price_options', $download_id );
 }
+endif;
 
 
 /*
@@ -135,6 +149,7 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
  * Retrieve their terms, and then return the list items required by mixitup
  * to be properly displayed inside the filters.
  */
+if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
 function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 	global $post;
 	$tags = array();
@@ -160,11 +175,13 @@ function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 		return $output;
 	endif;
 }
+endif;
 
 
 /*
  * A mini cart. Simply displays number of products and a link.
  */
+if ( !function_exists( 'shoestrap_edd_mini_shopping_cart' ) ) :
 function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
 	global $edd_options;
 	ob_start();
@@ -189,6 +206,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	</div>
 	<?php echo ob_get_clean();
 }
+endif;
 
 
 /**
@@ -202,6 +220,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
  * @uses edd_get_discounts()
  * @return string $discounts_lists List of all the active discount codes
  */
+if ( !function_exists( 'shoestrap_edd_discounts_shortcode' ) ) :
 function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
 	$discounts = edd_get_discounts();
 
@@ -224,6 +243,7 @@ function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
 
 	return $discounts_list;
 }
+endif;
 remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
 add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
 
@@ -232,6 +252,7 @@ add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
 /*
  * Custom function to get minimum price as plain number
  */
+if ( !function_exists( 'shoestrap_edd_min_price_plain' ) ) :
 function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
 	if ( edd_has_variable_prices( $download_id ) ) {
 		$prices = edd_get_variable_prices( $download_id );
@@ -250,6 +271,7 @@ function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
 		echo $price;
 	endif;
 }
+endif;
 
 
 /*
@@ -257,7 +279,7 @@ function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
  * This only applied when the "EDD Software Specs" is installed.
  * We are removing the default version because we're adding these in the meta widget.
  */
-if ( class_exists( 'EDD_Software_Specs' ) ) :
+if ( class_exists( 'EDD_Software_Specs' ) && !function_exists( 'remove_edd_software_specs_from_content' ) ) :
 function remove_edd_software_specs_from_content() {
 	global $EDD_Software_Specs;
 	remove_action( 'edd_after_download_content', array( $EDD_Software_Specs, 'specs' ), 30 );
@@ -272,6 +294,7 @@ endif;
  * @since 1.0
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_default_cc_address_fields' ) ) :
 function shoestrap_edd_default_cc_address_fields() {
 	$logged_in = is_user_logged_in();
 
@@ -368,6 +391,7 @@ function shoestrap_edd_default_cc_address_fields() {
 	</fieldset>
 	<?php echo ob_get_clean();
 }
+endif;
 remove_action( 'edd_after_cc_fields', 'edd_default_cc_address_fields' );
 add_action( 'edd_after_cc_fields', 'shoestrap_edd_default_cc_address_fields' );
 
@@ -378,13 +402,14 @@ add_action( 'edd_after_cc_fields', 'shoestrap_edd_default_cc_address_fields' );
  * @since 1.6
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_checkout_tax_fields' ) ) :
 function shoestrap_edd_checkout_tax_fields() {
 	if( edd_cart_needs_tax_address_fields() && edd_get_cart_total() )
 		shoestrap_edd_default_cc_address_fields();
 }
+endif;
 remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_tax_fields', 999 );
 add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_tax_fields', 999 );
-
 
 
 /**
@@ -395,6 +420,7 @@ add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_tax_field
  * @param string $redirect Redirect page URL
  * @return string Login form
 */
+if ( !function_exists( 'shoestrap_edd_login_form' ) ) :
 function shoestrap_edd_login_form( $redirect = '' ) {
 	global $edd_options, $post;
 
@@ -438,6 +464,7 @@ function shoestrap_edd_login_form( $redirect = '' ) {
 	}
 	return ob_get_clean();
 }
+endif;
 
 
 /**
@@ -451,6 +478,7 @@ function shoestrap_edd_login_form( $redirect = '' ) {
  * @uses edd_login_form()
  * @return string
  */
+if ( !function_exists( 'shoestrap_edd_login_form_shortcode' ) ) :
 function shoestrap_edd_login_form_shortcode( $atts, $content = null ) {
 	extract( shortcode_atts( array(
 			'redirect' => '',
@@ -458,6 +486,7 @@ function shoestrap_edd_login_form_shortcode( $atts, $content = null ) {
 	);
 	return shoestrap_edd_login_form( $redirect );
 }
+endif;
 remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
 add_shortcode( 'edd_login', 'shoestrap_edd_login_form_shortcode' );
 
@@ -471,6 +500,7 @@ add_shortcode( 'edd_login', 'shoestrap_edd_login_form_shortcode' );
  * @since 1.2.2
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_payment_mode_select' ) ) :
 function shoestrap_edd_payment_mode_select() {
 	$gateways = edd_get_enabled_payment_gateways();
 	$page_URL = edd_get_current_page_url();
@@ -506,6 +536,7 @@ function shoestrap_edd_payment_mode_select() {
 	<div id="edd_purchase_form_wrap"></div><!-- the checkout fields are loaded into this-->
 	<?php do_action('edd_payment_mode_bottom');
 }
+endif;
 remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
 add_action( 'edd_payment_mode_select', 'shoestrap_edd_payment_mode_select' );
 
@@ -518,6 +549,7 @@ add_action( 'edd_payment_mode_select', 'shoestrap_edd_payment_mode_select' );
  * @since 1.3.3
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_user_info_fields' ) ) :
 function shoestrap_edd_user_info_fields() {
 	if ( is_user_logged_in() )
 		$user_data = get_userdata( get_current_user_id() );
@@ -570,6 +602,7 @@ function shoestrap_edd_user_info_fields() {
 	</fieldset>
 	<?php
 }
+endif;
 remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
 add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields' );
 
@@ -579,11 +612,13 @@ add_action( 'edd_purchase_form_after_user_info', 'shoestrap_edd_user_info_fields
  * This will simply alter the query so that EDD Downloads are shown
  * on the Frontpage instead of the list of posts.
  */
+if ( !function_exists( 'shoestrap_edd_downloads_on_homepage' ) ) :
 function shoestrap_edd_downloads_on_homepage( $query ) {
     if ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && $query->is_home() && $query->is_main_query() ) {
         $query->set( 'post_type', array( 'download' ) );
     }
 }
+endif;
 add_filter( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
 
 
@@ -596,6 +631,7 @@ add_filter( 'pre_get_posts', 'shoestrap_edd_downloads_on_homepage' );
  * that must be added so that the grid works properly
  * using some clear-left declarations.
  */
+if ( !function_exists( 'shoestrap_edd_get_download_class' ) ) :
 function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 	$content_width 	= shoestrap_content_width_px();
 	$breakpoint 	= shoestrap_getVariable( 'screen_tablet' );
@@ -617,11 +653,13 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 
 	return $class;
 }
+endif;
 
 
 /*
  * Custom function to display prices
  */
+if ( !function_exists( 'shoestrap_edd_price' ) ) :
 function shoestrap_edd_price( $el = 'h2' ) {
 	// find if there's a ZERO price in variable pricing
 	$zero_price = 0;
@@ -662,11 +700,13 @@ function shoestrap_edd_price( $el = 'h2' ) {
 
 	echo '</' . $el . '>';
 }
+endif;
 
 
 /*
  * Some additional CSS rules that must be added for this plugin
  */
+if ( !function_exists( 'shoestrap_edd_header_css' ) ) :
 function shoestrap_edd_header_css() {
 	$screen_tablet         = filter_var( shoestrap_getVariable( 'screen_tablet' ), FILTER_SANITIZE_NUMBER_INT );
 	$screen_desktop        = filter_var( shoestrap_getVariable( 'screen_desktop' ), FILTER_SANITIZE_NUMBER_INT );
@@ -684,6 +724,7 @@ function shoestrap_edd_header_css() {
 	</style>
 	<?php
 }
+endif;
 add_action( 'wp_head', 'shoestrap_edd_header_css' );
 
 
@@ -693,6 +734,7 @@ add_action( 'wp_head', 'shoestrap_edd_header_css' );
  * @since 1.0
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_get_cc_form' ) ) :
 function shoestrap_edd_get_cc_form() {
 	ob_start(); ?>
 
@@ -764,6 +806,7 @@ function shoestrap_edd_get_cc_form() {
 
 	echo ob_get_clean();
 }
+endif;
 remove_action( 'edd_cc_form', 'edd_get_cc_form' );
 add_action( 'edd_cc_form', 'shoestrap_edd_get_cc_form' );
 
@@ -777,6 +820,7 @@ add_action( 'edd_cc_form', 'shoestrap_edd_get_cc_form' );
  * @since 1.0
  * @return string
  */
+if ( !function_exists( 'shoestrap_edd_get_register_fields' ) ) :
 function shoestrap_edd_get_register_fields() {
 	global $edd_options;
 	global $user_ID;
@@ -888,6 +932,7 @@ function shoestrap_edd_get_register_fields() {
 	<?php
 	echo ob_get_clean();
 }
+endif;
 remove_action( 'edd_purchase_form_register_fields', 'edd_get_register_fields' );
 add_action( 'edd_purchase_form_register_fields', 'shoestrap_edd_get_register_fields' );
 
@@ -900,6 +945,7 @@ add_action( 'edd_purchase_form_register_fields', 'shoestrap_edd_get_register_fie
  * @since 1.0
  * @return string
  */
+if ( !function_exists( 'shoestrap_edd_get_login_fields' ) ) :
 function shoestrap_edd_get_login_fields() {
 	ob_start(); ?>
 
@@ -931,9 +977,9 @@ function shoestrap_edd_get_login_fields() {
 	</fieldset><!--end #edd_login_fields-->
 	<?php echo ob_get_clean();
 }
+endif;
 remove_action( 'edd_purchase_form_login_fields', 'edd_get_login_fields' );
 add_action( 'edd_purchase_form_login_fields', 'shoestrap_edd_get_login_fields' );
-
 
 
 /**
@@ -944,6 +990,7 @@ add_action( 'edd_purchase_form_login_fields', 'shoestrap_edd_get_login_fields' )
  * @since 1.2.2
  * @return void
 */
+if ( !function_exists( 'shoestrap_edd_discount_field' ) ) :
 function shoestrap_edd_discount_field() {
 	if( ! isset( $_GET['payment-mode'] ) && count( edd_get_enabled_payment_gateways() ) > 1 && ! edd_is_ajax_enabled() )
 		return; // Only show once a payment method has been selected if ajax is disabled
@@ -965,6 +1012,7 @@ function shoestrap_edd_discount_field() {
 		<?php
 	endif;
 }
+endif;
 remove_action( 'edd_checkout_form_top', 'edd_discount_field', -1 );
 add_action( 'edd_checkout_form_top', 'shoestrap_edd_discount_field', -1 );
 
@@ -975,6 +1023,7 @@ add_action( 'edd_checkout_form_top', 'shoestrap_edd_discount_field', -1 );
  * @since 1.5
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_checkout_final_total' ) ) :
 function shoestrap_edd_checkout_final_total() { ?>
 	<h2 class="text-center">
 		<?php _e( 'Purchase Total:', 'edd' ); ?>
@@ -983,6 +1032,7 @@ function shoestrap_edd_checkout_final_total() { ?>
 	</h2>
 	<?php
 }
+endif;
 remove_action( 'edd_purchase_form_before_submit', 'edd_checkout_final_total', 999 );
 add_action( 'edd_purchase_form_before_submit', 'shoestrap_edd_checkout_final_total', 999 );
 
@@ -993,6 +1043,7 @@ add_action( 'edd_purchase_form_before_submit', 'shoestrap_edd_checkout_final_tot
  * @since 1.3.3
  * @return void
  */
+if ( !function_exists( 'shoestrap_edd_checkout_submit' ) ) :
 function shoestrap_edd_checkout_submit() { ?>
 	<fieldset id="edd_purchase_submit">
 		<?php do_action( 'edd_purchase_form_before_submit' ); ?>
@@ -1005,6 +1056,7 @@ function shoestrap_edd_checkout_submit() { ?>
 	</fieldset>
 <?php
 }
+endif;
 remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_submit', 9999 );
 add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_submit', 9999 );
 
@@ -1016,6 +1068,7 @@ add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_submit', 
  * @global $edd_options Array of all the EDD Options
  * @return string
  */
+if ( !function_exists( 'shoestrap_edd_checkout_button_next' ) ) :
 function shoestrap_edd_checkout_button_next() {
 	global $edd_options;
 
@@ -1026,6 +1079,7 @@ function shoestrap_edd_checkout_button_next() {
 	<input type="submit" name="gateway_submit" id="edd_next_button" class="edd-submit btn btn-primary" value="<?php _e( 'Next', 'edd' ); ?>"/>
 	<?php return apply_filters( 'edd_checkout_button_next', ob_get_clean() );
 }
+endif;
 
 
 /**
@@ -1035,6 +1089,7 @@ function shoestrap_edd_checkout_button_next() {
  * @global $edd_options Array of all the EDD Options
  * @return string
  */
+if ( !function_exists( 'shoestrap_edd_checkout_button_purchase' ) ) :
 function shoestrap_edd_checkout_button_purchase() {
 	global $edd_options;
 	$color = isset( $edd_options[ 'checkout_color' ] ) ? $edd_options[ 'checkout_color' ] : 'gray';
@@ -1048,8 +1103,9 @@ function shoestrap_edd_checkout_button_purchase() {
 	<input type="submit" class="edd-submit btn btn-primary btn-block btn-lg" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
 	<?php return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
 }
+endif;
 
-
+if ( !function_exists( 'shoestrap_edd_add_minicart_to_navbar' ) ) :
 function shoestrap_edd_add_minicart_to_navbar() {
 	if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) : ?>
 		<div class="pull-right">
@@ -1058,4 +1114,5 @@ function shoestrap_edd_add_minicart_to_navbar() {
 	<?php
 	endif;
 }
+endif;
 add_action( 'shoestrap_inside_nav_begin', 'shoestrap_edd_add_minicart_to_navbar' );
