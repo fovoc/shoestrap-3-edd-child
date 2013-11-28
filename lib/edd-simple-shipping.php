@@ -89,25 +89,25 @@ if ( class_exists( 'EDD_Simple_Shipping' ) ) :
 					$('#shipping_state_other').show();$('#shipping_state_us').hide();$('#shipping_state_ca').hide();
 				}
 				var postData = {
-		            action: 'edd_get_shipping_rate',
-		            country:  val
-		        };
-		        $.ajax({
-		            type: "POST",
-		            data: postData,
-		            dataType: "json",
-		            url: edd_global_vars.ajaxurl,
-		            success: function (response) {
-		                if( response ) {
-		                	$('.edd_cart_amount').text( response.total );
-		                	$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
-		                } else {
-		                    console.log( response );
-		                }
-		            }
-		        }).fail(function (data) {
-		            console.log(data);
-		        });
+					action: 'edd_get_shipping_rate',
+					country:  val
+				};
+				$.ajax({
+					type: "POST",
+					data: postData,
+					dataType: "json",
+					url: edd_global_vars.ajaxurl,
+					success: function (response) {
+						if( response ) {
+							$('.edd_cart_amount').text( response.total );
+							$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
+						} else {
+							console.log( response );
+						}
+					}
+				}).fail(function (data) {
+					console.log(data);
+				});
 			});
 
 			$('body').on('edd_taxes_recalculated', function( event, data ) {
@@ -116,52 +116,52 @@ if ( class_exists( 'EDD_Simple_Shipping' ) ) :
 					return;
 
 				var postData = {
-		            action: 'edd_get_shipping_rate',
-		            country: data.postdata.country
-		        };
-		        $.ajax({
-		            type: "POST",
-		            data: postData,
-		            dataType: "json",
-		            url: edd_global_vars.ajaxurl,
-		            success: function (response) {
-		                if( response ) {
-		                	$('.edd_cart_amount').text( response.total );
-		                	$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
-		                } else {
-		                    console.log( response );
-		                }
-		            }
-		        }).fail(function (data) {
-		            console.log(data);
-		        });
+					action: 'edd_get_shipping_rate',
+					country: data.postdata.country
+				};
+				$.ajax({
+					type: "POST",
+					data: postData,
+					dataType: "json",
+					url: edd_global_vars.ajaxurl,
+					success: function (response) {
+						if( response ) {
+							$('.edd_cart_amount').text( response.total );
+							$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
+						} else {
+							console.log( response );
+						}
+					}
+				}).fail(function (data) {
+					console.log(data);
+				});
 
 			});
 
 			$('select#edd-gateway, input.edd-gateway').change( function (e) {
 				var postData = {
-		            action: 'edd_get_shipping_rate',
-		            country: 'US' // default
-		        };
-		        $.ajax({
-		            type: "POST",
-		            data: postData,
-		            dataType: "json",
-		            url: edd_global_vars.ajaxurl,
-		            success: function (response) {
-		                if( response ) {
-		                	$('.edd_cart_amount').text( response.total );
-		                	$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
-		                } else {
-		                    console.log( response );
-		                }
-		            }
-		        }).fail(function (data) {
-		            console.log(data);
-		        });
+					action: 'edd_get_shipping_rate',
+					country: 'US' // default
+				};
+				$.ajax({
+					type: "POST",
+					data: postData,
+					dataType: "json",
+					url: edd_global_vars.ajaxurl,
+					success: function (response) {
+						if( response ) {
+							$('.edd_cart_amount').text( response.total );
+							$('#edd_cart_fee_simple_shipping .edd_cart_fee_amount').text( response.shipping_amount );
+						} else {
+							console.log( response );
+						}
+					}
+				}).fail(function (data) {
+					console.log(data);
+				});
 			});
 			$('#shoestrap_edd_simple_shipping_show').change(function(){
-				$('#edd_simple_shipping_fields_wrap').toggle();
+				$('#shoestrap_edd_simple_shipping_fields_wrap').toggle();
 			});
 		});</script>
 
@@ -174,63 +174,82 @@ if ( class_exists( 'EDD_Simple_Shipping' ) ) :
 					</label>
 				</fieldset>
 			<?php endif; ?>
-			<div id="edd_simple_shipping_fields_wrap"<?php echo $display; ?>>
+			<div id="shoestrap_edd_simple_shipping_fields_wrap"<?php echo $display; ?>>
 				<fieldset id="edd_simple_shipping_fields">
 					<?php do_action( 'edd_shipping_address_top' ); ?>
 					<legend><?php _e( 'Shipping Details', 'edd-simple-shipping' ); ?></legend>
-					<p id="edd-shipping-address-wrap">
-						<label class="edd-label"><?php _e( 'Shipping Address', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The address to ship your purchase to.', 'edd-simple-shipping' ); ?></span>
-						<input type="text" name="shipping_address" class="shipping-address edd-input" placeholder="<?php _e( 'Address line 1', 'edd-simple-shipping' ); ?>"/>
-					</p>
-					<p id="edd-shipping-address-2-wrap">
-						<label class="edd-label"><?php _e( 'Shipping Address Line 2', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your shipping address.', 'edd-simple-shipping' ); ?></span>
-						<input type="text" name="shipping_address_2" class="shipping-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd-simple-shipping' ); ?>"/>
-					</p>
-					<p id="edd-shipping-city-wrap">
-						<label class="edd-label"><?php _e( 'Shipping City', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The city for your shipping address.', 'edd-simple-shipping' ); ?></span>
-						<input type="text" name="shipping_city" class="shipping-city edd-input" placeholder="<?php _e( 'City', 'edd-simple-shipping' ); ?>"/>
-					</p>
-					<p id="edd-shipping-country-wrap">
-						<label class="edd-label"><?php _e( 'Shipping Country', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The country for your shipping address.', 'edd-simple-shipping' ); ?></span>
-						<select name="shipping_country" class="shipping-country edd-select">
-							<?php
-							$countries = edd_get_country_list();
-							foreach( $countries as $country_code => $country ) {
-							  echo '<option value="' . $country_code . '">' . $country . '</option>';
-							}
-							?>
-						</select>
-					</p>
-					<p id="edd-shipping-state-wrap">
-						<label class="edd-label"><?php _e( 'Shipping State / Province', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The state / province for your shipping address.', 'edd-simple-shipping' ); ?></span>
-						<input type="text" size="6" name="shipping_state_other" id="shipping_state_other" class="shipping-state edd-input" placeholder="<?php _e( 'State / Province', 'edd-simple-shipping' ); ?>" style="display:none;"/>
-			            <select name="shipping_state_us" id="shipping_state_us" class="shipping-state edd-select">
-			                <?php
-			                    $states = edd_get_states_list();
-			                    foreach( $states as $state_code => $state ) {
-			                        echo '<option value="' . $state_code . '">' . $state . '</option>';
-			                    }
-			                ?>
-			            </select>
-			            <select name="shipping_state_ca" id="shipping_state_ca" class="shipping-state edd-select" style="display: none;">
-			                <?php
-			                    $provinces = edd_get_provinces_list();
-			                    foreach( $provinces as $province_code => $province ) {
-			                        echo '<option value="' . $province_code . '">' . $province . '</option>';
-			                    }
-			                ?>
-			            </select>
-					</p>
-					<p id="edd-shipping-zip-wrap">
-						<label class="edd-label"><?php _e( 'Shipping Zip / Postal Code', 'edd-simple-shipping' ); ?></label>
-						<span class="edd-description"><?php _e( 'The zip / postal code for your shipping address.', 'edd-simple-shipping' ); ?></span>
-						<input type="text" size="4" name="shipping_zip" class="shipping-zip edd-input" placeholder="<?php _e( 'Zip / Postal code', 'edd-simple-shipping' ); ?>"/>
-					</p>
+
+					<div class="form-group" id="edd-shipping-address-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping Address', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The address to ship your purchase to.', 'edd-simple-shipping' ); ?></small>
+							<input type="text" name="shipping_address" class="form-control shipping-address edd-input" placeholder="<?php _e( 'Address line 1', 'edd-simple-shipping' ); ?>"/>
+						</div>
+					</div>
+
+					<div class="form-group" id="edd-shipping-address-2-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping Address Line 2', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your shipping address.', 'edd-simple-shipping' ); ?></small>
+							<input type="text" name="shipping_address_2" class="form-control shipping-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd-simple-shipping' ); ?>"/>
+						</div>
+					</div>
+
+					<div class="form-group" id="edd-shipping-city-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping City', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The city for your shipping address.', 'edd-simple-shipping' ); ?></small>
+							<input type="text" name="shipping_city" class="form-control shipping-city edd-input" placeholder="<?php _e( 'City', 'edd-simple-shipping' ); ?>"/>
+						</div>
+					</div>
+
+					<div class="form-group" id="edd-shipping-country-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping Country', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The country for your shipping address.', 'edd-simple-shipping' ); ?></small>
+							<select name="shipping_country" class="form-control shipping-country edd-select">
+								<?php
+								$countries = edd_get_country_list();
+								foreach( $countries as $country_code => $country ) {
+								  echo '<option value="' . $country_code . '">' . $country . '</option>';
+								}
+								?>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group" id="edd-shipping-state-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping State / Province', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The state / province for your shipping address.', 'edd-simple-shipping' ); ?></small>
+							<input type="text" size="6" name="shipping_state_other" id="shipping_state_other" class="form-control shipping-state edd-input" placeholder="<?php _e( 'State / Province', 'edd-simple-shipping' ); ?>" style="display:none;"/>
+							<select name="shipping_state_us" id="shipping_state_us" class="form-control shipping-state edd-select">
+								<?php
+									$states = edd_get_states_list();
+									foreach( $states as $state_code => $state ) {
+										echo '<option value="' . $state_code . '">' . $state . '</option>';
+									}
+								?>
+							</select>
+							<select name="shipping_state_ca" id="shipping_state_ca" class="form-control shipping-state edd-select" style="display: none;">
+								<?php
+									$provinces = edd_get_provinces_list();
+									foreach( $provinces as $province_code => $province ) {
+										echo '<option value="' . $province_code . '">' . $province . '</option>';
+									}
+								?>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group" id="edd-shipping-zip-wrap">
+						<label class="control-label col-md-3 edd-label"><?php _e( 'Shipping Zip / Postal Code', 'edd-simple-shipping' ); ?></label>
+						<div class="col-md-9">
+							<small class="edd-description"><?php _e( 'The zip / postal code for your shipping address.', 'edd-simple-shipping' ); ?></small>
+							<input type="text" size="4" name="shipping_zip" class="form-control shipping-zip edd-input" placeholder="<?php _e( 'Zip / Postal code', 'edd-simple-shipping' ); ?>"/>
+						</div>
+					</div>
+
 					<?php do_action( 'edd_shipping_address_bottom' ); ?>
 				</fieldset>
 			</div>
@@ -239,12 +258,6 @@ if ( class_exists( 'EDD_Simple_Shipping' ) ) :
 	}
 	endif;
 
-	if ( !function_exists( 'shoestrap_edd_simple_shipping_address_fields_actions' ) ) :
-		function shoestrap_edd_simple_shipping_address_fields_actions() {
-			global $EDD_Simple_Shipping;
-			remove_action( 'edd_purchase_form_after_cc_form', array( $EDD_Simple_Shipping, 'address_fields' ) );
-			add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_simple_shipping_address_fields', 999 );
-		}
-		add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_simple_shipping_address_fields_actions', 999 );
-	endif;
+remove_all_actions( 'edd_purchase_form_after_cc_form', 999 );
+add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_simple_shipping_address_fields', 998 );
 endif;
