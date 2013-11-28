@@ -21,5 +21,6 @@ require_once get_stylesheet_directory() . '/lib/admin.php';
 if ( class_exists( 'Easy_Digital_Downloads' ) ) :
 	require_once get_stylesheet_directory() . '/lib/edd-functions.php';
 	require_once get_stylesheet_directory() . '/lib/edd-widgets.php';
-	require_once get_stylesheet_directory() . '/lib/edd-simple-shipping.php';
+	require_once get_stylesheet_directory() . '/lib/addons/edd-simple-shipping.php';
+	require_once get_stylesheet_directory() . '/lib/addons/edd-variable-pricing-switcher.php';
 endif;
