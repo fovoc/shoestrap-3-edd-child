@@ -309,12 +309,12 @@ function shoestrap_edd_default_cc_address_fields() {
 	ob_start(); ?>
 
 	<fieldset id="edd_cc_address" class="cc-address">
-		<span><legend><?php _e( 'Billing Details', 'edd' ); ?></legend></span>
+		<legend><?php _e( 'Billing Details', 'edd' ); ?></legend>
 		<?php do_action( 'edd_cc_billing_top' ); ?>
 		<div class="form-group" id="edd-card-address-wrap">
 			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing Address', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The primary billing address for your credit card.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The primary billing address for your credit card.', 'edd' ); ?></small>
 				<input type="text" name="card_address" class="form-control card-address edd-input required" placeholder="<?php _e( 'Address line 1', 'edd' ); ?>" value="<?php echo $line1; ?>"/>
 			</div>
 		</div>
@@ -322,7 +322,7 @@ function shoestrap_edd_default_cc_address_fields() {
 		<div class="form-group" id="edd-card-address-2-wrap">
 			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Address Line 2 (optional)', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your billing address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your billing address.', 'edd' ); ?></small>
 				<input type="text" name="card_address_2" class="form-control card-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd' ); ?>" value="<?php echo $line2; ?>"/>
 			</div>
 		</div>
@@ -330,7 +330,7 @@ function shoestrap_edd_default_cc_address_fields() {
 		<div class="form-group" id="edd-card-city-wrap">
 			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing City', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The city for your billing address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The city for your billing address.', 'edd' ); ?></small>
 				<input type="text" name="card_city" class="form-control card-city edd-input required" placeholder="<?php _e( 'City', 'edd' ); ?>" value="<?php echo $city; ?>"/>
 			</div>
 		</div>
@@ -338,7 +338,7 @@ function shoestrap_edd_default_cc_address_fields() {
 		<div class="form-group" id="edd-card-zip-wrap">
 			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Zip / Postal Code', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The zip or postal code for your billing address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The zip or postal code for your billing address.', 'edd' ); ?></small>
 				<input type="text" size="4" name="card_zip" class="form-control card-zip edd-input required" placeholder="<?php _e( 'Zip / Postal code', 'edd' ); ?>"/>
 			</div>
 		</div>
@@ -346,7 +346,7 @@ function shoestrap_edd_default_cc_address_fields() {
 		<div class="form-group" id="edd-card-country-wrap">
 			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Country', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The country for your billing address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The country for your billing address.', 'edd' ); ?></small>
 				<select name="billing_country" id="billing_country" class="form-control billing_country edd-select required">
 					<?php
 
@@ -367,7 +367,7 @@ function shoestrap_edd_default_cc_address_fields() {
 		<div class="form-group" id="edd-card-state-wrap">
 			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing State / Province', 'edd' ); ?></label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The state or province for your billing address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The state or province for your billing address.', 'edd' ); ?></small>
 				<?php
 				$selected_state = edd_get_shop_state();
 				$states         = edd_get_shop_states();
@@ -376,7 +376,7 @@ function shoestrap_edd_default_cc_address_fields() {
 					$selected_state = $user_address['state'];
 
 				if( ! empty( $states ) ) : ?>
-					<select name="card_state" id="card_state" class="card_state edd-select required">
+					<select name="card_state" id="card_state" class="form-control card_state edd-select required">
 						<?php foreach( $states as $state_code => $state ) {
 							echo '<option value="' . $state_code . '"' . selected( $state_code, $selected_state, false ) . '>' . $state . '</option>';
 						} ?>
@@ -449,10 +449,10 @@ function shoestrap_edd_login_form( $redirect = '' ) {
 						<input name="edd_user_pass" id="edd_user_pass" class="form-control password required" type="password"/>
 					</div>
 				</div>
-				<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>"/>
-				<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>"/>
-				<input type="hidden" name="edd_action" value="user_login"/>
-				<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>"/>
+				<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>" />
+				<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>" />
+				<input type="hidden" name="edd_action" value="user_login" />
+				<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>" />
 				<a class="btn btn-link btn-sm btn-block" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
 					<?php _e( 'Lost Password?', 'edd' ); ?>
 				</a>
@@ -556,7 +556,7 @@ function shoestrap_edd_user_info_fields() {
 		$user_data = get_userdata( get_current_user_id() );
 	?>
 	<fieldset id="edd_checkout_user_info">
-		<span><legend><?php echo apply_filters( 'edd_checkout_personal_info_text', __( 'Personal Info', 'edd' ) ); ?></legend></span>
+		<legend><?php echo apply_filters( 'edd_checkout_personal_info_text', __( 'Personal Info', 'edd' ) ); ?></legend>
 		<?php do_action( 'edd_purchase_form_before_email' ); ?>
 
 		<div class="form-group" id="edd-email-wrap">
@@ -567,7 +567,7 @@ function shoestrap_edd_user_info_fields() {
 				<?php } ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></small>
 				<input class="form-control edd-input required" type="email" name="edd_email" placeholder="<?php _e( 'Email address', 'edd' ); ?>" id="edd-email" value="<?php echo is_user_logged_in() ? $user_data->user_email : ''; ?>"/>
 			</div>
 		</div>
@@ -582,7 +582,7 @@ function shoestrap_edd_user_info_fields() {
 				<?php } ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></small>>
 				<input class="form-control edd-input required" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->first_name : ''; ?>"/>
 			</div>
 		</div>
@@ -594,7 +594,7 @@ function shoestrap_edd_user_info_fields() {
 				<?php } ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></small>>
 				<input class="form-control edd-input" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->last_name : ''; ?>"/>
 			</div>
 		</div>
@@ -742,7 +742,7 @@ function shoestrap_edd_get_cc_form() {
 	<?php do_action( 'edd_before_cc_fields' ); ?>
 
 	<fieldset id="edd_cc_fields" class="edd-do-validate">
-		<span><legend><?php _e( 'Credit Card Info', 'edd' ); ?></legend></span>
+		<legend><?php _e( 'Credit Card Info', 'edd' ); ?></legend>
 		<?php if( is_ssl() ) : ?>
 			<div class="alert alert-success" id="edd_secure_site_wrapper">
 				<h3><i class="el-icon-lock"></i><?php _e( 'This is a secure SSL encrypted payment.', 'edd' ); ?></h3>>
@@ -755,7 +755,7 @@ function shoestrap_edd_get_cc_form() {
 				<span class="card-type"></span>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The (typically) 16 digits on the front of your credit card.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The (typically) 16 digits on the front of your credit card.', 'edd' ); ?></small>
 				<input type="text" autocomplete="off" name="card_number" class="form-control card-number edd-input required" placeholder="<?php _e( 'Card number', 'edd' ); ?>" />
 			</div>
 		</div>
@@ -766,7 +766,7 @@ function shoestrap_edd_get_cc_form() {
 				<span class="edd-required-indicator">*</span>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The 3 digit (back) or 4 digit (front) value on your card.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The 3 digit (back) or 4 digit (front) value on your card.', 'edd' ); ?></small>
 				<input type="text" size="4" autocomplete="off" name="card_cvc" class="form-control card-cvc edd-input required" placeholder="<?php _e( 'Security code', 'edd' ); ?>" />
 			</div>
 		</div>
@@ -777,7 +777,7 @@ function shoestrap_edd_get_cc_form() {
 				<span class="edd-required-indicator">*</span>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The name printed on the front of your credit card.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'The name printed on the front of your credit card.', 'edd' ); ?></small>
 				<input type="text" autocomplete="off" name="card_name" class="form-control card-name edd-input required" placeholder="<?php _e( 'Card name', 'edd' ); ?>" />
 			</div>
 		</div>
@@ -790,14 +790,21 @@ function shoestrap_edd_get_cc_form() {
 				<span class="edd-required-indicator">*</span>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'The date your credit card expires, typically on the front of the card.', 'edd' ); ?></span>
-				<select name="card_exp_month" class="form-control card-expiry-month edd-select edd-select-small required">
-					<?php for( $i = 1; $i <= 12; $i++ ) { echo '<option value="' . $i . '">' . sprintf ('%02d', $i ) . '</option>'; } ?>
-				</select>
-				<span class="exp-divider"> / </span>
-				<select name="card_exp_year" class="card-expiry-year edd-select edd-select-small required">
-					<?php for( $i = date('Y'); $i <= date('Y') + 10; $i++ ) { echo '<option value="' . $i . '">' . substr( $i, 2 ) . '</option>'; } ?>
-				</select>
+				<small class="edd-description"><?php _e( 'The date your credit card expires, typically on the front of the card.', 'edd' ); ?></small>
+				<div class="row">
+					<div class="col-md-6">
+						<small class="edd-description">Month</small>
+						<select name="card_exp_month" class="form-control card-expiry-month edd-select edd-select-small required">
+							<?php for( $i = 1; $i <= 12; $i++ ) { echo '<option value="' . $i . '">' . sprintf ('%02d', $i ) . '</option>'; } ?>
+						</select>
+					</div>
+					<div class="col-md-6">
+						<small class="edd-description">Year</small>
+						<select name="card_exp_year" class="form-control card-expiry-year edd-select edd-select-small required">
+							<?php for( $i = date('Y'); $i <= date('Y') + 10; $i++ ) { echo '<option value="' . $i . '">' . substr( $i, 2 ) . '</option>'; } ?>
+						</select>
+					</div>
+				</div>
 			</div>
 		</div>
 		<?php do_action( 'edd_after_cc_expiration' ); ?>
@@ -846,7 +853,7 @@ function shoestrap_edd_get_register_fields() {
 				<?php endif; ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></small>
 				<input name="edd_email" id="edd-email" class="required edd-input form-control" type="email" placeholder="<?php _e( 'Email', 'edd' ); ?>" title="<?php _e( 'Email', 'edd' ); ?>"/>
 			</div>
 		</div>
@@ -859,7 +866,7 @@ function shoestrap_edd_get_register_fields() {
 				<?php endif; ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></small>
 				<input class="edd-input required form-control" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->user_firstname : ''; ?>"/>
 			</div>
 		</div>
@@ -872,7 +879,7 @@ function shoestrap_edd_get_register_fields() {
 				<?php endif; ?>
 			</label>
 			<div class="col-md-9">
-				<span class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></small>
 				<input class="edd-input form-control" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->user_lastname : ''; ?>"/>
 			</div>
 		</div>
@@ -880,7 +887,7 @@ function shoestrap_edd_get_register_fields() {
 		<?php do_action('edd_register_fields_after'); ?>
 
 		<fieldset id="edd_register_account_fields">
-			<span><legend><?php _e( 'Create an account', 'edd' ); if( !edd_no_guest_checkout() ) { echo ' ' . __( '(optional)', 'edd' ); } ?></legend></span>
+			<legend><?php _e( 'Create an account', 'edd' ); if( !edd_no_guest_checkout() ) { echo ' ' . __( '(optional)', 'edd' ); } ?></legend>
 			<?php do_action('edd_register_account_fields_before'); ?>
 
 			<div class="form-group" id="edd-user-login-wrap">
@@ -892,7 +899,7 @@ function shoestrap_edd_get_register_fields() {
 				</label>
 
 				<div class="col-md-9">
-					<span class="edd-description"><?php _e( 'The username you will use to log into your account.', 'edd' ); ?></span>
+					<small class="edd-description"><?php _e( 'The username you will use to log into your account.', 'edd' ); ?></small>
 					<input name="edd_user_login" id="edd_user_login" class="form-control <?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="text" placeholder="<?php _e( 'Username', 'edd' ); ?>" title="<?php _e( 'Username', 'edd' ); ?>"/>
 				</div>
 			</div>
@@ -905,7 +912,7 @@ function shoestrap_edd_get_register_fields() {
 					<?php endif; ?>
 				</label>
 				<div class="col-md-9">
-					<span class="edd-description"><?php _e( 'The password used to access your account.', 'edd' ); ?></span>
+					<small class="edd-description"><?php _e( 'The password used to access your account.', 'edd' ); ?></small>
 					<input name="edd_user_pass" id="edd_user_pass" class="form-control <?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" placeholder="<?php _e( 'Password', 'edd' ); ?>" type="password"/>
 				</div>
 			</div>
@@ -918,7 +925,7 @@ function shoestrap_edd_get_register_fields() {
 					<?php endif; ?>
 				</label>
 				<div class="col-md-9">
-					<span class="edd-description"><?php _e( 'Confirm your password.', 'edd' ); ?></span>
+					<small class="edd-description"><?php _e( 'Confirm your password.', 'edd' ); ?></small>
 					<input name="edd_user_pass_confirm" id="edd_user_pass_confirm" class="form-control <?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" placeholder="<?php _e( 'Confirm password', 'edd' ); ?>" type="password"/>
 				</div>
 			</div>
@@ -1006,7 +1013,7 @@ function shoestrap_edd_discount_field() {
 					<?php _e( 'Discount', 'edd' ); ?>
 					<img src="<?php echo EDD_PLUGIN_URL; ?>assets/images/loading.gif" id="edd-discount-loader" style="display:none;"/>
 				</label>
-				<span class="edd-description"><?php _e( 'Enter a coupon code if you have one.', 'edd' ); ?></span>
+				<small class="edd-description"><?php _e( 'Enter a coupon code if you have one.', 'edd' ); ?></span>
 				<input class="edd-input form-control" type="text" id="edd-discount" name="edd-discount" placeholder="<?php _e( 'Enter discount', 'edd' ); ?>"/>
 			</p>
 		</fieldset>
