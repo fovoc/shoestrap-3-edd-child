@@ -185,6 +185,7 @@ endif;
 if ( !function_exists( 'shoestrap_edd_mini_shopping_cart' ) ) :
 function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
 	global $edd_options;
+	$label = shoestrap_getVariable( 'shoestrap_edd_minicart_label' );
 	ob_start();
 
 	$display = 'style="display:none;"';
@@ -202,7 +203,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
 		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
 			<i class="el-icon-shopping-cart"></i>
-			<?php _e( 'Checkout', 'edd' ); ?>
+			<?php echo $label; ?>
 		</a>
 	</div>
 	<?php echo ob_get_clean();

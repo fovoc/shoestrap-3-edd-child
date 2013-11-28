@@ -63,6 +63,15 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
+    'title'     => __( 'Show the cart on the NavBar', 'shoestrap_edd' ),
+    'desc'      => __( 'Show a link to the cart with totals in the navbar.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_minicart_label',
+    'default'   => __( 'Checkout', 'edd' ),
+    'type'      => 'text',
+    'required'  => array( 'shoestrap_edd_navbar_cart','=',array( '1' ) ),
+  );
+
+  $fields[] = array( 
     'name'            => __( 'Shoestrap Theme Licence', 'shoestrap' ),
     'id'              => 'shoestrap_edd_child_license_key',
     'default'         => '',
