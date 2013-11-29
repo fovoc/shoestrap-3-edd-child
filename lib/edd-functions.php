@@ -20,7 +20,7 @@ function shoestrap_edd_assets() {
 		wp_register_script('shoestrap_edd_mixitup', get_stylesheet_directory_uri() . '/assets/js/jquery.mixitup.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_edd_mixitup');
 		// Here triggers the MixItiUp && EqualHeights
-		add_action( 'wp_footer', function() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }, 99 );
+		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
 	endif;
 }
 endif;
@@ -61,13 +61,19 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 9 );
 if ( !function_exists( 'shoestrap_edd_helper_actions' ) ) :
 function shoestrap_edd_helper_actions() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
-		add_action( 'shoestrap_index_begin', function() { echo '<div class="clearfix"></div><div class="row product-list">'; } );
-		add_action( 'shoestrap_index_end', function() { echo '</div>'; } );
-		add_action( 'shoestrap_content_override', function() { get_template_part( 'templates/content-download' ); } );
+		add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions_index_begin' );
+		add_action( 'shoestrap_index_end', 'shoestrap_edd_helper_actions_index_end' );
+		add_action( 'shoestrap_content_override', 'shoestrap_edd_helper_actions_content_override' );
 	endif;
 }
 endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
+
+
+function shoestrap_edd_custom_script() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }
+function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
+function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div><div class="row product-list">'; }
+function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
 
 
 /*
