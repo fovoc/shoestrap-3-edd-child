@@ -3,7 +3,7 @@
 if ( class_exists( 'EDD_Variable_Pricing_Switcher' ) ) :
 
 	global $EDD_Variable_Pricing_Switcher;
-	remove_action( 'edd_before_purchase_form', array( $EDD_Variable_Pricing_Switcher, 'checkout_addition' ), 10 );
+	remove_action( 'edd_before_purchase_form', array( $EDD_Variable_Pricing_Switcher, 'checkout_addition' ) );
 	add_action( 'edd_before_purchase_form', 'shoestrap_edd_variable_pricing_switcher_checkout_addition', 10 );
 
 	if ( !function_exists( 'shoestrap_edd_variable_pricing_switcher_checkout_addition' ) ) :
@@ -59,7 +59,7 @@ if ( class_exists( 'EDD_Variable_Pricing_Switcher' ) ) :
 
 	?>
 	<form name="edd_variable_pricing_switcher" action="<?php echo edd_get_checkout_uri(); ?>" method="post">
-		<fieldset id="edd_variable_pricing_switcher-fieldset">
+		<fieldset id="edd_variable_pricing_switcher-fieldset" class="shoestrap">
 			<span><legend><?php echo $vps_label; ?></legend></span>
 			<?php echo $pricing_switchers; ?>
 		</fieldset>
@@ -87,3 +87,12 @@ if ( class_exists( 'EDD_Variable_Pricing_Switcher' ) ) :
 	}
 	endif;
 endif;
+
+function shoestrap_edd_variable_pricing_switcher_css() { ?>
+	<style>
+		#edd_variable_pricing_switcher-fieldset { display: none; }
+		#edd_variable_pricing_switcher-fieldset.shoestrap { display: block; }
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'shoestrap_edd_variable_pricing_switcher_css' );
