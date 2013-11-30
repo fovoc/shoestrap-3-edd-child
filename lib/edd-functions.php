@@ -727,7 +727,8 @@ function shoestrap_edd_header_css() {
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
 	.edd-cart-added-alert { color: whitesmoke; }
-	.mix-sort .dropdown-menu li.sort { cursor: pointer; }
+	.mix-sort .dropdown-menu li.sort, .dropdown-menu li.filter { cursor: pointer; }
+	.mix-sort .dropdown-menu li.sort:hover, .dropdown-menu li.filter:hover { color: gray; }
 	.product-list .mix{opacity: 0;display: none;}
 	</style>
 	<?php
