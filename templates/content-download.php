@@ -12,7 +12,7 @@ $categories     = '';
 $tags           = '';
 
 // get the layout classes
-$mix_class      = 'mix';
+$mix_class      = '';
 $sm_class       = ( $content_width < $breakpoint ) ? 'col-sm-12' : 'col-sm-6';
 $md_class       = 'col-md-4';
 
@@ -68,7 +68,7 @@ else :
 endif;
 ?>
 
-<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?> data-name="<?php echo get_the_title( $post->ID ); ?>" data-price="<?php shoestrap_edd_min_price_plain( $post->ID ); ?>">
+<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?>>
 	<div class="equal">
 		<div class="<?php echo shoestrap_edd_element_class(); ?>">
 			<?php
@@ -85,7 +85,7 @@ endif;
 					</div>
 					<div class="caption">
 						<a itemprop="url" href="<?php echo get_permalink(); ?>">
-							<h3 itemprop="name"><?php echo get_the_title(); ?></h3>
+							<h3 itemprop="name" class="name"><?php echo get_the_title(); ?></h3>
 						</a>
 						<?php shoestrap_edd_price( 'h4' ); ?>
 						<?php if ( $show_excerpt == 1 ) : ?>
@@ -95,7 +95,7 @@ endif;
 				<?php else : ?>
 					<div class="panel-heading">
 						<a itemprop="url" href="<?php echo get_permalink(); ?>">
-							<h4 itemprop="name"><?php echo get_the_title(); ?></h4>
+							<h4 itemprop="name" class="name"><?php echo get_the_title(); ?></h4>
 						</a>
 					</div>
 					<div class="download-image">
