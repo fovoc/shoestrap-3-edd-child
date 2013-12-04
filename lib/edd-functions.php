@@ -11,14 +11,11 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
-	// Register && Enqueue jQuery EqualHeights
-	wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
-	wp_enqueue_script('shoestrap_edd_equalheights');
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
-		// Register && Enqueue MixItUp
-		wp_register_script('shoestrap_edd_mixitup', get_stylesheet_directory_uri() . '/assets/js/jquery.mixitup.min.js', false, null, true);
-		wp_enqueue_script('shoestrap_edd_mixitup');
+		// Register && Enqueue Isotope
+		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
+		wp_enqueue_script('shoestrap_isotope');
 		// Here triggers the MixItiUp && EqualHeights
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
 	endif;
@@ -56,7 +53,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 9 );
 /*
  * some necessary hacks to make templating work properly.
  * These include overriding the content, as well as adding some additional
- * <div> elements for mixitup.
+ * <div> elements for isotope.
  */
 if ( !function_exists( 'shoestrap_edd_helper_actions' ) ) :
 function shoestrap_edd_helper_actions() {
@@ -70,9 +67,66 @@ endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
-function shoestrap_edd_custom_script() { echo '<script>$(function(){$(".product-list").mixitup();$(".product-list .equal").equalHeights();});</script>'; }
+function shoestrap_edd_custom_script() { 
+	echo '<script>$(function(){ 
+			var $container = $(".product-list");
+			
+			$container.isotope({
+			  // options...
+			  animationEngine: "best-available",
+			  resizable: false, // disable normal resizing
+			  // set columnWidth to a percentage of container width
+			  masonry: { columnWidth: $container.width() / 12 },
+			  // get sort data-filter
+			  getSortData : {
+			    name : function ( $elem ) {
+			      return $elem.find(".name").text();
+			    }
+			  }
+			});
+
+			// update columnWidth on window resize
+			$(window).smartresize(function(){
+			  $container.isotope({
+			    // update columnWidth to a percentage of container width
+			    masonry: { columnWidth: $container.width() / 12 }
+			  });
+			});
+
+			// filter items when filter link is clicked
+			$(".filter-isotope a").click(function(){
+			  var selector = $(this).attr("data-filter");
+			  $container.isotope({ filter: selector });
+			  return false;
+			});
+
+
+
+			// data-price="<?php shoestrap_edd_min_price_plain( $post->ID ); ?>"
+
+
+  		$(".isotope-sort .true a").click(function(){
+			  // get href attribute, minus the "#"
+			  var sortName = $(this).attr("href").slice(1);
+			  $container.isotope({ sortBy : sortName, sortAscending : true });
+			  return false;
+			});
+
+			$(".isotope-sort .false a").click(function(){
+			  // get href attribute, minus the "#"
+			  var sortName = $(this).attr("href").slice(1);
+			  $container.isotope({ sortBy : sortName, sortAscending : false });
+			  return false;
+			});
+
+			$(".isotope-sort .sort-default").click(function(){
+			  $container.isotope({ sortBy : "original-order" });
+			  return false;
+			});
+
+		});</script>'; }
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
-function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div><div class="row product-list">'; }
+function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
 
 
@@ -173,7 +227,7 @@ function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 	foreach ( $tags as $tagid ) :
 		$tag = get_term( $tagid, $vocabulary );
 		$tagname = $tag->name;
-		$output .= '<li class="filter" data-filter="' . $tagid . '">' . $tagname . '</li>';
+		$output .= '<li><a href="#" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
 	endforeach;
 
 	if ( $echo ) :
@@ -727,8 +781,51 @@ function shoestrap_edd_header_css() {
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
 	.edd-cart-added-alert { color: whitesmoke; }
-	.mix-sort .dropdown-menu li.sort { cursor: pointer; }
-	.product-list .mix{opacity: 0;display: none;}
+	/**** Isotope filtering ****/
+	.isotope-item {
+	  z-index: 2;
+	}
+	.isotope-hidden.isotope-item {
+	  pointer-events: none;
+	  z-index: 1;
+	}
+	.isotope,
+	.isotope .isotope-item {
+	  /* change duration value to whatever you like */
+	  -webkit-transition-duration: 0.8s;
+	     -moz-transition-duration: 0.8s;
+	      -ms-transition-duration: 0.8s;
+	       -o-transition-duration: 0.8s;
+	          transition-duration: 0.8s;
+	}
+
+	.isotope {
+	  -webkit-transition-property: height, width;
+	     -moz-transition-property: height, width;
+	      -ms-transition-property: height, width;
+	       -o-transition-property: height, width;
+	          transition-property: height, width;
+	}
+
+	.isotope .isotope-item {
+	  -webkit-transition-property: -webkit-transform, opacity;
+	     -moz-transition-property:    -moz-transform, opacity;
+	      -ms-transition-property:     -ms-transform, opacity;
+	       -o-transition-property:      -o-transform, opacity;
+	          transition-property:         transform, opacity;
+	}
+
+	/**** disabling Isotope CSS3 transitions ****/
+
+	.isotope.no-transition,
+	.isotope.no-transition .isotope-item,
+	.isotope .isotope-item.no-transition {
+	  -webkit-transition-duration: 0s;
+	     -moz-transition-duration: 0s;
+	      -ms-transition-duration: 0s;
+	       -o-transition-duration: 0s;
+	          transition-duration: 0s;
+	}
 	</style>
 	<?php
 }
