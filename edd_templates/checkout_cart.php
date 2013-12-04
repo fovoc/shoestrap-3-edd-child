@@ -64,6 +64,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 						<td class="edd_cart_fee_label"><?php echo esc_html( $fee['label'] ); ?></td>
 						<td class="edd_cart_fee_amount"><?php echo esc_html( edd_currency_filter( edd_format_amount( $fee['amount'] ) ) ); ?></td>
 						<td></td>
+						<td></td>
 					</tr>
 				<?php endforeach; ?>
 			<?php endif; ?>
