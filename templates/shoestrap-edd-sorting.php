@@ -18,8 +18,8 @@
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li class="false"><a href="#price"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></li>
-			<li class="true"><a href="#price"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></li>
+			<li class="false"><a href="#price"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></a></li>
+			<li class="true"><a href="#price"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></a></li>
 		</ul>
 	</div>
 </div>
