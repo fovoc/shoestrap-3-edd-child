@@ -7,7 +7,7 @@
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li class="false"><a href="#name-false"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></a></li>
+			<li class="false"><a href="#name"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></a></li>
 			<li class="true"><a href="#name"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></a></li>
 		</ul>
 	</div>
@@ -18,8 +18,8 @@
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li class="sort" data-sort="data-price" data-order="desc"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></li>
-			<li class="sort" data-sort="data-price" data-order="asc"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></li>
+			<li class="false"><a href="#price"><i class="el-icon-chevron-down"></i> <?php _e( 'Descending', 'shoestrap_edd' ); ?></li>
+			<li class="true"><a href="#price"><i class="el-icon-chevron-up"></i> <?php _e( 'Ascending', 'shoestrap_edd' ); ?></li>
 		</ul>
 	</div>
 </div>

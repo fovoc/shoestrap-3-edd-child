@@ -12,7 +12,6 @@ $categories     = '';
 $tags           = '';
 
 // get the layout classes
-$mix_class      = '';
 $sm_class       = ( $content_width < $breakpoint ) ? 'col-sm-12' : 'col-sm-6';
 $md_class       = 'col-md-4';
 
@@ -68,9 +67,10 @@ else :
 endif;
 ?>
 
-<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $mix_class, $sm_class, $md_class, $categories, $tags ) ); ?>>
+<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $sm_class, $md_class, $categories, $tags ) ); ?>>
 	<div class="equal">
 		<div class="<?php echo shoestrap_edd_element_class(); ?>">
+			<span class="hidden price"><?php /* a hidden plain minimum price used in Isotope's sorting */ shoestrap_edd_min_price_plain( $post->ID ); ?></span>
 			<?php
 				if ( $style != 'panel' ) : ?>
 					<div class="download-image">

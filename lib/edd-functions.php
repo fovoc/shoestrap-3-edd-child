@@ -11,13 +11,25 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
+	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
 		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_isotope');
-		// Here triggers the MixItiUp && EqualHeights
+		// Register && Enqueue Isotope-Sloppy-Masonry
+		wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
+		wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
+		// Here trigger our scripts
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
+
+		if ( $infinitescroll == 1 ) :
+			wp_register_script( 'shoestrap_edd_infinitescroll', get_stylesheet_directory_uri() . '/assets/js/jquery.infinitescroll.min.js', false, null, true );
+			wp_enqueue_script( 'shoestrap_edd_infinitescroll' );
+			wp_register_script( 'shoestrap_edd_imagesloaded', get_stylesheet_directory_uri() . '/assets/js/imagesloaded.pkgd.min.js', false, null, true );
+			wp_enqueue_script( 'shoestrap_edd_imagesloaded' );
+		endif;
+
 	endif;
 }
 endif;
@@ -38,16 +50,16 @@ add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
  * We have divided mixitup in 3 template parts to make this easier.
  */
 if ( !function_exists( 'shoestrap_edd_mixitup_templates' ) ) :
-function shoestrap_edd_mixitup_templates() {
+function shoestrap_edd_isotope_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
-		get_template_part( 'templates/mixitup', 'sorting' );
-		get_template_part( 'templates/mixitup', 'download_category' );
-		get_template_part( 'templates/mixitup', 'download_tag' );
+		get_template_part( 'templates/shoestrap-edd', 'sorting' );
+		get_template_part( 'templates/shoestrap-edd', 'download_category' );
+		get_template_part( 'templates/shoestrap-edd', 'download_tag' );
 		echo '<div class="clearfix"></div>';
 	endif;
 }
 endif;
-add_action( 'shoestrap_index_begin', 'shoestrap_edd_mixitup_templates', 9 );
+add_action( 'shoestrap_index_begin', 'shoestrap_edd_isotope_templates', 9 );
 
 
 /*
@@ -69,62 +81,99 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_custom_script() { 
 	echo '<script>$(function(){ 
+			// SELECT OUR MAIN DOWNLOAD WRAPPER
 			var $container = $(".product-list");
 			
+			// HERE IS ISOTOPE
 			$container.isotope({
 			  // options...
 			  animationEngine: "best-available",
-			  resizable: false, // disable normal resizing
-			  // set columnWidth to a percentage of container width
-			  masonry: { columnWidth: $container.width() / 12 },
+
 			  // get sort data-filter
 			  getSortData : {
 			    name : function ( $elem ) {
 			      return $elem.find(".name").text();
+			    },
+			    price : function ( $elem ) {
+			      return $elem.find(".price").text();
 			    }
 			  }
 			});
 
-			// update columnWidth on window resize
-			$(window).smartresize(function(){
-			  $container.isotope({
-			    // update columnWidth to a percentage of container width
-			    masonry: { columnWidth: $container.width() / 12 }
-			  });
+			// SLOPPY
+			$container.isotope({
+			    layoutMode: "sloppyMasonry",
+			    itemSelector: ".type-download"
 			});
 
-			// filter items when filter link is clicked
+			// FILTERING
 			$(".filter-isotope a").click(function(){
 			  var selector = $(this).attr("data-filter");
 			  $container.isotope({ filter: selector });
 			  return false;
 			});
 
-
-
-			// data-price="<?php shoestrap_edd_min_price_plain( $post->ID ); ?>"
-
-
+			// SORTING Ascending
   		$(".isotope-sort .true a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
 			  $container.isotope({ sortBy : sortName, sortAscending : true });
 			  return false;
 			});
-
+			
+			// SORTING Descending
 			$(".isotope-sort .false a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
 			  $container.isotope({ sortBy : sortName, sortAscending : false });
 			  return false;
 			});
-
+			
+			// SORTING Default
 			$(".isotope-sort .sort-default").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
 			  return false;
-			});
+			});';
 
-		});</script>'; }
+	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
+	if ( $infinitescroll == 1 ) :
+		$msgText = "";
+		$msgText .= "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'>";
+			$msgText .= "<div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_loading_color' ) ) . "' style='width: 100%;'>";
+				$msgText .= "<span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_loading_text' ) ) . "<span>";
+			$msgText .= "</div>";
+		$msgText .= "</div>";
+
+		$finishedMsg = "";
+		$finishedMsg .= "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'>";
+			$finishedMsg .= "<div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_end_color' ) ) . "' style='width: 100%;'>";
+				$finishedMsg .= "<span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_end_text' ) ) . "<span>";
+			$finishedMsg .= "</div>";
+		$finishedMsg .= "</div>";
+
+		echo '
+					$container.infinitescroll({
+						navSelector  : ".pager",
+						nextSelector : ".pager .previous a",
+						itemSelector : ".type-download",
+						loading: {
+							msgText: "'; echo $msgText; echo'",
+							finishedMsg: "'; echo $finishedMsg; echo'"
+						}
+						// trigger Masonry as a callback
+						},function( newElements ) {
+							// hide new items while they are loading
+							var newElems = $( newElements ).css({ opacity: 0 });
+							// ensure that images load before adding to masonry layout
+							$(newElems).imagesLoaded(function(){
+								// show elems now they are ready
+								$(newElems).animate({ opacity: 1 });
+								$container.isotope( "appended", $(newElems), true );
+							});
+						});';
+	endif;
+	echo '});</script>';
+}
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
@@ -780,7 +829,8 @@ function shoestrap_edd_header_css() {
 	.download-image { position: relative; }
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
-	.edd-cart-added-alert { color: whitesmoke; }
+	.edd-cart-added-alert { color: whitesmoke; background-color: gray; }
+	.open > .dropdown-menu { padding: 0; }
 	/**** Isotope filtering ****/
 	.isotope-item {
 	  z-index: 2;
@@ -798,7 +848,6 @@ function shoestrap_edd_header_css() {
 	       -o-transition-duration: 0.8s;
 	          transition-duration: 0.8s;
 	}
-
 	.isotope {
 	  -webkit-transition-property: height, width;
 	     -moz-transition-property: height, width;
@@ -806,7 +855,6 @@ function shoestrap_edd_header_css() {
 	       -o-transition-property: height, width;
 	          transition-property: height, width;
 	}
-
 	.isotope .isotope-item {
 	  -webkit-transition-property: -webkit-transform, opacity;
 	     -moz-transition-property:    -moz-transform, opacity;
@@ -814,9 +862,7 @@ function shoestrap_edd_header_css() {
 	       -o-transition-property:      -o-transform, opacity;
 	          transition-property:         transform, opacity;
 	}
-
 	/**** disabling Isotope CSS3 transitions ****/
-
 	.isotope.no-transition,
 	.isotope.no-transition .isotope-item,
 	.isotope .isotope-item.no-transition {
@@ -825,6 +871,23 @@ function shoestrap_edd_header_css() {
 	      -ms-transition-duration: 0s;
 	       -o-transition-duration: 0s;
 	          transition-duration: 0s;
+	}
+	/**** styling required for Infinite Scroll ****/
+	#infscr-loading {
+  position: fixed;
+  text-align: center;
+  bottom: 30px;
+  left: 50%;
+  width: 220px;
+  height: auto;
+  padding-top: 0px;
+  margin-left: -100px;
+  z-index: 100;
+  background: transparent ;
+  overflow: hidden;
+	}
+	#infscr-loading img {
+	  display: none;  
 	}
 	</style>
 	<?php

@@ -71,6 +71,66 @@ function shoestrap_module_edd_options( $sections ) {
     'required'  => array( 'shoestrap_edd_navbar_cart','=',array( '1' ) ),
   );
 
+  $fields[] = array( 
+    'title'     => __( 'Enable Infinite Scroll', 'shoestrap' ),
+    'desc'      => __( 'Default: Off.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_infinite_scroll',
+    'default'   => 0,
+    'type'      => 'switch'
+  );
+
+  $fields[] = array( 
+    'title'     => __( 'Loading text', 'shoestrap' ),
+    'desc'      => __( 'The text inside the progress bar as next set is loading.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_loading_text',
+    'default'   => 'Loading...',
+    'type'      => 'text',
+    'required'  => array( 'shoestrap_edd_infinite_scroll','=',array( '1' ) ),
+  );
+
+  $fields[] = array( 
+    'title'     => __( 'End text', 'shoestrap' ),
+    'desc'      => __( 'The text inside the progress bar when no more posts are available.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_end_text',
+    'default'   => 'End of list',
+    'type'      => 'text',
+    'required'  => array( 'shoestrap_edd_infinite_scroll','=',array( '1' ) ),
+  );
+
+  $fields[] = array( 
+    'title'     => __( 'Loading progress bar color', 'shoestrap' ),
+    'desc'      => __( 'Select between standard Bootstrap\'s progress bars classes', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_loading_color',
+    'default'   => ' ',
+    'type'      => 'select',
+    'customizer'=> array(),
+    'options'   => array( 
+      'default' => 'Default',
+      'info'    => 'Info',
+      'success' => 'Success',
+      'warning' => 'Warning',
+      'danger'  => 'Danger'
+    ),
+    'required'  => array( 'shoestrap_edd_infinite_scroll','=',array( '1' ) ),
+  );
+
+  $fields[] = array( 
+    'title'     => __( 'End progress bar color', 'shoestrap' ),
+    'desc'      => __( 'Select between standard Bootstrap\'s progress bars classes', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_end_color',
+    'default'   => ' ',
+    'type'      => 'select',
+    'customizer'=> array(),
+    'options'   => array( 
+      'default' => 'Default',
+      'info'    => 'Info',
+      'success' => 'Success',
+      'warning' => 'Warning',
+      'danger'  => 'Danger'
+    ),
+    'required'  => array( 'shoestrap_edd_infinite_scroll','=',array( '1' ) ),
+  );
+
   $section['fields'] = $fields;
 
   $section = apply_filters( 'shoestrap_module_edd_options_modifier', $section );
