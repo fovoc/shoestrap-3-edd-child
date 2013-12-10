@@ -159,7 +159,7 @@ function shoestrap_edd_child_licensing($section) {
     'mode'            => 'theme', // theme|plugin
     'path'            => '', // Path to the plugin/template main file
     'remote_api_url'  => 'http://shoestrap.org',    // our store URL that is running EDD
-    'version'         => '1.0.2', // current version number
+    'version'         => '1.0.3', // current version number
     'item_name'       => 'Shoestrap 3 EDD Child', // name of this theme
     'author'          => 'Aristeides Stathopoulos (@aristath), Dimitris Kalliris (@fovoc)', // author of this theme
     'field_id'        => "shoestrap_edd_child_license_key", // ID of the field used by EDD
