@@ -12,16 +12,24 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
 	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
+	$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
 		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_isotope');
-		// Register && Enqueue Isotope-Sloppy-Masonry
-		wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
-		wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
 		// Here trigger our scripts
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
+
+		if ( $masonry == 1 ) :
+			// Register && Enqueue Isotope-Sloppy-Masonry
+			wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
+			wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
+		else:
+			// Register && Enqueue jQuery EqualHeights
+			wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
+			wp_enqueue_script('shoestrap_edd_equalheights');
+		endif;
 
 		if ( ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 			add_action( 'shoestrap_page_header_override', 'shoestrap_edd_dummy_blank_for_frontpage_title' );
@@ -90,12 +98,14 @@ function shoestrap_edd_custom_script() {
 	echo '<script>$(function(){ 
 			// SELECT OUR MAIN DOWNLOAD WRAPPER
 			var $container = $(".product-list");
-			
+			';
+
+		$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
+		if ( $masonry == 1 ) :
+			echo '
 			// HERE IS ISOTOPE
 			$container.isotope({
-			  // options...
 			  animationEngine: "best-available",
-
 			  // get sort data-filter
 			  getSortData : {
 			    name : function ( $elem ) {
@@ -106,13 +116,29 @@ function shoestrap_edd_custom_script() {
 			    }
 			  }
 			});
-
 			// SLOPPY
 			$container.isotope({
 			    layoutMode: "sloppyMasonry",
 			    itemSelector: ".type-download"
-			});
+			});';
+		else:
+			echo '
+			$container.isotope( "option", { 
+			animationEngine: "best-available",
+			// get sort data-filter
+			  getSortData : {
+			    name : function ( $elem ) {
+			      return $elem.find(".name").text();
+			    },
+			    price : function ( $elem ) {
+			      return $elem.find(".price").text();
+			    }
+			  } 
+			} )
+			$(".product-list .equal").equalHeights();';
+		endif;
 
+		echo '
 			// FILTERING
 			$(".filter-isotope a").click(function(){
 			  var selector = $(this).attr("data-filter");
@@ -167,15 +193,28 @@ function shoestrap_edd_custom_script() {
 							msgText: "'; echo $msgText; echo'",
 							finishedMsg: "'; echo $finishedMsg; echo'"
 						}
-						// trigger Masonry as a callback
+						// trigger Isotope as a callback
 						},function( newElements ) {
+
 							// hide new items while they are loading
 							var newElems = $( newElements ).css({ opacity: 0 });
-							// ensure that images load before adding to masonry layout
+
+							// ensure that images load before all
 							$(newElems).imagesLoaded(function(){
+
 								// show elems now they are ready
-								$(newElems).animate({ opacity: 1 });
-								$container.isotope( "appended", $(newElems), true );
+								$(newElems).animate({ opacity: 1 });';
+
+								if ( $masonry == 1 ):
+									echo '
+								$container.isotope( "appended", $(newElems), true );';
+								else:
+									echo '
+								// re-calculate equalheights for all elements
+								$(newElems).css("padding-top","20px");
+								$(".product-list .equal").equalHeights();';
+								endif;
+								echo '
 							});
 						});';
 	endif;
