@@ -46,7 +46,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 						?>
 					</td>
 					<td class="edd_cart_item_price"><?php echo edd_cart_item_price( $item['id'], $item['options'] ); ?></td>
-					<td class="edd_cart_actions">
+					<td class="edd_cart_actions text-right">
 						<?php if( edd_item_quanities_enabled() ) : ?>
 							<input type="number" min="1" step="1" name="edd-cart-download-<?php echo $key; ?>-quantity" class="pull-right form-control edd-input edd-item-quantity" value="<?php echo edd_get_cart_item_quantity( $item['id'], $item['options'] ); ?>" style="width: 50%; max-width: 100px;"/>
 							<input type="hidden" name="edd-cart-downloads[]" value="<?php echo $item['id']; ?>"/>

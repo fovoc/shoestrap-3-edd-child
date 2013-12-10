@@ -207,7 +207,8 @@ function shoestrap_edd_custom_script() {
 
 								if ( $masonry == 1 ):
 									echo '
-								$container.isotope( "appended", $(newElems), true );';
+								$container.isotope( "appended", $(newElems), true );
+								$("input .edd-add-to-cart").css("display","none");';
 								else:
 									echo '
 								// re-calculate equalheights for all elements
@@ -876,6 +877,7 @@ function shoestrap_edd_header_css() {
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
 	.edd-cart-added-alert { color: whitesmoke; background-color: gray; }
+	input[type="submit"].edd-add-to-cart { display: none; }
 	.open > .dropdown-menu { padding: 0; }
 	/**** Isotope filtering ****/
 	.isotope-item {
