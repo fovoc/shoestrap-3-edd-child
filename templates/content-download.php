@@ -104,7 +104,7 @@ endif;
 							<?php if ( edd_has_variable_prices( $post->ID ) ) : ?>
 								<a href="<?php echo get_permalink(); ?>" class="btn btn-primary"><?php _e( 'Choose Option', 'shoestrap_edd' ); ?></a>
 							<?php else : ?>
-								<?php edd_get_purchase_link(); ?>
+								<?php echo edd_get_purchase_link(); ?>
 							<?php endif; ?>
 						</div>
 					</div>

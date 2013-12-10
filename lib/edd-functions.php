@@ -23,6 +23,10 @@ function shoestrap_edd_assets() {
 		// Here trigger our scripts
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
 
+		if ( ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
+			add_action( 'shoestrap_page_header_override', 'shoestrap_edd_dummy_blank_for_frontpage_title' );
+		endif;
+
 		if ( $infinitescroll == 1 ) :
 			wp_register_script( 'shoestrap_edd_infinitescroll', get_stylesheet_directory_uri() . '/assets/js/jquery.infinitescroll.min.js', false, null, true );
 			wp_enqueue_script( 'shoestrap_edd_infinitescroll' );
@@ -34,6 +38,9 @@ function shoestrap_edd_assets() {
 }
 endif;
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
+
+
+function shoestrap_edd_dummy_blank_for_frontpage_title() {}
 
 
 if ( !function_exists( 'shoestrap_edd_increase_navbar_cart_quantity' ) ) :
