@@ -72,6 +72,14 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
+    'title'     => __( 'Enable Masonry', 'shoestrap' ),
+    'desc'      => __( 'Default: On.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_masonry',
+    'default'   => 1,
+    'type'      => 'switch'
+  );
+
+  $fields[] = array( 
     'title'     => __( 'Enable Infinite Scroll', 'shoestrap' ),
     'desc'      => __( 'Default: Off.', 'shoestrap' ),
     'id'        => 'shoestrap_edd_infinite_scroll',
