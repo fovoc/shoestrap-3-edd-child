@@ -72,10 +72,10 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
-    'title'     => __( 'Enable Masonry', 'shoestrap' ),
-    'desc'      => __( 'Default: On.', 'shoestrap' ),
-    'id'        => 'shoestrap_edd_masonry',
-    'default'   => 1,
+    'title'     => __( 'Enable EqualHeights', 'shoestrap' ),
+    'desc'      => __( 'Default: Off.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_equalheights',
+    'default'   => 0,
     'type'      => 'switch'
   );
 

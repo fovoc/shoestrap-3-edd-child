@@ -12,7 +12,7 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
 	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
-	$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
+	$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
@@ -20,12 +20,11 @@ function shoestrap_edd_assets() {
 		wp_enqueue_script('shoestrap_isotope');
 		// Here trigger our scripts
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
+		// Register && Enqueue Isotope-Sloppy-Masonry
+		wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
+		wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
 
-		if ( $masonry == 1 ) :
-			// Register && Enqueue Isotope-Sloppy-Masonry
-			wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
-			wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
-		else:
+		if ( $equalheights == 1 ) :
 			// Register && Enqueue jQuery EqualHeights
 			wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
 			wp_enqueue_script('shoestrap_edd_equalheights');
@@ -96,47 +95,30 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_custom_script() { 
 	echo '<script>$(function(){ 
-			// SELECT OUR MAIN DOWNLOAD WRAPPER
-			var $container = $(".product-list");
-			';
+			var $container = $(".product-list");';
 
-		$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
-		if ( $masonry == 1 ) :
+		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
+		if ( $equalheights == 1 ) :
 			echo '
-			// HERE IS ISOTOPE
-			$container.isotope({
-			  animationEngine: "best-available",
-			  // get sort data-filter
-			  getSortData : {
-			    name : function ( $elem ) {
-			      return $elem.find(".name").text();
-			    },
-			    price : function ( $elem ) {
-			      return $elem.find(".price").text();
-			    }
-			  }
-			});
-			// SLOPPY
-			$container.isotope({
-			    layoutMode: "sloppyMasonry",
-			    itemSelector: ".type-download"
-			});';
-		else:
-			echo '
-			$container.isotope( "option", { 
-			animationEngine: "best-available",
-			// get sort data-filter
-			  getSortData : {
-			    name : function ( $elem ) {
-			      return $elem.find(".name").text();
-			    },
-			    price : function ( $elem ) {
-			      return $elem.find(".price").text();
-			    }
-			  } 
-			} )
-			$(".product-list .equal").equalHeights();';
+    	$(".product-list .type-download").equalHeights();
+			';
 		endif;
+			echo '
+				$container.isotope({
+				  layoutMode: "sloppyMasonry",
+				  itemSelector: ".type-download",
+				  animationEngine: "best-available",
+				  // get sort data-filter
+				  getSortData : {
+				    name : function ( $elem ) {
+				      return $elem.find(".name").text();
+				    },
+				    price : function ( $elem ) {
+				      return $elem.find(".price").text();
+				    }
+				  }
+				});
+			';
 
 		echo '
 			// FILTERING
@@ -195,27 +177,21 @@ function shoestrap_edd_custom_script() {
 						}
 						// trigger Isotope as a callback
 						},function( newElements ) {
-
 							// hide new items while they are loading
 							var newElems = $( newElements ).css({ opacity: 0 });
-
 							// ensure that images load before all
 							$(newElems).imagesLoaded(function(){
-
-								// show elems now they are ready
-								$(newElems).animate({ opacity: 1 });';
-
-								if ( $masonry == 1 ):
-									echo '
-								$container.isotope( "appended", $(newElems), true );
-								$("input .edd-add-to-cart").css("display","none");';
-								else:
+							// show elems now they are ready
+							$(newElems).animate({ opacity: 1 });';
+								if ( $equalheights == 1 ):
 									echo '
 								// re-calculate equalheights for all elements
-								$(newElems).css("padding-top","20px");
-								$(".product-list .equal").equalHeights();';
+								$(".product-list .type-download").equalHeights();
+								';
 								endif;
 								echo '
+								$container.isotope( "appended", $(newElems), true );
+								$("input .edd-add-to-cart").css("display","none");
 							});
 						});';
 	endif;
