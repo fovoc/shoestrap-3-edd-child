@@ -63,8 +63,8 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
-    'title'     => __( 'Show the cart on the NavBar', 'shoestrap_edd' ),
-    'desc'      => __( 'Show a link to the cart with totals in the navbar.', 'shoestrap' ),
+    'title'     => __( 'NavBar Cart Label', 'shoestrap_edd' ),
+    'desc'      => __( 'Label of Cart in NavBar.', 'shoestrap' ),
     'id'        => 'shoestrap_edd_minicart_label',
     'default'   => __( 'Checkout', 'edd' ),
     'type'      => 'text',
