@@ -35,6 +35,7 @@ function shoestrap_edd_assets() {
 		endif;
 
 		if ( $infinitescroll == 1 ) :
+			// Register && Enqueue Infinite Scroll
 			wp_register_script( 'shoestrap_edd_infinitescroll', get_stylesheet_directory_uri() . '/assets/js/jquery.infinitescroll.min.js', false, null, true );
 			wp_enqueue_script( 'shoestrap_edd_infinitescroll' );
 			wp_register_script( 'shoestrap_edd_imagesloaded', get_stylesheet_directory_uri() . '/assets/js/imagesloaded.pkgd.min.js', false, null, true );
@@ -60,10 +61,9 @@ add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
 
 
 /*
- * Add the mixitup template parts and an extra wrapper div.
- * We have divided mixitup in 3 template parts to make this easier.
+ * Add template parts for sorting && filtering and an extra wrapper div.
  */
-if ( !function_exists( 'shoestrap_edd_mixitup_templates' ) ) :
+if ( !function_exists( 'shoestrap_edd_isotope_templates' ) ) :
 function shoestrap_edd_isotope_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/shoestrap-edd', 'sorting' );
@@ -279,7 +279,7 @@ endif;
 
 /*
  * This function is a mini loop that will go through all the items currently displayed
- * Retrieve their terms, and then return the list items required by mixitup
+ * Retrieve their terms, and then return the list items required by isotope
  * to be properly displayed inside the filters.
  */
 if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
@@ -380,32 +380,6 @@ function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
 endif;
 remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
 add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
-
-
-
-/*
- * Custom function to get minimum price as plain number
- */
-if ( !function_exists( 'shoestrap_edd_min_price_plain' ) ) :
-function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
-	if ( edd_has_variable_prices( $download_id ) ) {
-		$prices = edd_get_variable_prices( $download_id );
-		// Return the lowest price
-		$price_float = 0;
-      foreach ($prices as $key => $value)
-        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
-          $price_float = (float)$prices[ $key ]['amount'];
-          $price = edd_sanitize_amount( $price_float );
-	} else {
-		$price = edd_get_download_price( $download_id );
-	}
-	if ( $echo == false ) :
-		return $price;
-	else :
-		echo $price;
-	endif;
-}
-endif;
 
 
 /*
@@ -770,7 +744,7 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 	$content_width 	= shoestrap_content_width_px();
 	$breakpoint 	= shoestrap_getVariable( 'screen_tablet' );
 
-	$class = 'col-sm-6 col-md-4 mix';
+	$class = 'col-sm-6 col-md-4';
 
 	if ( $content_width < $breakpoint ) :
 		if ( $download_size != 'wide' ) :
@@ -819,16 +793,28 @@ function shoestrap_edd_price( $el = 'h2' ) {
 
 	elseif ( '0' == edd_get_download_price( get_the_ID() ) && !edd_has_variable_prices( get_the_ID() ) ) :
 		echo __( 'Free', 'shoestrap-edd' );
+		echo '<span class="hidden price">0</span>';
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
-		_e( 'Free', 'shoestrap_edd' );
+		_e( 'From Free', 'shoestrap_edd' );
+		echo '<span class="hidden price">0</span>';
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) ) :
 		_e( 'From ', 'shoestrap_edd' );
 		edd_price( get_the_ID() );
 
+		$prices = edd_get_variable_prices( get_the_ID() );
+		// Return the lowest price
+		$price_float = 0;
+      foreach ($prices as $key => $value)
+        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
+          $price_float = (float)$prices[ $key ]['amount'];
+          $price = edd_sanitize_amount( $price_float );
+		echo '<span class="hidden price">'; echo $price; echo '</span>';
+
 	else :
 		edd_price( get_the_ID() );
+		echo '<span class="hidden price">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
 
 	endif;
 
@@ -852,7 +838,7 @@ function shoestrap_edd_header_css() {
 	.download-image { position: relative; }
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
-	.edd-cart-added-alert { color: whitesmoke; background-color: gray; }
+	.edd-cart-added-alert { color: whitesmoke; background-color: gray; padding: 2px;}
 	input[type="submit"].edd-add-to-cart { display: none; }
 	.open > .dropdown-menu { padding: 0; }
 	/**** Isotope filtering ****/
