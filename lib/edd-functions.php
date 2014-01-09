@@ -12,7 +12,7 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
 	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
-	$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
+	$equalheights 	= shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
@@ -114,7 +114,7 @@ function shoestrap_edd_custom_script() {
 				      return $elem.find(".name").text();
 				    },
 				    price : function ( $elem ) {
-				      return $elem.find(".price").text();
+				      return parseInt( $elem.find(".price").text(), 10 );
 				    }
 				  }
 				});
@@ -190,7 +190,7 @@ function shoestrap_edd_custom_script() {
 								';
 								endif;
 								echo '
-								$container.isotope( "appended", $(newElems), true );
+								$container.isotope( "insert", $(newElems), true );
 								$("input .edd-add-to-cart").css("display","none");
 							});
 						});';
@@ -200,6 +200,42 @@ function shoestrap_edd_custom_script() {
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
+
+
+
+/*
+ * This function is a mini loop that will go through all the items currently displayed
+ * Retrieve their terms, and then return the list items required by isotope
+ * to be properly displayed inside the filters.
+ */
+if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
+function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
+	global $post;
+	$tags = array();
+	$output = '';
+	while (have_posts()) : the_post();
+		$terms = wp_get_post_terms( $post->ID, $vocabulary );
+		foreach ( $terms as $term ) :
+			$tags[] = $term->term_id;
+		endforeach;
+	endwhile;
+
+	$tags = array_unique( $tags );
+
+	foreach ( $tags as $tagid ) :
+		$tag = get_term( $tagid, $vocabulary );
+		$tagname = $tag->name;
+		$output .= '<li><a href="#" data-name="' . $tagname . '" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
+	endforeach;
+
+	if ( $echo ) :
+		echo $output;
+	else :
+		return $output;
+	endif;
+}
+endif;
+
 
 
 /*
@@ -277,39 +313,6 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 endif;
 
 
-/*
- * This function is a mini loop that will go through all the items currently displayed
- * Retrieve their terms, and then return the list items required by isotope
- * to be properly displayed inside the filters.
- */
-if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
-function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
-	global $post;
-	$tags = array();
-	$output = '';
-	while (have_posts()) : the_post();
-		$terms = wp_get_post_terms( $post->ID, $vocabulary );
-		foreach ( $terms as $term ) :
-			$tags[] = $term->term_id;
-		endforeach;
-	endwhile;
-
-	$tags = array_unique( $tags );
-
-	foreach ( $tags as $tagid ) :
-		$tag = get_term( $tagid, $vocabulary );
-		$tagname = $tag->name;
-		$output .= '<li><a href="#" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
-	endforeach;
-
-	if ( $echo ) :
-		echo $output;
-	else :
-		return $output;
-	endif;
-}
-endif;
-
 
 /*
  * A mini cart. Simply displays number of products and a link.
@@ -332,7 +335,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	?>
 
 	<div class="btn-group">
-		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
+		<button id="nav-cart-quantity" type="button" disabled="disabled" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
 		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
 			<i class="el-icon-shopping-cart"></i>
 			<?php echo $label; ?>
