@@ -63,8 +63,8 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
-    'title'     => __( 'Show the cart on the NavBar', 'shoestrap_edd' ),
-    'desc'      => __( 'Show a link to the cart with totals in the navbar.', 'shoestrap' ),
+    'title'     => __( 'NavBar Cart Label', 'shoestrap_edd' ),
+    'desc'      => __( 'Label of Cart in NavBar.', 'shoestrap' ),
     'id'        => 'shoestrap_edd_minicart_label',
     'default'   => __( 'Checkout', 'edd' ),
     'type'      => 'text',
@@ -72,10 +72,10 @@ function shoestrap_module_edd_options( $sections ) {
   );
 
   $fields[] = array( 
-    'title'     => __( 'Enable Masonry', 'shoestrap' ),
-    'desc'      => __( 'Default: On.', 'shoestrap' ),
-    'id'        => 'shoestrap_edd_masonry',
-    'default'   => 1,
+    'title'     => __( 'Enable EqualHeights', 'shoestrap' ),
+    'desc'      => __( 'Default: Off.', 'shoestrap' ),
+    'id'        => 'shoestrap_edd_equalheights',
+    'default'   => 0,
     'type'      => 'switch'
   );
 
@@ -147,6 +147,7 @@ function shoestrap_module_edd_options( $sections ) {
   return $sections;
 }
 add_filter( 'redux-sections-' . REDUX_OPT_NAME, 'shoestrap_module_edd_options', 1 );   
+add_filter( 'redux/options/' . REDUX_OPT_NAME . '/sections', 'shoestrap_module_edd_options', 1 );   
 endif;
 
 if ( !function_exists( 'shoestrap_edd_child_licensing' ) ) :
@@ -159,7 +160,7 @@ function shoestrap_edd_child_licensing($section) {
     'mode'            => 'theme', // theme|plugin
     'path'            => '', // Path to the plugin/template main file
     'remote_api_url'  => 'http://shoestrap.org',    // our store URL that is running EDD
-    'version'         => '1.0.3', // current version number
+    'version'         => '1.0.4', // current version number
     'item_name'       => 'Shoestrap 3 EDD Child', // name of this theme
     'author'          => 'Aristeides Stathopoulos (@aristath), Dimitris Kalliris (@fovoc)', // author of this theme
     'field_id'        => "shoestrap_edd_child_license_key", // ID of the field used by EDD

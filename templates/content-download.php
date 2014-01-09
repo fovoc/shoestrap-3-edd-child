@@ -70,7 +70,6 @@ endif;
 <article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $sm_class, $md_class, $categories, $tags ) ); ?>>
 	<div class="equal">
 		<div class="<?php echo shoestrap_edd_element_class(); ?>">
-			<span class="hidden price"><?php /* a hidden plain minimum price used in Isotope's sorting */ shoestrap_edd_min_price_plain( $post->ID ); ?></span>
 			<?php
 				if ( $style != 'panel' ) : ?>
 					<div class="download-image">

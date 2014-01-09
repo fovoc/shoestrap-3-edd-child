@@ -12,7 +12,7 @@ add_action( 'edd_purchase_link_top', 'shoestrap_edd_purchase_variable_pricing', 
 if ( !function_exists( 'shoestrap_edd_assets' ) ) :
 function shoestrap_edd_assets() {
 	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
-	$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
+	$equalheights 	= shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
@@ -20,12 +20,11 @@ function shoestrap_edd_assets() {
 		wp_enqueue_script('shoestrap_isotope');
 		// Here trigger our scripts
 		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
+		// Register && Enqueue Isotope-Sloppy-Masonry
+		wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
+		wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
 
-		if ( $masonry == 1 ) :
-			// Register && Enqueue Isotope-Sloppy-Masonry
-			wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
-			wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
-		else:
+		if ( $equalheights == 1 ) :
 			// Register && Enqueue jQuery EqualHeights
 			wp_register_script('shoestrap_edd_equalheights', get_stylesheet_directory_uri() . '/assets/js/jquery.equalheights.min.js', false, null, true);
 			wp_enqueue_script('shoestrap_edd_equalheights');
@@ -36,6 +35,7 @@ function shoestrap_edd_assets() {
 		endif;
 
 		if ( $infinitescroll == 1 ) :
+			// Register && Enqueue Infinite Scroll
 			wp_register_script( 'shoestrap_edd_infinitescroll', get_stylesheet_directory_uri() . '/assets/js/jquery.infinitescroll.min.js', false, null, true );
 			wp_enqueue_script( 'shoestrap_edd_infinitescroll' );
 			wp_register_script( 'shoestrap_edd_imagesloaded', get_stylesheet_directory_uri() . '/assets/js/imagesloaded.pkgd.min.js', false, null, true );
@@ -61,10 +61,9 @@ add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
 
 
 /*
- * Add the mixitup template parts and an extra wrapper div.
- * We have divided mixitup in 3 template parts to make this easier.
+ * Add template parts for sorting && filtering and an extra wrapper div.
  */
-if ( !function_exists( 'shoestrap_edd_mixitup_templates' ) ) :
+if ( !function_exists( 'shoestrap_edd_isotope_templates' ) ) :
 function shoestrap_edd_isotope_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/shoestrap-edd', 'sorting' );
@@ -96,47 +95,30 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_custom_script() { 
 	echo '<script>$(function(){ 
-			// SELECT OUR MAIN DOWNLOAD WRAPPER
-			var $container = $(".product-list");
-			';
+			var $container = $(".product-list");';
 
-		$masonry = shoestrap_getVariable( 'shoestrap_edd_masonry' );
-		if ( $masonry == 1 ) :
+		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
+		if ( $equalheights == 1 ) :
 			echo '
-			// HERE IS ISOTOPE
-			$container.isotope({
-			  animationEngine: "best-available",
-			  // get sort data-filter
-			  getSortData : {
-			    name : function ( $elem ) {
-			      return $elem.find(".name").text();
-			    },
-			    price : function ( $elem ) {
-			      return $elem.find(".price").text();
-			    }
-			  }
-			});
-			// SLOPPY
-			$container.isotope({
-			    layoutMode: "sloppyMasonry",
-			    itemSelector: ".type-download"
-			});';
-		else:
-			echo '
-			$container.isotope( "option", { 
-			animationEngine: "best-available",
-			// get sort data-filter
-			  getSortData : {
-			    name : function ( $elem ) {
-			      return $elem.find(".name").text();
-			    },
-			    price : function ( $elem ) {
-			      return $elem.find(".price").text();
-			    }
-			  } 
-			} )
-			$(".product-list .equal").equalHeights();';
+    	$(".product-list .type-download").equalHeights();
+			';
 		endif;
+			echo '
+				$container.isotope({
+				  layoutMode: "sloppyMasonry",
+				  itemSelector: ".type-download",
+				  animationEngine: "best-available",
+				  // get sort data-filter
+				  getSortData : {
+				    name : function ( $elem ) {
+				      return $elem.find(".name").text();
+				    },
+				    price : function ( $elem ) {
+				      return parseInt( $elem.find(".price").text(), 10 );
+				    }
+				  }
+				});
+			';
 
 		echo '
 			// FILTERING
@@ -195,27 +177,21 @@ function shoestrap_edd_custom_script() {
 						}
 						// trigger Isotope as a callback
 						},function( newElements ) {
-
 							// hide new items while they are loading
 							var newElems = $( newElements ).css({ opacity: 0 });
-
 							// ensure that images load before all
 							$(newElems).imagesLoaded(function(){
-
-								// show elems now they are ready
-								$(newElems).animate({ opacity: 1 });';
-
-								if ( $masonry == 1 ):
-									echo '
-								$container.isotope( "appended", $(newElems), true );
-								$("input .edd-add-to-cart").css("display","none");';
-								else:
+							// show elems now they are ready
+							$(newElems).animate({ opacity: 1 });';
+								if ( $equalheights == 1 ):
 									echo '
 								// re-calculate equalheights for all elements
-								$(newElems).css("padding-top","20px");
-								$(".product-list .equal").equalHeights();';
+								$(".product-list .type-download").equalHeights();
+								';
 								endif;
 								echo '
+								$container.isotope( "insert", $(newElems), true );
+								$("input .edd-add-to-cart").css("display","none");
 							});
 						});';
 	endif;
@@ -224,6 +200,42 @@ function shoestrap_edd_custom_script() {
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
+
+
+
+/*
+ * This function is a mini loop that will go through all the items currently displayed
+ * Retrieve their terms, and then return the list items required by isotope
+ * to be properly displayed inside the filters.
+ */
+if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
+function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
+	global $post;
+	$tags = array();
+	$output = '';
+	while (have_posts()) : the_post();
+		$terms = wp_get_post_terms( $post->ID, $vocabulary );
+		foreach ( $terms as $term ) :
+			$tags[] = $term->term_id;
+		endforeach;
+	endwhile;
+
+	$tags = array_unique( $tags );
+
+	foreach ( $tags as $tagid ) :
+		$tag = get_term( $tagid, $vocabulary );
+		$tagname = $tag->name;
+		$output .= '<li><a href="#" data-name="' . $tagname . '" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
+	endforeach;
+
+	if ( $echo ) :
+		echo $output;
+	else :
+		return $output;
+	endif;
+}
+endif;
+
 
 
 /*
@@ -301,39 +313,6 @@ function shoestrap_edd_purchase_variable_pricing( $download_id ) {
 endif;
 
 
-/*
- * This function is a mini loop that will go through all the items currently displayed
- * Retrieve their terms, and then return the list items required by mixitup
- * to be properly displayed inside the filters.
- */
-if ( !function_exists( 'shoestrap_edd_downloads_terms_filters' ) ) :
-function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
-	global $post;
-	$tags = array();
-	$output = '';
-	while (have_posts()) : the_post();
-		$terms = wp_get_post_terms( $post->ID, $vocabulary );
-		foreach ( $terms as $term ) :
-			$tags[] = $term->term_id;
-		endforeach;
-	endwhile;
-
-	$tags = array_unique( $tags );
-
-	foreach ( $tags as $tagid ) :
-		$tag = get_term( $tagid, $vocabulary );
-		$tagname = $tag->name;
-		$output .= '<li><a href="#" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
-	endforeach;
-
-	if ( $echo ) :
-		echo $output;
-	else :
-		return $output;
-	endif;
-}
-endif;
-
 
 /*
  * A mini cart. Simply displays number of products and a link.
@@ -356,7 +335,7 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	?>
 
 	<div class="btn-group">
-		<button id="nav-cart-quantity" type="button" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
+		<button id="nav-cart-quantity" type="button" disabled="disabled" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
 		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
 			<i class="el-icon-shopping-cart"></i>
 			<?php echo $label; ?>
@@ -404,32 +383,6 @@ function shoestrap_edd_discounts_shortcode( $atts, $content = null ) {
 endif;
 remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
 add_shortcode( 'download_discounts', 'shoestrap_edd_discounts_shortcode' );
-
-
-
-/*
- * Custom function to get minimum price as plain number
- */
-if ( !function_exists( 'shoestrap_edd_min_price_plain' ) ) :
-function shoestrap_edd_min_price_plain( $download_id, $echo = true ) {
-	if ( edd_has_variable_prices( $download_id ) ) {
-		$prices = edd_get_variable_prices( $download_id );
-		// Return the lowest price
-		$price_float = 0;
-      foreach ($prices as $key => $value)
-        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
-          $price_float = (float)$prices[ $key ]['amount'];
-          $price = edd_sanitize_amount( $price_float );
-	} else {
-		$price = edd_get_download_price( $download_id );
-	}
-	if ( $echo == false ) :
-		return $price;
-	else :
-		echo $price;
-	endif;
-}
-endif;
 
 
 /*
@@ -794,7 +747,7 @@ function shoestrap_edd_get_download_class( $download_size = 'normal' ) {
 	$content_width 	= shoestrap_content_width_px();
 	$breakpoint 	= shoestrap_getVariable( 'screen_tablet' );
 
-	$class = 'col-sm-6 col-md-4 mix';
+	$class = 'col-sm-6 col-md-4';
 
 	if ( $content_width < $breakpoint ) :
 		if ( $download_size != 'wide' ) :
@@ -843,16 +796,28 @@ function shoestrap_edd_price( $el = 'h2' ) {
 
 	elseif ( '0' == edd_get_download_price( get_the_ID() ) && !edd_has_variable_prices( get_the_ID() ) ) :
 		echo __( 'Free', 'shoestrap-edd' );
+		echo '<span class="hidden price">0</span>';
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
-		_e( 'Free', 'shoestrap_edd' );
+		_e( 'From Free', 'shoestrap_edd' );
+		echo '<span class="hidden price">0</span>';
 
 	elseif ( edd_has_variable_prices( get_the_ID() ) ) :
 		_e( 'From ', 'shoestrap_edd' );
 		edd_price( get_the_ID() );
 
+		$prices = edd_get_variable_prices( get_the_ID() );
+		// Return the lowest price
+		$price_float = 0;
+      foreach ($prices as $key => $value)
+        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
+          $price_float = (float)$prices[ $key ]['amount'];
+          $price = edd_sanitize_amount( $price_float );
+		echo '<span class="hidden price">'; echo $price; echo '</span>';
+
 	else :
 		edd_price( get_the_ID() );
+		echo '<span class="hidden price">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
 
 	endif;
 
@@ -876,7 +841,7 @@ function shoestrap_edd_header_css() {
 	.download-image { position: relative; }
 	.download-image:hover .overlay { bottom: 0; visibility: visible; }
 	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
-	.edd-cart-added-alert { color: whitesmoke; background-color: gray; }
+	.edd-cart-added-alert { color: whitesmoke; background-color: gray; padding: 2px;}
 	input[type="submit"].edd-add-to-cart { display: none; }
 	.open > .dropdown-menu { padding: 0; }
 	/**** Isotope filtering ****/
