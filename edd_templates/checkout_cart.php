@@ -47,7 +47,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 					</td>
 					<td class="edd_cart_item_price"><?php echo edd_cart_item_price( $item['id'], $item['options'] ); ?></td>
 					<td class="edd_cart_actions text-right">
-						<?php if( edd_item_quanities_enabled() ) : ?>
+						<?php if( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) : ?>
 							<input type="number" min="1" step="1" name="edd-cart-download-<?php echo $key; ?>-quantity" class="pull-right form-control edd-input edd-item-quantity" value="<?php echo edd_get_cart_item_quantity( $item['id'], $item['options'] ); ?>" style="width: 50%; max-width: 100px;"/>
 							<input type="hidden" name="edd-cart-downloads[]" value="<?php echo $item['id']; ?>"/>
 							<input type="hidden" name="edd-cart-download-<?php echo $key; ?>-options" value="<?php esc_attr_e( serialize( $item['options'] ) ); ?>"/>
@@ -73,7 +73,7 @@ if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
 	</tbody>
 	<tfoot>
 
-		<?php if( edd_item_quanities_enabled() ) : ?>
+		<?php if( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) : ?>
 			<tr class="edd_cart_footer_row edd_cart_update_row">
 				<th colspan="4">
 					<input type="submit" name="edd_update_cart_submit" value="<?php _e( 'Update Cart', 'edd' ); ?>" class="btn btn-success pull-right"/>
