@@ -67,8 +67,8 @@ if ( !function_exists( 'shoestrap_edd_isotope_templates' ) ) :
 function shoestrap_edd_isotope_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/shoestrap-edd', 'sorting' );
-		get_template_part( 'templates/shoestrap-edd', 'download_category' );
 		get_template_part( 'templates/shoestrap-edd', 'download_tag' );
+		get_template_part( 'templates/shoestrap-edd', 'download_category' );
 		echo '<div class="clearfix"></div>';
 	endif;
 }
@@ -125,10 +125,33 @@ function shoestrap_edd_custom_script() {
 			';
 
 		echo '
-			// FILTERING
-			$(".filter-isotope a").click(function(){
+			// FILTERING categories
+			$(".filter-cat a").click(function(){
 			  var selector = $(this).attr("data-filter");
+			  var selector_name = $(this).text();
 			  $container.isotope({ filter: selector });
+			  if ( selector == "*" ) {
+			  	$(".btn-cat").html($default_cat_label).removeClass("btn-primary");
+			  }
+			  else {
+			  	$(".btn-cat").html(selector_name).addClass("btn-primary");
+			  }
+			  $(".btn-tag").html($default_tag_label).removeClass("btn-primary");
+			  return false;
+			});
+
+			// FILTERING tags
+			$(".filter-tag a").click(function(){
+			  var selector = $(this).attr("data-filter");
+			  var selector_name = $(this).text();
+			  $container.isotope({ filter: selector });
+			  if ( selector == "*" ) {
+			  	$(".btn-tag").html($default_tag_label).removeClass("btn-primary");
+			  }
+			  else {
+			  	$(".btn-tag").html(selector_name).addClass("btn-primary");
+			  }
+			  $(".btn-cat").html($default_cat_label).removeClass("btn-primary");
 			  return false;
 			});
 
@@ -254,7 +277,8 @@ function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 	foreach ( $tags as $tagid ) :
 		$tag = get_term( $tagid, $vocabulary );
 		$tagname = $tag->name;
-		$output .= '<li><a href="#" data-name="' . $tagname . '" data-filter=".' . $tagid . '">' . $tagname . '</a></li>';
+		$tagslug = $tag->slug;
+		$output .= '<li><a href="#" data-filter=".' . $tagslug . '">' . $tagname . '</a></li>';
 	endforeach;
 
 	if ( $echo ) :

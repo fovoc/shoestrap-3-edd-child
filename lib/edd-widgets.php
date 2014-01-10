@@ -77,7 +77,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 			</tr>
 
 			<tr>
-				<td><i class="el-icon-user"> <?php _e( 'Author', 'shoestrap_edd' ); ?></td>
+				<td><i class="el-icon-user"></i> <?php _e( 'Author', 'shoestrap_edd' ); ?></td>
 				<td><a href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ) ); ?>"><?php the_author_meta( 'display_name' ); ?></a></td>
 			</tr>
 

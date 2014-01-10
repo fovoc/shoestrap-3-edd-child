@@ -50,16 +50,18 @@ $variable_priced = ( function_exists( 'edd_has_variable_prices' ) && edd_has_var
 $terms = get_the_terms( $id, 'download_category' );
 if ( $terms && ! is_wp_error( $terms ) ) :
 	foreach ( $terms as $term ) :
-		$download_categories[] = $term->term_id;
+		$download_categories[] = $term->slug;
 	endforeach;
 	$categories = join( ' ', $download_categories );
+else :
+	$categories = '';
 endif;
 
 // Get a list with tags of each download (MixitUp!)
 $terms = get_the_terms( $id, 'download_tag' );
 if ( $terms && ! is_wp_error( $terms ) ) :
 	foreach ( $terms as $term ) :
-		$download_tags[] = $term->term_id;
+		$download_tags[] = $term->slug;
 	endforeach;
 	$tags = join(" ", $download_tags );
 else :
@@ -67,7 +69,7 @@ else :
 endif;
 ?>
 
-<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $sm_class, $md_class, $categories, $tags ) ); ?>>
+<article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $sm_class, $md_class, $categories, $tags ) ); ?> >
 	<div class="equal">
 		<div class="<?php echo shoestrap_edd_element_class(); ?>">
 			<?php
