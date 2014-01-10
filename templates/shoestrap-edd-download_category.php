@@ -7,7 +7,7 @@ $terms = get_terms( 'download_category' );
 $count = count( $terms );
 if ( $count > 0 ) : ?>
 <div class="btn-group filter-isotope pull-right">
-	<a class="btn btn-default" data-name="" data-filter="*"><?php _e( 'All Categories', 'shoestrap_edd' ); ?></a>
+	<a class="btn btn-default btn-cat" data-filter="*"><?php _e( 'All Categories', 'shoestrap_edd' ); ?></a>
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>

@@ -95,7 +95,11 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 function shoestrap_edd_custom_script() { 
 	echo '<script>$(function(){ 
-			var $container = $(".product-list");';
+			var $container = $(".product-list");
+			var $default_name_label = $(".btn-name").text();
+			var $default_price_label = $(".btn-price").text();
+			var $default_cat_label = $(".btn-cat").text();
+			var $default_tag_label = $(".btn-tag").text();';
 
 		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 		if ( $equalheights == 1 ) :
@@ -132,6 +136,17 @@ function shoestrap_edd_custom_script() {
   		$(".isotope-sort .true a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
+			  var order = $(this).text();
+			  if ( sortName == "name" ) {
+			  	$(".btn-name").html($default_name_label).append(" ").append(order).addClass("btn-primary");
+			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
+			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
+			  }
+			  if ( sortName == "price" ) {
+			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
+			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
+			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
+			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : true });
 			  return false;
 			});
@@ -140,6 +155,17 @@ function shoestrap_edd_custom_script() {
 			$(".isotope-sort .false a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
+			  var order = $(this).text();
+			  if ( sortName == "name" ) {
+			  	$(".btn-name").html( $default_name_label ).append(" ").append(order).addClass("btn-primary");
+			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
+			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
+			  }
+			  if ( sortName == "price" ) {
+			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
+			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
+			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
+			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : false });
 			  return false;
 			});
@@ -147,6 +173,9 @@ function shoestrap_edd_custom_script() {
 			// SORTING Default
 			$(".isotope-sort .sort-default").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
+			  $(this).addClass("btn-primary");
+			  $(".btn-price").html( $default_price_label ).removeClass("btn-primary");
+			  $(".btn-name").html( $default_name_label ).removeClass("btn-primary");
 			  return false;
 			});';
 
