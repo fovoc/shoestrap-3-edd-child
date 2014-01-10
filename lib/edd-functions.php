@@ -94,7 +94,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
 function shoestrap_edd_custom_script() { 
-	echo '<script>$(function(){ 
+	$script = '<script>$(function(){ 
 			var $container = $(".product-list");
 			var $default_name_label = $(".btn-name").text();
 			var $default_price_label = $(".btn-price").text();
@@ -103,11 +103,11 @@ function shoestrap_edd_custom_script() {
 
 		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 		if ( $equalheights == 1 ) :
-			echo '
+			$script .= '
     	$(".product-list .type-download").equalHeights();
 			';
 		endif;
-			echo '
+			$script .= '
 				$container.isotope({
 				  layoutMode: "sloppyMasonry",
 				  itemSelector: ".type-download",
@@ -122,9 +122,7 @@ function shoestrap_edd_custom_script() {
 				    }
 				  }
 				});
-			';
-
-		echo '
+	
 			// FILTERING categories
 			$(".filter-cat a").click(function(){
 			  var selector = $(this).attr("data-filter");
@@ -163,12 +161,10 @@ function shoestrap_edd_custom_script() {
 			  if ( sortName == "name" ) {
 			  	$(".btn-name").html($default_name_label).append(" ").append(order).addClass("btn-primary");
 			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
-			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
 			  }
 			  if ( sortName == "price" ) {
 			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
 			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
-			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : true });
 			  return false;
@@ -182,12 +178,10 @@ function shoestrap_edd_custom_script() {
 			  if ( sortName == "name" ) {
 			  	$(".btn-name").html( $default_name_label ).append(" ").append(order).addClass("btn-primary");
 			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
-			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
 			  }
 			  if ( sortName == "price" ) {
 			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
 			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
-			  	$(".isotope-sort .sort-default").removeClass("btn-primary");
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : false });
 			  return false;
@@ -196,7 +190,6 @@ function shoestrap_edd_custom_script() {
 			// SORTING Default
 			$(".isotope-sort .sort-default").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
-			  $(this).addClass("btn-primary");
 			  $(".btn-price").html( $default_price_label ).removeClass("btn-primary");
 			  $(".btn-name").html( $default_name_label ).removeClass("btn-primary");
 			  return false;
@@ -218,14 +211,14 @@ function shoestrap_edd_custom_script() {
 			$finishedMsg .= "</div>";
 		$finishedMsg .= "</div>";
 
-		echo '
+		$script .= '
 					$container.infinitescroll({
 						navSelector  : ".pager",
 						nextSelector : ".pager .previous a",
 						itemSelector : ".type-download",
 						loading: {
-							msgText: "'; echo $msgText; echo'",
-							finishedMsg: "'; echo $finishedMsg; echo'"
+							msgText: "'. $msgText .'",
+							finishedMsg: "'. $finishedMsg .'"
 						}
 						// trigger Isotope as a callback
 						},function( newElements ) {
@@ -236,18 +229,19 @@ function shoestrap_edd_custom_script() {
 							// show elems now they are ready
 							$(newElems).animate({ opacity: 1 });';
 								if ( $equalheights == 1 ):
-									echo '
+									$script .= '
 								// re-calculate equalheights for all elements
 								$(".product-list .type-download").equalHeights();
 								';
 								endif;
-								echo '
+								$script .= '
 								$container.isotope( "insert", $(newElems), true );
 								$("input .edd-add-to-cart").css("display","none");
 							});
 						});';
 	endif;
-	echo '});</script>';
+	$script .= '});</script>';
+	echo $script;
 }
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }

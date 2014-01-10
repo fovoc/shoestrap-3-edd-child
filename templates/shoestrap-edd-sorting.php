@@ -1,7 +1,6 @@
 <div class="pull-left isotope-sort">
-	<a class="sort-default btn btn-default"><?php _e( 'Default', 'shoestrap_edd' ); ?></a>
 	<div class="btn-group">
-		<button class="btn btn-default btn-name" disabled="disabled"><?php _e( 'Name', 'shoestrap_edd' ); ?></button>
+		<button class="sort-default btn btn-default btn-name" title="<?php _e( 'Click to reset', 'shoestrap_edd' ); ?>"><?php _e( 'Name', 'shoestrap_edd' ); ?></button>
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
@@ -12,7 +11,7 @@
 		</ul>
 	</div>
 	<div class="btn-group">
-		<button class="btn btn-default btn-price" disabled="disabled"><?php _e( 'Price', 'shoestrap_edd' ); ?></button>
+		<button class="sort-default btn btn-default btn-price" title="<?php _e( 'Click to reset', 'shoestrap_edd' ); ?>"><?php _e( 'Price', 'shoestrap_edd' ); ?></button>
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>

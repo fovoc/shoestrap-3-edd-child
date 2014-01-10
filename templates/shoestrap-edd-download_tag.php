@@ -7,7 +7,7 @@ $terms = get_terms( 'download_tag' );
 $count = count( $terms );
 if ( $count > 0 ) : ?>
 <div class="btn-group filter-tag pull-right">
-	<a class="btn btn-default btn-tag" data-filter="*"><?php _e( 'All Tags', 'shoestrap_edd' ); ?></a>
+	<a class="btn btn-default btn-tag" data-filter="*" title="<?php _e( 'Click to reset', 'shoestrap_edd' ); ?>"><?php _e( 'All Tags', 'shoestrap_edd' ); ?></a>
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>
