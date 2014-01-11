@@ -14,6 +14,13 @@ function shoestrap_edd_assets() {
 	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
 	$equalheights 	= shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 
+	// Register && Enqueue Bootstrap Multiselect
+		wp_register_script('shoestrap_multiselect', get_stylesheet_directory_uri() . '/assets/js/bootstrap-multiselect.js', false, null, true);
+		wp_enqueue_script('shoestrap_multiselect');
+	// Bootstrap Multiselect stylesheet
+  wp_enqueue_style( 'shoestrap_multiselect_css', get_stylesheet_directory_uri(). '/assets/css/bootstrap-multiselect.css', false, null );
+	wp_enqueue_scripts( 'shoestrap_multiselect_css' );
+
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
 		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
@@ -69,7 +76,6 @@ function shoestrap_edd_isotope_templates() {
 		get_template_part( 'templates/shoestrap-edd', 'sorting' );
 		get_template_part( 'templates/shoestrap-edd', 'download_tag' );
 		get_template_part( 'templates/shoestrap-edd', 'download_category' );
-		echo '<div class="clearfix"></div>';
 	endif;
 }
 endif;
@@ -94,19 +100,25 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
 function shoestrap_edd_custom_script() { 
-	$script = '<script>$(function(){ 
+	$script = '<script>$(function(){
 			var $container = $(".product-list");
-			var $default_name_label = $(".btn-name").text();
-			var $default_price_label = $(".btn-price").text();
-			var $default_cat_label = $(".btn-cat").text();
-			var $default_tag_label = $(".btn-tag").text();';
+			var $default_name_label 	= $(".btn-name").text();
+			var $default_price_label 	= $(".btn-price").text();
+
+			$("#download-cats, #download-tags").multiselect({
+      	enableCaseInsensitiveFiltering: true,
+      	dropRight: true
+    	});
+			var $checkboxes = $(".multiselect-container li a");';
 
 		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 		if ( $equalheights == 1 ) :
+			// Enable equalheights before isotope
 			$script .= '
     	$(".product-list .type-download").equalHeights();
 			';
 		endif;
+			// Main Isotope 
 			$script .= '
 				$container.isotope({
 				  layoutMode: "sloppyMasonry",
@@ -121,39 +133,26 @@ function shoestrap_edd_custom_script() {
 				      return parseInt( $elem.find(".price").text(), 10 );
 				    }
 				  }
-				});
+				});';
 	
-			// FILTERING categories
-			$(".filter-cat a").click(function(){
-			  var selector = $(this).attr("data-filter");
-			  var selector_name = $(this).text();
-			  $container.isotope({ filter: selector });
-			  if ( selector == "*" ) {
-			  	$(".btn-cat").html($default_cat_label).removeClass("btn-primary");
-			  }
-			  else {
-			  	$(".btn-cat").html(selector_name).addClass("btn-primary");
-			  }
-			  $(".btn-tag").html($default_tag_label).removeClass("btn-primary");
-			  return false;
-			});
-
-			// FILTERING tags
-			$(".filter-tag a").click(function(){
-			  var selector = $(this).attr("data-filter");
-			  var selector_name = $(this).text();
-			  $container.isotope({ filter: selector });
-			  if ( selector == "*" ) {
-			  	$(".btn-tag").html($default_tag_label).removeClass("btn-primary");
-			  }
-			  else {
-			  	$(".btn-tag").html(selector_name).addClass("btn-primary");
-			  }
-			  $(".btn-cat").html($default_cat_label).removeClass("btn-primary");
-			  return false;
-			});
+			// Multiple dropdown FILTERING
+			$script .= '
+			$checkboxes.click(function(){
+		    var filters = [];
+	    	var active_cats = $("#download-cats").val();
+		    if ( active_cats ) {
+		    	filters.push(active_cats);
+		    }
+		    var active_tags = $("#download-tags").val();
+		    if ( active_tags ) {
+		    	filters.push(active_tags);
+		    }
+				filters = filters.join(", ");
+		    $container.isotope({ filter: filters });
+		  });';
 
 			// SORTING Ascending
+  		$script .= '
   		$(".isotope-sort .true a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
@@ -168,9 +167,10 @@ function shoestrap_edd_custom_script() {
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : true });
 			  return false;
-			});
+			});';
 			
 			// SORTING Descending
+			$script .= '
 			$(".isotope-sort .false a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
@@ -185,9 +185,10 @@ function shoestrap_edd_custom_script() {
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : false });
 			  return false;
-			});
+			});';
 			
 			// SORTING Default
+			$script .= '
 			$(".isotope-sort .sort-default").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
 			  $(".btn-price").html( $default_price_label ).removeClass("btn-primary");
@@ -229,10 +230,9 @@ function shoestrap_edd_custom_script() {
 							// show elems now they are ready
 							$(newElems).animate({ opacity: 1 });';
 								if ( $equalheights == 1 ):
-									$script .= '
 								// re-calculate equalheights for all elements
-								$(".product-list .type-download").equalHeights();
-								';
+								$script .= '
+								$(".product-list .type-download").equalHeights();';
 								endif;
 								$script .= '
 								$container.isotope( "insert", $(newElems), true );
@@ -243,7 +243,7 @@ function shoestrap_edd_custom_script() {
 	$script .= '});</script>';
 	echo $script;
 }
-function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clearfix"></div><div class="row product-list">'; }
+function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clear clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
 
@@ -272,7 +272,7 @@ function shoestrap_edd_downloads_terms_filters( $vocabulary, $echo = false ) {
 		$tag = get_term( $tagid, $vocabulary );
 		$tagname = $tag->name;
 		$tagslug = $tag->slug;
-		$output .= '<li><a href="#" data-filter=".' . $tagslug . '">' . $tagname . '</a></li>';
+		$output .= '<option value=".' . $tagslug . '">' . $tagname . '</option>';
 	endforeach;
 
 	if ( $echo ) :
@@ -891,6 +891,7 @@ function shoestrap_edd_header_css() {
 	.edd-cart-added-alert { color: whitesmoke; background-color: gray; padding: 2px;}
 	input[type="submit"].edd-add-to-cart { display: none; }
 	.open > .dropdown-menu { padding: 0; }
+	.clear { padding-bottom: 20px; }
 	/**** Isotope filtering ****/
 	.isotope-item {
 	  z-index: 2;
