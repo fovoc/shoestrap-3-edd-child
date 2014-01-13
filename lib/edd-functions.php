@@ -149,6 +149,18 @@ function shoestrap_edd_custom_script() {
 		    }
 				filters = filters.join(", ");
 		    $container.isotope({ filter: filters });
+		    if ( $(".filter-cats .multiselect").text() != "None selected " ) {
+					$(".filter-cats .multiselect").removeClass("btn-default").addClass("btn-primary");
+				}
+				else {
+					$(".filter-cats .multiselect").removeClass("btn-primary").addClass("btn-default");	
+				}
+				if ( $(".filter-tags .multiselect").text() != "None selected " ) {
+					$(".filter-tags .multiselect").removeClass("btn-default").addClass("btn-primary");
+				}
+				else {
+					$(".filter-tags .multiselect").removeClass("btn-primary").addClass("btn-default");	
+				}
 		  });';
 
 			// SORTING Ascending
@@ -158,12 +170,16 @@ function shoestrap_edd_custom_script() {
 			  var sortName = $(this).attr("href").slice(1);
 			  var order = $(this).text();
 			  if ( sortName == "name" ) {
-			  	$(".btn-name").html($default_name_label).append(" ").append(order).addClass("btn-primary");
-			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
+			  	$(".btn-name .name").html($default_name_label).append(" ").append(order);
+			  	$(".btn-price .name").html( $default_price_label );
+			  	$(".btn-name").addClass("btn-primary");
+			  	$(".btn-price").removeClass("btn-primary");
 			  }
 			  if ( sortName == "price" ) {
-			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
-			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
+			  	$(".btn-price .name").html( $default_price_label ).append(" ").append(order);
+			  	$(".btn-name .name").html( $default_name_label );
+			  	$(".btn-price").addClass("btn-primary");
+			  	$(".btn-name").removeClass("btn-primary");
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : true });
 			  return false;
@@ -176,12 +192,16 @@ function shoestrap_edd_custom_script() {
 			  var sortName = $(this).attr("href").slice(1);
 			  var order = $(this).text();
 			  if ( sortName == "name" ) {
-			  	$(".btn-name").html( $default_name_label ).append(" ").append(order).addClass("btn-primary");
-			  	$(".btn-price").html( $default_price_label ).removeClass("btn-primary");
+			  	$(".btn-name .name").html( $default_name_label ).append(" ").append(order);
+			  	$(".btn-price .name").html( $default_price_label );
+			  	$(".btn-name").addClass("btn-primary");
+			  	$(".btn-price").removeClass("btn-primary");
 			  }
 			  if ( sortName == "price" ) {
-			  	$(".btn-price").html( $default_price_label ).append(" ").append(order).addClass("btn-primary");
-			  	$(".btn-name").html( $default_name_label ).removeClass("btn-primary");
+			  	$(".btn-price .name").html( $default_price_label ).append(" ").append(order);
+			  	$(".btn-name .name").html( $default_name_label );
+			  	$(".btn-price").addClass("btn-primary");
+			  	$(".btn-name").removeClass("btn-primary");
 			  }
 			  $container.isotope({ sortBy : sortName, sortAscending : false });
 			  return false;
@@ -189,10 +209,12 @@ function shoestrap_edd_custom_script() {
 			
 			// SORTING Default
 			$script .= '
-			$(".isotope-sort .sort-default").click(function(){
+			$(".isotope-sort .default a").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
-			  $(".btn-price").html( $default_price_label ).removeClass("btn-primary");
-			  $(".btn-name").html( $default_name_label ).removeClass("btn-primary");
+			  $(".btn-price .name").html( $default_price_label ).removeClass("btn-primary");
+			  $(".btn-name .name").html( $default_name_label ).removeClass("btn-primary");
+			  $(".btn-price").removeClass("btn-primary");
+			  $(".btn-name").removeClass("btn-primary");
 			  return false;
 			});';
 
