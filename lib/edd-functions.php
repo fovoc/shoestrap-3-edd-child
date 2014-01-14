@@ -15,8 +15,8 @@ function shoestrap_edd_assets() {
 	$equalheights 	= shoestrap_getVariable( 'shoestrap_edd_equalheights' );
 
 	// Register && Enqueue Bootstrap Multiselect
-		wp_register_script('shoestrap_multiselect', get_stylesheet_directory_uri() . '/assets/js/bootstrap-multiselect.js', false, null, true);
-		wp_enqueue_script('shoestrap_multiselect');
+	wp_register_script('shoestrap_multiselect', get_stylesheet_directory_uri() . '/assets/js/bootstrap-multiselect.js', false, null, true);
+	wp_enqueue_script('shoestrap_multiselect');
 	// Bootstrap Multiselect stylesheet
   wp_enqueue_style( 'shoestrap_multiselect_css', get_stylesheet_directory_uri(). '/assets/css/bootstrap-multiselect.css', false, null );
 	wp_enqueue_scripts( 'shoestrap_multiselect_css' );
@@ -25,8 +25,6 @@ function shoestrap_edd_assets() {
 		// Register && Enqueue Isotope
 		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_isotope');
-		// Here trigger our scripts
-		add_action( 'wp_footer', 'shoestrap_edd_custom_script', 99 );
 		// Register && Enqueue Isotope-Sloppy-Masonry
 		wp_register_script('shoestrap_isotope_sloppy_masonry', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.sloppy-masonry.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_isotope_sloppy_masonry');
@@ -54,17 +52,25 @@ function shoestrap_edd_assets() {
 endif;
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
 
+/*
+ * Load our custom scripts
+ */
+if ( !function_exists( 'shoestrap_load_scripts' ) ) :
+	function shoestrap_load_scripts() {
+		wp_enqueue_script('shoestrap_script', get_stylesheet_directory_uri() . '/assets/js/script.js');
+		wp_localize_script('shoestrap_script', 'shoestrap_script_vars', array(
+				'equalheights' 		=> shoestrap_getVariable( 'shoestrap_edd_equalheights' ),
+				'infinitescroll' 	=> shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' ),
+				'msgText' 				=> "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_loading_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_loading_text' ) ) . "<span></div></div>",
+				'finishedMsg' 		=> "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_end_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_end_text' ) ) . "<span></div></div>"
+			)
+		);
+	}
+endif;
+add_action('wp_enqueue_scripts', 'shoestrap_load_scripts', 99);
+
 
 function shoestrap_edd_dummy_blank_for_frontpage_title() {}
-
-
-if ( !function_exists( 'shoestrap_edd_increase_navbar_cart_quantity' ) ) :
-// Script to increase the total cart quantity in navbar-cart
-function shoestrap_edd_increase_navbar_cart_quantity(){
-	echo '<script type="text/javascript">jQuery(document).ready(function(){$(".edd-add-to-cart").click(function(){$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });});});</script>';
-}
-endif;
-add_action('wp_footer','shoestrap_edd_increase_navbar_cart_quantity');
 
 
 /*
@@ -98,161 +104,6 @@ endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
-function shoestrap_edd_custom_script() { 
-	$script = '<script>$(function(){
-			var $container = $(".product-list");
-			var $default_name_label 	= $(".btn-name").text();
-			var $default_price_label 	= $(".btn-price").text();
-
-			$(".filter select").multiselect({
-      	enableCaseInsensitiveFiltering: true,
-      	dropRight: true,
-      	nonSelectedText: "No filters",
-    	});
-			var $checkboxes = $(".multiselect-container li a");';
-
-		$equalheights = shoestrap_getVariable( 'shoestrap_edd_equalheights' );
-		if ( $equalheights == 1 ) :
-			// Enable equalheights before isotope
-			$script .= '
-    	$(".product-list .type-download").equalHeights();
-			';
-		endif;
-			// Main Isotope 
-			$script .= '
-				$container.isotope({
-				  layoutMode: "sloppyMasonry",
-				  itemSelector: ".type-download",
-				  animationEngine: "best-available",
-				  // get sort data-filter
-				  getSortData : {
-				    name : function ( $elem ) {
-				      return $elem.find(".name").text();
-				    },
-				    price : function ( $elem ) {
-				      return parseInt( $elem.find(".price").text(), 10 );
-				    }
-				  }
-				});';
-	
-			// Multiple dropdown FILTERING
-			$script .= '
-			$checkboxes.click(function(){
-		    var filters = [];
-	    	var active = $(".filter select").val();
-		    if ( active ) 
-		    	filters.push(active);
-				filters = filters.join(", ");
-		    $container.isotope({ filter: filters });
-		    if ( $(".filter .multiselect").text() != "No filters " ) 
-					$(".filter .multiselect").removeClass("btn-default").addClass("btn-primary");
-				else 
-					$(".filter .multiselect").removeClass("btn-primary").addClass("btn-default");	
-		  });';
-
-			// SORTING Ascending
-  		$script .= '
-  		$(".sort .true a").click(function(){
-			  // get href attribute, minus the "#"
-			  var sortName = $(this).attr("href").slice(1);
-			  var order = $(this).text();
-			  if ( sortName == "name" ) {
-			  	$(".btn-name .name").html($default_name_label).append(" ").append(order);
-			  	$(".btn-price .name").html( $default_price_label );
-			  	$(".btn-name").addClass("btn-primary");
-			  	$(".btn-price").removeClass("btn-primary");
-			  }
-			  if ( sortName == "price" ) {
-			  	$(".btn-price .name").html( $default_price_label ).append(" ").append(order);
-			  	$(".btn-name .name").html( $default_name_label );
-			  	$(".btn-price").addClass("btn-primary");
-			  	$(".btn-name").removeClass("btn-primary");
-			  }
-			  $container.isotope({ sortBy : sortName, sortAscending : true });
-			  return false;
-			});';
-			
-			// SORTING Descending
-			$script .= '
-			$(".sort .false a").click(function(){
-			  // get href attribute, minus the "#"
-			  var sortName = $(this).attr("href").slice(1);
-			  var order = $(this).text();
-			  if ( sortName == "name" ) {
-			  	$(".btn-name .name").html( $default_name_label ).append(" ").append(order);
-			  	$(".btn-price .name").html( $default_price_label );
-			  	$(".btn-name").addClass("btn-primary");
-			  	$(".btn-price").removeClass("btn-primary");
-			  }
-			  if ( sortName == "price" ) {
-			  	$(".btn-price .name").html( $default_price_label ).append(" ").append(order);
-			  	$(".btn-name .name").html( $default_name_label );
-			  	$(".btn-price").addClass("btn-primary");
-			  	$(".btn-name").removeClass("btn-primary");
-			  }
-			  $container.isotope({ sortBy : sortName, sortAscending : false });
-			  return false;
-			});';
-			
-			// SORTING Default
-			$script .= '
-			$(".sort .default a").click(function(){
-			  $container.isotope({ sortBy : "original-order" });
-			  $(".btn-price .name").html( $default_price_label );
-			  $(".btn-name .name").html( $default_name_label );
-			  $(".btn-price").removeClass("btn-primary");
-			  $(".btn-name").removeClass("btn-primary");
-			  return false;
-			});';
-
-	$infinitescroll = shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' );
-	if ( $infinitescroll == 1 ) :
-		$msgText = "";
-		$msgText .= "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'>";
-			$msgText .= "<div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_loading_color' ) ) . "' style='width: 100%;'>";
-				$msgText .= "<span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_loading_text' ) ) . "<span>";
-			$msgText .= "</div>";
-		$msgText .= "</div>";
-
-		$finishedMsg = "";
-		$finishedMsg .= "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'>";
-			$finishedMsg .= "<div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_end_color' ) ) . "' style='width: 100%;'>";
-				$finishedMsg .= "<span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_end_text' ) ) . "<span>";
-			$finishedMsg .= "</div>";
-		$finishedMsg .= "</div>";
-
-		$script .= '
-					$container.infinitescroll({
-						navSelector  : ".pager",
-						nextSelector : ".pager .previous a",
-						itemSelector : ".type-download",
-						loading: {
-							msgText: "'. $msgText .'",
-							finishedMsg: "'. $finishedMsg .'"
-						}
-						// trigger Isotope as a callback
-						},function( newElements ) {
-							// hide new items while they are loading
-							var newElems = $( newElements ).css({ opacity: 0 });
-							// ensure that images load before all
-							$(newElems).imagesLoaded(function(){
-							// show elems now they are ready
-							$(newElems).animate({ opacity: 1 });';
-								if ( $equalheights == 1 ):
-								// re-calculate equalheights for all elements
-								$script .= '
-								$(".product-list .type-download").equalHeights();';
-								endif;
-								// insert new elements (page#2) && keep the appropriate EDD button hidden
-								$script .= '
-								$container.isotope( "insert", $(newElems), true );
-								$("input .edd-add-to-cart").css("display","none");
-							});
-						});';
-	endif;
-	$script .= '});</script>';
-	echo $script;
-}
 function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clear clearfix"></div><div class="row product-list">'; }
 function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
