@@ -61,6 +61,7 @@ if ( !function_exists( 'shoestrap_load_scripts' ) ) :
 		wp_localize_script('shoestrap_script', 'shoestrap_script_vars', array(
 				'equalheights' 		=> shoestrap_getVariable( 'shoestrap_edd_equalheights' ),
 				'infinitescroll' 	=> shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' ),
+				'no_filters'			=>  __( 'No filters', 'shoestrap_edd' ),
 				'msgText' 				=> "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_loading_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_loading_text' ) ) . "<span></div></div>",
 				'finishedMsg' 		=> "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_end_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_end_text' ) ) . "<span></div></div>"
 			)
