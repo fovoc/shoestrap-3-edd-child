@@ -1,4 +1,4 @@
-<div class="pull-left isotope-sort">
+<div class="pull-left sort">
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-name dropdown-toggle" data-toggle="dropdown">
 			<span class="name"><?php _e( 'Name', 'shoestrap_edd' ); ?></span> <span class="caret"></span>

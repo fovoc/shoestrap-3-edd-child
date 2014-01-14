@@ -74,8 +74,7 @@ if ( !function_exists( 'shoestrap_edd_isotope_templates' ) ) :
 function shoestrap_edd_isotope_templates() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) ) :
 		get_template_part( 'templates/shoestrap-edd', 'sorting' );
-		get_template_part( 'templates/shoestrap-edd', 'download_tag' );
-		get_template_part( 'templates/shoestrap-edd', 'download_category' );
+		get_template_part( 'templates/shoestrap-edd', 'filtering' );
 	endif;
 }
 endif;
@@ -105,9 +104,10 @@ function shoestrap_edd_custom_script() {
 			var $default_name_label 	= $(".btn-name").text();
 			var $default_price_label 	= $(".btn-price").text();
 
-			$("#download-cats, #download-tags").multiselect({
+			$(".filter select").multiselect({
       	enableCaseInsensitiveFiltering: true,
-      	dropRight: true
+      	dropRight: true,
+      	nonSelectedText: "No filters",
     	});
 			var $checkboxes = $(".multiselect-container li a");';
 
@@ -139,33 +139,20 @@ function shoestrap_edd_custom_script() {
 			$script .= '
 			$checkboxes.click(function(){
 		    var filters = [];
-	    	var active_cats = $("#download-cats").val();
-		    if ( active_cats ) {
-		    	filters.push(active_cats);
-		    }
-		    var active_tags = $("#download-tags").val();
-		    if ( active_tags ) {
-		    	filters.push(active_tags);
-		    }
+	    	var active = $(".filter select").val();
+		    if ( active ) 
+		    	filters.push(active);
 				filters = filters.join(", ");
 		    $container.isotope({ filter: filters });
-		    if ( $(".filter-cats .multiselect").text() != "None selected " ) {
-					$(".filter-cats .multiselect").removeClass("btn-default").addClass("btn-primary");
-				}
-				else {
-					$(".filter-cats .multiselect").removeClass("btn-primary").addClass("btn-default");	
-				}
-				if ( $(".filter-tags .multiselect").text() != "None selected " ) {
-					$(".filter-tags .multiselect").removeClass("btn-default").addClass("btn-primary");
-				}
-				else {
-					$(".filter-tags .multiselect").removeClass("btn-primary").addClass("btn-default");	
-				}
+		    if ( $(".filter .multiselect").text() != "No filters " ) 
+					$(".filter .multiselect").removeClass("btn-default").addClass("btn-primary");
+				else 
+					$(".filter .multiselect").removeClass("btn-primary").addClass("btn-default");	
 		  });';
 
 			// SORTING Ascending
   		$script .= '
-  		$(".isotope-sort .true a").click(function(){
+  		$(".sort .true a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
 			  var order = $(this).text();
@@ -187,7 +174,7 @@ function shoestrap_edd_custom_script() {
 			
 			// SORTING Descending
 			$script .= '
-			$(".isotope-sort .false a").click(function(){
+			$(".sort .false a").click(function(){
 			  // get href attribute, minus the "#"
 			  var sortName = $(this).attr("href").slice(1);
 			  var order = $(this).text();
@@ -209,10 +196,10 @@ function shoestrap_edd_custom_script() {
 			
 			// SORTING Default
 			$script .= '
-			$(".isotope-sort .default a").click(function(){
+			$(".sort .default a").click(function(){
 			  $container.isotope({ sortBy : "original-order" });
-			  $(".btn-price .name").html( $default_price_label ).removeClass("btn-primary");
-			  $(".btn-name .name").html( $default_name_label ).removeClass("btn-primary");
+			  $(".btn-price .name").html( $default_price_label );
+			  $(".btn-name .name").html( $default_name_label );
 			  $(".btn-price").removeClass("btn-primary");
 			  $(".btn-name").removeClass("btn-primary");
 			  return false;
@@ -256,6 +243,7 @@ function shoestrap_edd_custom_script() {
 								$script .= '
 								$(".product-list .type-download").equalHeights();';
 								endif;
+								// insert new elements (page#2) && keep the appropriate EDD button hidden
 								$script .= '
 								$container.isotope( "insert", $(newElems), true );
 								$("input .edd-add-to-cart").css("display","none");
