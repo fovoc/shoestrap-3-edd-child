@@ -69,6 +69,17 @@ if ( !function_exists( 'shoestrap_load_scripts' ) ) :
 endif;
 add_action('wp_enqueue_scripts', 'shoestrap_load_scripts', 99);
 
+/*
+ * Load our custom styles
+ */
+if ( !function_exists( 'shoestrap_load_styles' ) ) :
+	function shoestrap_load_styles() {
+		wp_register_style('shoestrap_styles', get_stylesheet_directory_uri() . '/assets/css/styles.css');
+		wp_enqueue_style( 'shoestrap_styles' );  
+	}
+endif;
+add_action('wp_enqueue_scripts', 'shoestrap_load_styles', 99 );
+
 
 function shoestrap_edd_dummy_blank_for_frontpage_title() {}
 
@@ -733,89 +744,6 @@ function shoestrap_edd_price( $el = 'h2' ) {
 }
 endif;
 
-
-/*
- * Some additional CSS rules that must be added for this plugin
- */
-if ( !function_exists( 'shoestrap_edd_header_css' ) ) :
-function shoestrap_edd_header_css() {
-	$screen_tablet         = filter_var( shoestrap_getVariable( 'screen_tablet' ), FILTER_SANITIZE_NUMBER_INT );
-	$screen_desktop        = filter_var( shoestrap_getVariable( 'screen_desktop' ), FILTER_SANITIZE_NUMBER_INT );
-	$screen_large_desktop  = filter_var( shoestrap_getVariable( 'screen_large_desktop' ), FILTER_SANITIZE_NUMBER_INT );
-	?>
-	<style>
-	.dropdown-menu li.sort, .dropdown-menu, li.filter { padding-left: .5em; }
-	.row.product-list .download { margin-bottom: 2em; }
-	.download-image { position: relative; }
-	.download-image:hover .overlay { bottom: 0; visibility: visible; }
-	.download-image .overlay { display: block; position: absolute; right: 0; visibility: hidden; background: rgba(0,0,0,0.6); width: 100%; padding: 15px; }
-	.edd-cart-added-alert { color: whitesmoke; background-color: gray; padding: 2px;}
-	input[type="submit"].edd-add-to-cart { display: none; }
-	.open > .dropdown-menu { padding: 0; }
-	.clear { padding-bottom: 20px; }
-	/**** Isotope filtering ****/
-	.isotope-item {
-	  z-index: 2;
-	}
-	.isotope-hidden.isotope-item {
-	  pointer-events: none;
-	  z-index: 1;
-	}
-	.isotope,
-	.isotope .isotope-item {
-	  /* change duration value to whatever you like */
-	  -webkit-transition-duration: 0.8s;
-	     -moz-transition-duration: 0.8s;
-	      -ms-transition-duration: 0.8s;
-	       -o-transition-duration: 0.8s;
-	          transition-duration: 0.8s;
-	}
-	.isotope {
-	  -webkit-transition-property: height, width;
-	     -moz-transition-property: height, width;
-	      -ms-transition-property: height, width;
-	       -o-transition-property: height, width;
-	          transition-property: height, width;
-	}
-	.isotope .isotope-item {
-	  -webkit-transition-property: -webkit-transform, opacity;
-	     -moz-transition-property:    -moz-transform, opacity;
-	      -ms-transition-property:     -ms-transform, opacity;
-	       -o-transition-property:      -o-transform, opacity;
-	          transition-property:         transform, opacity;
-	}
-	/**** disabling Isotope CSS3 transitions ****/
-	.isotope.no-transition,
-	.isotope.no-transition .isotope-item,
-	.isotope .isotope-item.no-transition {
-	  -webkit-transition-duration: 0s;
-	     -moz-transition-duration: 0s;
-	      -ms-transition-duration: 0s;
-	       -o-transition-duration: 0s;
-	          transition-duration: 0s;
-	}
-	/**** styling required for Infinite Scroll ****/
-	#infscr-loading {
-  position: fixed;
-  text-align: center;
-  bottom: 30px;
-  left: 50%;
-  width: 220px;
-  height: auto;
-  padding-top: 0px;
-  margin-left: -100px;
-  z-index: 100;
-  background: transparent ;
-  overflow: hidden;
-	}
-	#infscr-loading img {
-	  display: none;  
-	}
-	</style>
-	<?php
-}
-endif;
-add_action( 'wp_head', 'shoestrap_edd_header_css' );
 
 
 /**
