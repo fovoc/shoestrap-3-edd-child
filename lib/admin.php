@@ -149,23 +149,3 @@ function shoestrap_module_edd_options( $sections ) {
 // add_filter( 'redux-sections-' . REDUX_OPT_NAME, 'shoestrap_module_edd_options', 1 );   
 add_filter( 'redux/options/' . REDUX_OPT_NAME . '/sections', 'shoestrap_module_edd_options', 1 );   
 endif;
-
-if ( !function_exists( 'shoestrap_edd_child_licensing' ) ) :
-function shoestrap_edd_child_licensing($section) {
-  $section['fields'][] = array( 
-    'title'           => __( 'Shoestrap EDD Child-Theme Licence', 'shoestrap' ),
-    'id'              => 'shoestrap_edd_child_license_key',
-    'default'         => '',
-    'type'            => 'edd_license',
-    'mode'            => 'theme', // theme|plugin
-    'path'            => '', // Path to the plugin/template main file
-    'remote_api_url'  => 'http://shoestrap.org',    // our store URL that is running EDD
-    'version'         => '1.0.4', // current version number
-    'item_name'       => 'Shoestrap 3 EDD Child', // name of this theme
-    'author'          => 'Aristeides Stathopoulos (@aristath), Dimitris Kalliris (@fovoc)', // author of this theme
-    'field_id'        => "shoestrap_edd_child_license_key", // ID of the field used by EDD
-  ); 
-  return $section;
-}
-endif;
-add_filter( 'shoestrap_module_licencing_options_modifier', 'shoestrap_edd_child_licensing' );
