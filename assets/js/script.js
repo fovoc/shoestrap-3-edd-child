@@ -1,4 +1,10 @@
 $(function(){
+	
+	// Increase the total cart quantity in navbar-cart
+	$(".edd-add-to-cart").click(function(){
+		$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });
+	});
+
 	//ISOTOPE
 	var $container = $(".product-list");
 	var $default_name_label   = $(".btn-name").text();
@@ -122,10 +128,5 @@ $(function(){
 					});
 				});
 	}
-
-	// Increase the total cart quantity in navbar-cart
-	$(".edd-add-to-cart").click(function(){
-		$("#nav-cart-quantity").html(function(i, val){ return val*1+1 });
-	});
 
 });
