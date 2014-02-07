@@ -107,7 +107,7 @@ add_action( 'shoestrap_index_begin', 'shoestrap_edd_isotope_templates', 9 );
 if ( !function_exists( 'shoestrap_edd_helper_actions' ) ) :
 function shoestrap_edd_helper_actions() {
 	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
-		add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions_index_begin' );
+		add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions_index_begin', 30 );
 		add_action( 'shoestrap_index_end', 'shoestrap_edd_helper_actions_index_end' );
 		add_action( 'shoestrap_content_override', 'shoestrap_edd_helper_actions_content_override' );
 	endif;
