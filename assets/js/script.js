@@ -18,8 +18,9 @@ $(function(){
 	
 	var $checkboxes = $(".multiselect-container li a");
 
-	if ( shoestrap_script_vars.equalheights == 1 )
+	if ( shoestrap_script_vars.equalheights == 1 ) {
 		$(".product-list .type-download").equalHeights();
+	}
 
 	$container.isotope({
 		layoutMode: "sloppyMasonry",
