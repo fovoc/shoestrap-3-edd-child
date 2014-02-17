@@ -21,7 +21,7 @@ function shoestrap_edd_assets() {
   wp_enqueue_style( 'shoestrap_multiselect_css', get_stylesheet_directory_uri(). '/assets/css/bootstrap-multiselect.css', false, null );
 	wp_enqueue_scripts( 'shoestrap_multiselect_css' );
 
-	if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
+	//if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) :
 		// Register && Enqueue Isotope
 		wp_register_script('shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true);
 		wp_enqueue_script('shoestrap_isotope');
@@ -47,7 +47,7 @@ function shoestrap_edd_assets() {
 			wp_enqueue_script( 'shoestrap_edd_imagesloaded' );
 		endif;
 
-	endif;
+	//endif;
 }
 endif;
 add_action( 'wp_head', 'shoestrap_edd_assets', 99 );
