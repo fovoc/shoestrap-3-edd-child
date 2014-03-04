@@ -228,13 +228,13 @@ class shoestrap_edd_mini_cart_widget extends WP_Widget {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
 
-		global $post, $edd_options;
+		global $post, $edd_options, $ss_framework;
 
 		echo $before_widget;
 		if ( $title ) {
 			echo $before_title . $title . $after_title;
 		}
-		shoestrap_edd_mini_shopping_cart();
+		shoestrap_edd_mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'primary' ), $ss_framework->button_classes( 'danger' ), null );
 		echo $after_widget;
 	}
 

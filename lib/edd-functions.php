@@ -116,8 +116,18 @@ endif;
 add_action( 'shoestrap_index_begin', 'shoestrap_edd_helper_actions', 13 );
 
 
-function shoestrap_edd_helper_actions_index_begin() { echo '<div class="clear clearfix"></div><div class="row product-list">'; }
-function shoestrap_edd_helper_actions_index_end() { echo '<div class="clearfix"></div></div>'; }
+function shoestrap_edd_helper_actions_index_begin() { 
+	global $ss_framework; 
+	echo $ss_framework->clearfix();
+	echo $ss_framework->open_row( 'div', null, 'product-list' ); 
+}
+
+function shoestrap_edd_helper_actions_index_end() { 
+	global $ss_framework; 
+	echo $ss_framework->clearfix();
+	echo $ss_framework->close_row( 'div' );
+}
+
 function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }
 
 
@@ -164,8 +174,10 @@ endif;
  */
 if ( !function_exists( 'shoestrap_edd_purchase_link_defaults' ) ) :
 function shoestrap_edd_purchase_link_defaults( $args ) {
-	$args['class'] = 'btn';
-	$args['style'] = 'btn-primary btn-block btn-lg';
+	global $ss_framework; 
+
+	$args['class'] = $ss_framework->button_classes( 'primary' );
+	$args['style'] = $ss_framework->button_classes( 'block', 'large' );
 	return $args;
 }
 endif;
@@ -238,8 +250,8 @@ endif;
  * A mini cart. Simply displays number of products and a link.
  */
 if ( !function_exists( 'shoestrap_edd_mini_shopping_cart' ) ) :
-function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_class = 'btn-sm', $btn_class = 'btn-primary', $price_class = 'btn-danger', $dropdown = true ) {
-	global $edd_options;
+function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'button', $size_class = 'small', $btn_class = 'primary', $price_class = 'danger', $dropdown = true ) {
+	global $edd_options, $ss_framework;
 	$label = shoestrap_getVariable( 'shoestrap_edd_minicart_label' );
 	ob_start();
 
@@ -254,8 +266,8 @@ function shoestrap_edd_mini_shopping_cart( $global_btn_class = 'btn', $size_clas
 	$a_classes   = $global_btn_class . ' ' . $btn_class . ' ' . $size_class;
 	?>
 
-	<div class="btn-group">
-		<button id="nav-cart-quantity" type="button" disabled="disabled" class="<?php echo $btn_classes; ?>"><?php echo $cart_quantity; ?></button>
+	<div class="<?php echo $ss_framework->button_group_classes(); ?>">
+		<button type="button" disabled="disabled" class="<?php echo $btn_classes; ?> nav-cart-quantity"><?php echo $cart_quantity; ?></button>
 		<a class="<?php echo $a_classes; ?>" href="<?php echo edd_get_checkout_uri(); ?>">
 			<i class="el-icon-shopping-cart"></i>
 			<?php echo $label; ?>
@@ -327,6 +339,7 @@ endif;
  */
 if ( !function_exists( 'shoestrap_edd_default_cc_address_fields' ) ) :
 function shoestrap_edd_default_cc_address_fields() {
+	global $ss_framework;
 	$logged_in = is_user_logged_in();
 
 	if( $logged_in )
@@ -342,40 +355,55 @@ function shoestrap_edd_default_cc_address_fields() {
 		<legend><?php _e( 'Billing Details', 'edd' ); ?></legend>
 		<?php do_action( 'edd_cc_billing_top' ); ?>
 		<div class="form-group" id="edd-card-address-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing Address', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing Address', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The primary billing address for your credit card.', 'edd' ); ?></small>
 				<input type="text" name="card_address" class="form-control card-address edd-input required" placeholder="<?php _e( 'Address line 1', 'edd' ); ?>" value="<?php echo $line1; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<div class="form-group" id="edd-card-address-2-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Address Line 2 (optional)', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing Address Line 2 (optional)', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The suite, apt no, PO box, etc, associated with your billing address.', 'edd' ); ?></small>
 				<input type="text" name="card_address_2" class="form-control card-address-2 edd-input" placeholder="<?php _e( 'Address line 2', 'edd' ); ?>" value="<?php echo $line2; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<div class="form-group" id="edd-card-city-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing City', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing City', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The city for your billing address.', 'edd' ); ?></small>
 				<input type="text" name="card_city" class="form-control card-city edd-input required" placeholder="<?php _e( 'City', 'edd' ); ?>" value="<?php echo $city; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<div class="form-group" id="edd-card-zip-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Zip / Postal Code', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing Zip / Postal Code', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The zip or postal code for your billing address.', 'edd' ); ?></small>
 				<input type="text" size="4" name="card_zip" class="form-control card-zip edd-input required" placeholder="<?php _e( 'Zip / Postal code', 'edd' ); ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<div class="form-group" id="edd-card-country-wrap">
-			<label class="col-md-3 control-label edd-label"><?php _e( 'Billing Country', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing Country', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The country for your billing address.', 'edd' ); ?></small>
 				<select name="billing_country" id="billing_country" class="form-control billing_country edd-select required">
 					<?php
@@ -391,12 +419,15 @@ function shoestrap_edd_default_cc_address_fields() {
 					}
 					?>
 				</select>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<div class="form-group" id="edd-card-state-wrap">
-			<label class="edd-label col-md-3 control-label"><?php _e( 'Billing State / Province', 'edd' ); ?></label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label' ); ?>
+			<?php _e( 'Billing State / Province', 'edd' ); ?>
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'The state or province for your billing address.', 'edd' ); ?></small>
 				<?php
 				$selected_state = edd_get_shop_state();
@@ -414,7 +445,7 @@ function shoestrap_edd_default_cc_address_fields() {
 				<?php else : ?>
 					<input type="text" size="6" name="card_state" id="card_state" class="card_state edd-input" placeholder="<?php _e( 'State / Province', 'edd' ); ?>"/>
 				<?php endif; ?>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<?php do_action( 'edd_cc_billing_bottom' ); ?>
@@ -453,7 +484,7 @@ add_action( 'edd_purchase_form_after_cc_form', 'shoestrap_edd_checkout_tax_field
 */
 if ( !function_exists( 'shoestrap_edd_login_form' ) ) :
 function shoestrap_edd_login_form( $redirect = '' ) {
-	global $edd_options, $post;
+	global $edd_options, $post, $ss_framework;
 
 	if ( $redirect == '' )
 		$redirect = edd_get_current_page_url();
@@ -468,22 +499,28 @@ function shoestrap_edd_login_form( $redirect = '' ) {
 				<legend><?php _e( 'Log into Your Account', 'edd' ); ?></legend>
 				<?php do_action('edd_checkout_login_fields_before');?>
 				<div class="form-group">
-					<label class="col-md-3 control-label" for="edd_user_Login"><?php _e( 'Username', 'edd' ); ?></label>
-					<div class="col-md-9">
+					<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'control-label', 'for="edd_user_Login"' ); ?>
+					<?php _e( 'Username', 'edd' ); ?>
+					<?php echo $ss_framework->close_col( 'label' ); ?>
+
+					<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 						<input name="edd_user_login" id="edd_user_login" class="form-control required" type="email" title="<?php _e( 'Username', 'edd' ); ?>"/>
-					</div>
+					<?php echo $ss_framework->close_col( 'div' ); ?>
 				</div>
 				<div class="form-group">
-					<label class="col-md-3 control-label" for="edd_user_pass"><?php _e( 'Password', 'edd' ); ?></label>
-					<div class="col-md-9">
+					<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'control-label', 'for="edd_user_pass"' ); ?>
+					<?php _e( 'Password', 'edd' ); ?>
+					<?php echo $ss_framework->close_col( 'label' ); ?>
+
+					<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 						<input name="edd_user_pass" id="edd_user_pass" class="form-control password required" type="password"/>
-					</div>
+					<?php echo $ss_framework->close_col( 'div' ); ?>
 				</div>
 				<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>" />
 				<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>" />
 				<input type="hidden" name="edd_action" value="user_login" />
 				<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>" />
-				<a class="btn btn-link btn-sm btn-block" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
+				<a class="<?php echo $ss_framework->button_classes( 'link', 'block' ); ?>" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
 					<?php _e( 'Lost Password?', 'edd' ); ?>
 				</a>
 				<?php do_action( 'edd_checkout_login_fields_after' );?>
@@ -582,6 +619,7 @@ add_action( 'edd_payment_mode_select', 'shoestrap_edd_payment_mode_select' );
  */
 if ( !function_exists( 'shoestrap_edd_user_info_fields' ) ) :
 function shoestrap_edd_user_info_fields() {
+	global $ss_framework;
 	if ( is_user_logged_in() )
 		$user_data = get_userdata( get_current_user_id() );
 	?>
@@ -590,43 +628,46 @@ function shoestrap_edd_user_info_fields() {
 		<?php do_action( 'edd_purchase_form_before_email' ); ?>
 
 		<div class="form-group" id="edd-email-wrap">
-			<label class="edd-label col-md-3 control-label" for="edd-email">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-email"' ); ?>
 				<?php _e( 'Email Address', 'edd' ); ?>
 				<?php if( edd_field_is_required( 'edd_email' ) ) { ?>
 					<span class="edd-required-indicator">*</span>
 				<?php } ?>
-			</label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></small>
 				<input class="form-control edd-input required" type="email" name="edd_email" placeholder="<?php _e( 'Email address', 'edd' ); ?>" id="edd-email" value="<?php echo is_user_logged_in() ? $user_data->user_email : ''; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<?php do_action( 'edd_purchase_form_after_email' ); ?>
 
 		<div class="form-group" id="edd-first-name-wrap">
-			<label class="col-md-3 control-label edd-label" for="edd-first">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-first"' ); ?>
 				<?php _e( 'First Name', 'edd' ); ?>
 				<?php if( edd_field_is_required( 'edd_first' ) ) { ?>
 					<span class="edd-required-indicator">*</span>
 				<?php } ?>
-			</label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></small>>
 				<input class="form-control edd-input required" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->first_name : ''; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 		<div class="form-group" id="edd-last-name-wrap">
-			<label class="col-md-3 control-label edd-label" for="edd-last">
+			<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-last"' ); ?>
 				<?php _e( 'Last Name', 'edd' ); ?>
 				<?php if( edd_field_is_required( 'edd_last' ) ) { ?>
 					<span class="edd-required-indicator">*</span>
 				<?php } ?>
-			</label>
-			<div class="col-md-9">
+			<?php echo $ss_framework->close_col( 'label' ); ?>
+			
+			<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
 				<small class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></small>>
 				<input class="form-control edd-input" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->last_name : ''; ?>"/>
-			</div>
+			<?php echo $ss_framework->close_col( 'div' ); ?>
 		</div>
 
 		<?php do_action( 'edd_purchase_form_user_info' ); ?>
@@ -1133,9 +1174,11 @@ endif;
 
 if ( !function_exists( 'shoestrap_edd_add_minicart_to_navbar' ) ) :
 function shoestrap_edd_add_minicart_to_navbar() {
-	if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) : ?>
+	if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) :
+		global $ss_framework;
+	?>
 		<div class="pull-right">
-			<?php shoestrap_edd_mini_shopping_cart( 'btn', 'navbar-btn', 'btn-success', 'btn-default' ); ?>
+			<?php shoestrap_edd_mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'success' ), $ss_framework->button_classes( 'default' ), null ); ?>
 		</div>
 	<?php
 	endif;

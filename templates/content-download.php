@@ -4,7 +4,7 @@ global $post;
 $style          = shoestrap_getVariable( 'shoestrap_edd_box_style' );
 $download_size  = shoestrap_getVariable( 'shoestrap_edd_products_width' );
 $show_excerpt   = shoestrap_getVariable( 'shoestrap_edd_show_text_in_lists' );
-$content_width 	= shoestrap_content_width_px();
+$content_width 	= Shoestrap_Layout::content_width_px( false );
 $breakpoint     = shoestrap_getVariable( 'screen_tablet' );
 $show_excerpt   = shoestrap_getVariable( 'shoestrap_edd_show_text_in_lists' );
 $in_cart        = '';
@@ -39,7 +39,7 @@ $args = array(
 	"retina"    => "",
 	"resize"    => true,
 );
-$image = shoestrap_image_resize( $args );
+$image = Shoestrap_Image::image_resize( $args );
 
 // The in-cart class
 $in_cart = ( function_exists( 'edd_item_in_cart' ) && edd_item_in_cart( $id ) && !edd_has_variable_prices( $id ) ) ? 'in-cart' : '';

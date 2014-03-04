@@ -6,7 +6,7 @@
 .edd-cart-added-alert { color: whitesmoke; background-color: gray; padding: 2px;}
 input[type="submit"].edd-add-to-cart { display: none; }
 .open > .dropdown-menu { padding: 0; }
-.clear { padding-bottom: 20px; }
+.product-list { padding-top: 20px; }
 /**** Isotope filtering ****/
 .isotope-item {
   z-index: 2;
