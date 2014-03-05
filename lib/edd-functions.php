@@ -291,65 +291,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		}
 
 		/**
-		 * Login Form
-		 *
-		 * @global $edd_options
-		 * @global $post
-		 * @param string $redirect Redirect page URL
-		 * @return string Login form
-		*/
-		function login_form( $redirect = '' ) {
-			global $edd_options, $post, $ss_framework;
-
-			if ( $redirect == '' )
-				$redirect = edd_get_current_page_url();
-
-			ob_start();
-
-			if ( ! is_user_logged_in() ) {
-				// Show any error messages after form submission
-				edd_print_errors(); ?>
-				<form id="edd_login_form" class="edd_form form-horizontal" action="" method="post" role="form">
-					<fieldset>
-						<legend><?php _e( 'Log into Your Account', 'edd' ); ?></legend>
-						<?php do_action('edd_checkout_login_fields_before');?>
-						<div class="form-group">
-							<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'control-label', 'for="edd_user_Login"' ); ?>
-							<?php _e( 'Username', 'edd' ); ?>
-							<?php echo $ss_framework->close_col( 'label' ); ?>
-
-							<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
-								<input name="edd_user_login" id="edd_user_login" class="form-control required" type="email" title="<?php _e( 'Username', 'edd' ); ?>"/>
-							<?php echo $ss_framework->close_col( 'div' ); ?>
-						</div>
-						<div class="form-group">
-							<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'control-label', 'for="edd_user_pass"' ); ?>
-							<?php _e( 'Password', 'edd' ); ?>
-							<?php echo $ss_framework->close_col( 'label' ); ?>
-
-							<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
-								<input name="edd_user_pass" id="edd_user_pass" class="form-control password required" type="password"/>
-							<?php echo $ss_framework->close_col( 'div' ); ?>
-						</div>
-						<input type="hidden" name="edd_redirect" value="<?php echo $redirect; ?>" />
-						<input type="hidden" name="edd_login_nonce" value="<?php echo wp_create_nonce( 'edd-login-nonce' ); ?>" />
-						<input type="hidden" name="edd_action" value="user_login" />
-						<input id="edd_login_submit" type="submit" class="edd_submit btn btn-primary btn-lg btn-block" value="<?php _e( 'Login', 'edd' ); ?>" />
-						<a class="<?php echo $ss_framework->button_classes( 'link', 'block' ); ?>" href="<?php echo wp_lostpassword_url(); ?>" title="<?php _e( 'Lost Password', 'edd' ); ?>">
-							<?php _e( 'Lost Password?', 'edd' ); ?>
-						</a>
-						<?php do_action( 'edd_checkout_login_fields_after' );?>
-					</fieldset>
-				</form>
-			<?php
-			} else {
-				echo '<p class="edd-logged-in">' . __( 'You are already logged in', 'edd' ) . '</p>';
-			}
-			return ob_get_clean();
-		}
-
-
-		/**
 		 * Login Shortcode
 		 *
 		 * Shows a login form allowing users to users to log in. This function simply
