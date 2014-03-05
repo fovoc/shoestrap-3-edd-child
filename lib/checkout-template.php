@@ -334,13 +334,19 @@ function ss_edd_get_cc_form() {
 				<span class="edd-required-indicator">*</span>
 			</label>
 			<span class="edd-description"><?php _e( 'The date your credit card expires, typically on the front of the card.', 'edd' ); ?></span>
-			<select id="card_exp_month" name="card_exp_month" class="<?php echo $input_class; ?>card-expiry-month edd-select edd-select-small required">
-				<?php for( $i = 1; $i <= 12; $i++ ) { echo '<option value="' . $i . '">' . sprintf ('%02d', $i ) . '</option>'; } ?>
-			</select>
-			<span class="exp-divider"> / </span>
-			<select id="card_exp_year" name="card_exp_year" class="<?php echo $input_class; ?>card-expiry-year edd-select edd-select-small required">
-				<?php for( $i = date('Y'); $i <= date('Y') + 10; $i++ ) { echo '<option value="' . $i . '">' . substr( $i, 2 ) . '</option>'; } ?>
-			</select>
+			<?php echo $ss_framework->open_row( 'div' ); ?>
+				<?php echo $ss_framework->open_col( 'div', array( 'mobile' => 6 ) ); ?>
+					<select id="card_exp_month" name="card_exp_month" class="<?php echo $input_class; ?>card-expiry-month edd-select edd-select-small required">
+						<?php for( $i = 1; $i <= 12; $i++ ) { echo '<option value="' . $i . '">' . sprintf ('%02d', $i ) . '</option>'; } ?>
+					</select>
+				<?php echo $ss_framework->close_col( 'div' ); ?>
+				<?php echo $ss_framework->open_col( 'div', array( 'mobile' => 6 ) ); ?>
+					<select id="card_exp_year" name="card_exp_year" class="<?php echo $input_class; ?>card-expiry-year edd-select edd-select-small required">
+						<?php for( $i = date('Y'); $i <= date('Y') + 10; $i++ ) { echo '<option value="' . $i . '">' . substr( $i, 2 ) . '</option>'; } ?>
+					</select>
+				<?php echo $ss_framework->close_col( 'div' ); ?>
+			<?php echo $ss_framework->close_row( 'div' ); ?>
+
 		</p>
 		<?php do_action( 'edd_after_cc_expiration' ); ?>
 
@@ -615,6 +621,7 @@ function ss_edd_checkout_button_purchase() {
 	ob_start();
 ?>
 	<input type="submit" class="<?php echo $ss_framework->button_classes( 'primary', 'medium', null, 'edd-submit ' . $style ); ?>" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
+	<hr>
 <?php
 	return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
 }
