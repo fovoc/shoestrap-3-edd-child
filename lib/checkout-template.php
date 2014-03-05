@@ -526,3 +526,29 @@ function ss_edd_discount_field() {
 }
 remove_action( 'edd_checkout_form_top', 'edd_discount_field', -1 );
 add_action( 'edd_checkout_form_top', 'ss_edd_discount_field', -1 );
+
+/**
+ * Renders the Checkout Submit section
+ *
+ * @since 1.3.3
+ * @return void
+ */
+function ss_edd_checkout_submit() {
+?>
+	<fieldset id="edd_purchase_submit">
+		<?php do_action( 'edd_purchase_form_before_submit' ); ?>
+
+		<?php edd_checkout_hidden_fields(); ?>
+
+		<?php echo ss_edd_checkout_button_purchase(); ?>
+
+		<?php do_action( 'edd_purchase_form_after_submit' ); ?>
+
+		<?php if ( ! edd_is_ajax_enabled() ) { ?>
+			<p class="edd-cancel"><a href="javascript:history.go(-1)"><?php _e( 'Go back', 'edd' ); ?></a></p>
+		<?php } ?>
+	</fieldset>
+<?php
+}
+remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_submit', 9999 );
+add_action( 'edd_purchase_form_after_cc_form', 'ss_edd_checkout_submit', 9999 );

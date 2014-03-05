@@ -36,9 +36,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			remove_action( 'edd_purchase_form_before_submit', 'edd_checkout_final_total', 999 );
 			add_action( 'edd_purchase_form_before_submit', array( $this, 'checkout_final_total' ), 999 );
 
-			remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_submit', 9999 );
-			add_action( 'edd_purchase_form_after_cc_form', array( $this, 'checkout_submit' ), 9999 );
-
 			add_filter( 'pre_get_posts', array( $this, 'downloads_on_homepage' ) );
 			add_action( 'shoestrap_inside_nav_begin', array( $this, 'add_minicart_to_navbar' ) );
 			/*
@@ -311,40 +308,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			}
 
 			return $class;
-		}
-
-		/**
-		 * Shows the final purchase total at the bottom of the checkout page
-		 *
-		 * @since 1.5
-		 * @return void
-		 */
-		function checkout_final_total() { ?>
-			<h2 class="text-center">
-				<?php _e( 'Purchase Total:', 'edd' ); ?>
-				<span class="edd_cart_amount" data-subtotal="<?php echo edd_get_cart_amount( false ); ?>" data-total="<?php echo edd_get_cart_amount( true, true ); ?>">
-				<?php edd_cart_total(); ?>
-			</h2>
-			<?php
-		}
-
-		/**
-		 * Renders the Checkout Submit section
-		 *
-		 * @since 1.3.3
-		 * @return void
-		 */
-		function checkout_submit() { ?>
-			<fieldset id="edd_purchase_submit">
-				<?php do_action( 'edd_purchase_form_before_submit' ); ?>
-				<?php edd_checkout_hidden_fields(); ?>
-				<?php echo $this->checkout_button_purchase(); ?>
-				<?php do_action( 'edd_purchase_form_after_submit' ); ?>
-				<?php if ( ! edd_is_ajax_enabled() ) { ?>
-					<p class="edd-cancel"><a href="javascript:history.go(-1)"><?php _e( 'Go back', 'edd' ); ?></a></p>
-				<?php } ?>
-			</fieldset>
-		<?php
 		}
 
 		/**
