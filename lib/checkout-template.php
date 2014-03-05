@@ -1,6 +1,13 @@
 <?php
 
 /**
+The functions in this file are modified versions of those found in
+easy-digital-downloads/includes/checkout/template.php
+
+What is mostly modified here is the addition of some framework classes so that the CSS framework works without any issues.
+*/
+
+/**
  * Outputs the default credit card address fields
  *
  * @since 1.0
