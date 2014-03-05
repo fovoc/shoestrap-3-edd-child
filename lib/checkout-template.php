@@ -352,3 +352,83 @@ function ss_edd_get_cc_form() {
 }
 remove_action( 'edd_cc_form', 'edd_get_cc_form' );
 add_action( 'edd_cc_form', 'ss_edd_get_cc_form' );
+
+/**
+ * Renders the user registration fields. If the user is logged in, a login
+ * form is displayed other a registration form is provided for the user to
+ * create an account.
+ *
+ * @since 1.0
+ * @return string
+ */
+function ss_edd_get_register_fields() {
+	global $edd_options;
+	global $user_ID;
+	global $ss_framework;
+
+	$input_class = $ss_framework->form_input_classes();
+	if ( ! empty( $input_class ) ) {
+		$input_class = $input_class . ' ';
+	} else {
+		$input_class = null;
+	}
+
+
+	if ( is_user_logged_in() )
+	$user_data = get_userdata( $user_ID );
+
+	ob_start(); ?>
+	<fieldset id="edd_register_fields">
+		
+		<p id="edd-login-account-wrap"><?php _e( 'Already have an account?', 'edd' ); ?> <a href="<?php echo add_query_arg('login', 1); ?>" class="edd_checkout_register_login" data-action="checkout_login"><?php _e( 'Login', 'edd' ); ?></a></p>
+		
+		<?php do_action('edd_register_fields_before'); ?>
+	
+		<fieldset id="edd_register_account_fields">
+			<span><legend><?php _e( 'Create an account', 'edd' ); if( !edd_no_guest_checkout() ) { echo ' ' . __( '(optional)', 'edd' ); } ?></legend></span>
+			<?php do_action('edd_register_account_fields_before'); ?>
+			<p id="edd-user-login-wrap">
+				<label for="edd_user_login">
+					<?php _e( 'Username', 'edd' ); ?>
+					<?php if( edd_no_guest_checkout() ) { ?>
+					<span class="edd-required-indicator">*</span>
+					<?php } ?>
+				</label>
+				<span class="edd-description"><?php _e( 'The username you will use to log into your account.', 'edd' ); ?></span>
+				<input name="edd_user_login" id="edd_user_login" class="<?php echo $input_class; ?><?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="text" placeholder="<?php _e( 'Username', 'edd' ); ?>" title="<?php _e( 'Username', 'edd' ); ?>"/>
+			</p>
+			<p id="edd-user-pass-wrap">
+				<label for="password">
+					<?php _e( 'Password', 'edd' ); ?>
+					<?php if( edd_no_guest_checkout() ) { ?>
+					<span class="edd-required-indicator">*</span>
+					<?php } ?>
+				</label>
+				<span class="edd-description"><?php _e( 'The password used to access your account.', 'edd' ); ?></span>
+				<input name="edd_user_pass" id="edd_user_pass" class="<?php echo $input_class; ?><?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" placeholder="<?php _e( 'Password', 'edd' ); ?>" type="password"/>
+			</p>
+			<p id="edd-user-pass-confirm-wrap" class="edd_register_password">
+				<label for="password_again">
+					<?php _e( 'Password Again', 'edd' ); ?>
+					<?php if( edd_no_guest_checkout() ) { ?>
+					<span class="edd-required-indicator">*</span>
+					<?php } ?>
+				</label>
+				<span class="edd-description"><?php _e( 'Confirm your password.', 'edd' ); ?></span>
+				<input name="edd_user_pass_confirm" id="edd_user_pass_confirm" class="<?php echo $input_class; ?><?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" placeholder="<?php _e( 'Confirm password', 'edd' ); ?>" type="password"/>
+			</p>
+			<?php do_action( 'edd_register_account_fields_after' ); ?>
+		</fieldset>
+		
+		<?php do_action('edd_register_fields_after'); ?>
+		
+		<input type="hidden" name="edd-purchase-var" value="needs-to-register"/>
+
+		<?php do_action( 'edd_purchase_form_user_info' ); ?>
+		
+	</fieldset>
+	<?php
+	echo ob_get_clean();
+}
+remove_action( 'edd_purchase_form_register_fields', 'edd_get_register_fields' );
+add_action( 'edd_purchase_form_register_fields', 'ss_edd_get_register_fields' );
