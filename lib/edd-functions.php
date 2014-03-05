@@ -298,9 +298,9 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		 * using some clear-left declarations.
 		 */
 		function get_download_class( $download_size = 'normal' ) {
-			global $ss_settings, $ss_framework;
+			global $ss_settings, $ss_framework, $ss_layout;
 
-			$content_width 	= Shoestrap_Layout::content_width_px();
+			$content_width 	= $ss_layout::content_width_px();
 			$breakpoint 	= $ss_settings['screen_tablet'];
 
 			$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 4 ) );

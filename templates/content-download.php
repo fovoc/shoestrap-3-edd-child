@@ -1,11 +1,11 @@
 <?php
 
-global $post, $ss_framework, $ss_settings, $ss_edd;
+global $post, $ss_framework, $ss_settings, $ss_edd, $ss_layout;
 
 $style          = $ss_settings['shoestrap_edd_box_style'];
 $download_size  = $ss_settings['shoestrap_edd_products_width'];
 $show_excerpt   = $ss_settings['shoestrap_edd_show_text_in_lists'];
-$content_width 	= Shoestrap_Layout::content_width_px( false );
+$content_width 	= $ss_layout->content_width_px( false );
 $breakpoint     = $ss_settings['screen_tablet'];
 $show_excerpt   = $ss_settings['shoestrap_edd_show_text_in_lists'];
 $in_cart        = '';
