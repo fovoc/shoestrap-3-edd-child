@@ -140,3 +140,64 @@ function ss_edd_checkout_tax_fields() {
 }
 remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_tax_fields', 999 );
 add_action( 'edd_purchase_form_after_cc_form', 'ss_edd_checkout_tax_fields', 999 );
+
+/**
+ * Renders the payment mode form by getting all the enabled payment gateways and
+ * outputting them as radio buttons for the user to choose the payment gateway. If
+ * a default payment gateway has been chosen from the EDD Settings, it will be
+ * automatically selected.
+ *
+ * @since 1.2.2
+ * @return void
+ */
+function edd_payment_mode_select() {
+	global $ss_framework;
+	$input_class = $ss_framework->form_input_classes();
+	if ( ! empty( $input_class ) ) {
+		$input_class = ' ' . $input_class;
+	} else {
+		$input_class = null;
+	}
+
+	$gateways = edd_get_enabled_payment_gateways();
+	$page_URL = edd_get_current_page_url();
+	do_action('edd_payment_mode_top'); ?>
+	<?php if( ! edd_is_ajax_enabled() ) { ?>
+	<form id="edd_payment_mode" action="<?php echo $page_URL; ?>" method="GET">
+	<?php } ?>
+		<fieldset id="edd_payment_mode_select">
+			<?php do_action( 'edd_payment_mode_before_gateways_wrap' ); ?>
+			<div id="edd-payment-mode-wrap">
+				<span class="edd-payment-mode-label"><?php _e( 'Select Payment Method', 'edd' ); ?></span><br/>
+				<?php
+
+				do_action( 'edd_payment_mode_before_gateways' );
+
+				foreach ( $gateways as $gateway_id => $gateway ) :
+					$checked = checked( $gateway_id, edd_get_default_gateway(), false );
+					$checked_class = $checked ? ' edd-gateway-option-selected' : '';
+					echo '<label for="edd-gateway-' . esc_attr( $gateway_id ) . '" class="edd-gateway-option' . $checked_class . '" id="edd-gateway-option-' . esc_attr( $gateway_id ) . '">';
+						echo '<input type="radio" name="payment-mode" class="' . $input_class . 'edd-gateway" id="edd-gateway-' . esc_attr( $gateway_id ) . '" value="' . esc_attr( $gateway_id ) . '"' . $checked . '>' . esc_html( $gateway['checkout_label'] );
+					echo '</label>';
+				endforeach;
+
+				do_action( 'edd_payment_mode_after_gateways' );
+
+				?>
+			</div>
+			<?php do_action( 'edd_payment_mode_after_gateways_wrap' ); ?>
+		</fieldset>
+		<fieldset id="edd_payment_mode_submit" class="edd-no-js">
+			<p id="edd-next-submit-wrap">
+				<?php echo edd_checkout_button_next(); ?>
+			</p>
+		</fieldset>
+	<?php if( ! edd_is_ajax_enabled() ) { ?>
+	</form>
+	<?php } ?>
+	<div id="edd_purchase_form_wrap"></div><!-- the checkout fields are loaded into this-->
+	<?php do_action('edd_payment_mode_bottom');
+}
+remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
+add_action( 'edd_payment_mode_select', 'ss_edd_payment_mode_select' );
+
