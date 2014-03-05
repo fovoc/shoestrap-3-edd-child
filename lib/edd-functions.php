@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_action( 'edd_purchase_form_login_fields', 'edd_get_login_fields' );
-			add_action( 'edd_purchase_form_login_fields', array( $this, 'get_login_fields' ) );
-
 			remove_action( 'edd_checkout_form_top', 'edd_discount_field', -1 );
 			add_action( 'edd_checkout_form_top', array( $this, 'discount_field' ), -1 );
 
@@ -317,46 +314,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			}
 
 			return $class;
-		}
-
-		/**
-		 * Gets the login fields for the login form on the checkout. This function hooks
-		 * on the edd_purchase_form_login_fields to display the login form if a user already
-		 * had an account.
-		 *
-		 * @since 1.0
-		 * @return string
-		 */
-		function get_login_fields() {
-			ob_start(); ?>
-
-			<fieldset id="edd_login_fields">
-				<div class="form-group" id="edd-new-account-wrap">
-					<a href="<?php echo remove_query_arg('login'); ?>" class="edd_checkout_register_login btn btn-success btn-lg btn-block" data-action="checkout_register">
-						<?php _e( 'Need to create an account?', 'edd' ); ?>
-						<?php _e( 'Register', 'edd' ); if(!edd_no_guest_checkout()) { echo ' ' . __( 'or checkout as a guest.', 'edd' ); } ?>
-					</a>
-				</div>
-				<?php do_action('edd_checkout_login_fields_before'); ?>
-
-				<div class="form-group" id="edd-user-login-wrap">
-					<label class="edd-label control-label col-md-3" for="edd-username"><?php _e( 'Username', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input class="form-control <?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="text" name="edd_user_login" id="edd_user_login" value="" placeholder="<?php _e( 'Your username', 'edd' ); ?>"/>
-					</div>
-				</div>
-
-				<div id="edd-user-pass-wrap" class="edd_login_password form-group">
-					<label class="edd-label control-label col-md-3" for="edd-password"><?php _e( 'Password', 'edd' ); ?></label>
-					<div class="col-md-9">
-						<input class="form-control <?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="password" name="edd_user_pass" id="edd_user_pass" placeholder="<?php _e( 'Your password', 'edd' ); ?>"/>
-						<input type="hidden" name="edd-purchase-var" value="needs-to-login"/>
-					</div>
-				</div>
-
-				<?php do_action('edd_checkout_login_fields_after'); ?>
-			</fieldset><!--end #edd_login_fields-->
-			<?php echo ob_get_clean();
 		}
 
 		/**

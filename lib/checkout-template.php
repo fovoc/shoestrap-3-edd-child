@@ -432,3 +432,55 @@ function ss_edd_get_register_fields() {
 }
 remove_action( 'edd_purchase_form_register_fields', 'edd_get_register_fields' );
 add_action( 'edd_purchase_form_register_fields', 'ss_edd_get_register_fields' );
+
+/**
+ * Gets the login fields for the login form on the checkout. This function hooks
+ * on the edd_purchase_form_login_fields to display the login form if a user already
+ * had an account.
+ *
+ * @since 1.0
+ * @return string
+ */
+function ss_edd_get_login_fields() {
+	global $edd_options;
+	global $ss_framework;
+
+	$input_class = $ss_framework->form_input_classes();
+	if ( ! empty( $input_class ) ) {
+		$input_class = $input_class . ' ';
+	} else {
+		$input_class = null;
+	}
+
+	$color = isset( $edd_options[ 'checkout_color' ] ) ? $edd_options[ 'checkout_color' ] : 'gray';
+	$color = ( $color == 'inherit' ) ? '' : $color;
+	$style = isset( $edd_options[ 'button_style' ] ) ? $edd_options[ 'button_style' ] : 'button';
+
+	ob_start(); ?>
+		<fieldset id="edd_login_fields">
+			<p id="edd-new-account-wrap">
+				<?php _e( 'Need to create an account?', 'edd' ); ?>
+				<a href="<?php echo remove_query_arg('login'); ?>" class="edd_checkout_register_login" data-action="checkout_register">
+					<?php _e( 'Register', 'edd' ); if(!edd_no_guest_checkout()) { echo ' ' . __( 'or checkout as a guest.', 'edd' ); } ?>
+				</a>
+			</p>
+			<?php do_action('edd_checkout_login_fields_before'); ?>
+			<p id="edd-user-login-wrap">
+				<label class="edd-label" for="edd-username"><?php _e( 'Username', 'edd' ); ?></label>
+				<input class="<?php echo $input_class; ?><?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="text" name="edd_user_login" id="edd_user_login" value="" placeholder="<?php _e( 'Your username', 'edd' ); ?>"/>
+			</p>
+			<p id="edd-user-pass-wrap" class="edd_login_password">
+				<label class="edd-label" for="edd-password"><?php _e( 'Password', 'edd' ); ?></label>
+				<input class="<?php echo $input_class; ?><?php if(edd_no_guest_checkout()) { echo 'required '; } ?>edd-input" type="password" name="edd_user_pass" id="edd_user_pass" placeholder="<?php _e( 'Your password', 'edd' ); ?>"/>
+				<input type="hidden" name="edd-purchase-var" value="needs-to-login"/>
+			</p>
+			<p id="edd-user-login-submit">
+				<input type="submit" class="<?php echo $ss_framework->button_classes( 'primary', 'medium', null, 'edd-submit button' . $color ); ?>" name="edd_login_submit" value="<?php _e( 'Login', 'edd' ); ?>"/>
+			</p>
+			<?php do_action('edd_checkout_login_fields_after'); ?>
+		</fieldset><!--end #edd_login_fields-->
+	<?php
+	echo ob_get_clean();
+}
+remove_action( 'edd_purchase_form_login_fields', 'edd_get_login_fields' );
+add_action( 'edd_purchase_form_login_fields', 'ss_edd_get_login_fields' );
