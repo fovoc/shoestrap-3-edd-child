@@ -20,38 +20,41 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-	if ( is_singular( 'download' ) ) :
-		$cache = wp_cache_get( 'widget_shoestrap_edd', 'widget' );
-		if ( !is_array( $cache ) ) :
-			$cache = array();
-		endif;
+		global $post, $ss_edd;
 
-		if ( !isset( $args['widget_id'] ) ) :
-			$args['widget_id'] = null;
-		endif;
+		if ( is_singular( 'download' ) ) {
+			$cache = wp_cache_get( 'widget_shoestrap_edd', 'widget' );
 
-		if ( isset( $cache[$args['widget_id']] ) ) :
-			echo $cache[$args['widget_id']];
-			return;
-		endif;
+			if ( ! is_array( $cache ) ) {
+				$cache = array();
+			}
+
+			if ( ! isset( $args['widget_id'] ) ) {
+				$args['widget_id'] = null;
+			}
+
+			if ( isset( $cache[$args['widget_id']] ) ) {
+				echo $cache[$args['widget_id']];
+			}
+		}
 
 		ob_start();
+
 		extract($args, EXTR_SKIP);
 
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Product Details', 'shoestrap_edd' ) : $instance['title'], $instance, $this->id_base );
-		foreach( $this->fields as $name => $label ) :
-			if ( !isset( $instance[$name] ) ) :
+
+		foreach( $this->fields as $name => $label ) {
+			if ( ! isset( $instance[$name] ) ) {
 				$instance[$name] = '';
-			endif;
-		endforeach;
+			}
+		}
 
 		echo $before_widget;
 
-		if ( $title ) :
+		if ( $title ) {
 			echo $before_title, $title, $after_title;
-		endif;
-
-		global $post;
+		}
 
 		$button_args = array(
 			'download_id' => $post->ID,
@@ -63,10 +66,10 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 			'class'       => 'btn btn-danger btn-block btn-lg edd-submit'
 		);
 
-		shoestrap_edd_price();	
+		$ss_edd->price();
 
-		echo edd_get_purchase_link( $button_args );
-		?>
+		echo edd_get_purchase_link( $button_args ); ?>
+
 		<table class="table table-striped table-bordered" style="margin-top: 2em;">
 			<?php
 			// Number of Downloads
@@ -100,6 +103,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 					</tr>
 				<?php endif; ?>
 			<?php endif; ?>
+
 			<?php
 			// Software Specs
 			?>
@@ -189,7 +193,6 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 		echo $after_widget;
 		$cache[$args['widget_id']] = ob_get_flush();
 		wp_cache_set( 'widget_shoestrap_edd', $cache, 'widget' );
-	endif;
 	}
 
 	function update( $new_instance, $old_instance ) {
@@ -197,9 +200,10 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 		$this->flush_widget_cache();
 		$alloptions = wp_cache_get( 'alloptions', 'options' );
 
-		if ( isset( $alloptions['widget_shoestrap_edd'] ) ) :
+		if ( isset( $alloptions['widget_shoestrap_edd'] ) ) {
 			delete_option('widget_shoestrap_edd');
-		endif;
+		}
+
 		return $instance;
 	}
 
@@ -228,13 +232,16 @@ class shoestrap_edd_mini_cart_widget extends WP_Widget {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
 
-		global $post, $edd_options, $ss_framework;
+		global $post, $edd_options, $ss_framework, $ss_edd;
 
 		echo $before_widget;
+
 		if ( $title ) {
 			echo $before_title . $title . $after_title;
 		}
-		shoestrap_edd_mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'primary' ), $ss_framework->button_classes( 'danger' ), null );
+
+		$ss_edd->mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'primary' ), $ss_framework->button_classes( 'danger' ), null );
+
 		echo $after_widget;
 	}
 
@@ -248,8 +255,12 @@ class shoestrap_edd_mini_cart_widget extends WP_Widget {
 
 	/** @see WP_Widget::form */
 	function form( $instance ) {
-		$title = isset( $instance[ 'title' ] ) ? esc_attr( $instance[ 'title' ] ) : '';
-		?>
+
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = esc_attr( $instance[ 'title' ] );
+		} else {
+			$title = '';
+		} ?>
 		<p>
        		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'edd' ); ?></label>
      		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>"

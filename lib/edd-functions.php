@@ -1114,6 +1114,7 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			endif;
 		}
 	}
+	global $ss_edd;
 	$ss_edd = new Shoestrap_EDD();
 }
 
