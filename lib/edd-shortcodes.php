@@ -57,7 +57,7 @@ add_shortcode( 'download_discounts', 'ss_edd_discounts_shortcode' );
  * @uses edd_login_form()
  * @return string
  */
-function edd_login_form_shortcode( $atts, $content = null ) {
+function ss_edd_login_form_shortcode( $atts, $content = null ) {
 	extract( shortcode_atts( array(
 			'redirect' => '',
 		), $atts, 'edd_login' )

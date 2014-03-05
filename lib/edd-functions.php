@@ -28,13 +28,9 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( $ss_settings['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) {
 				add_action( 'shoestrap_index_begin', array( $this, 'helper_actions_index_begin' ), 30 );
 				add_action( 'shoestrap_index_end', array( $this, 'helper_actions_index_end' ) );
-				add_action( 'shoestrap_content_override', 'shoestrap_edd_helper_actions_content_override' );
 			}
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
-
-			remove_action( 'edd_purchase_form_before_submit', 'edd_checkout_final_total', 999 );
-			add_action( 'edd_purchase_form_before_submit', array( $this, 'checkout_final_total' ), 999 );
 
 			add_filter( 'pre_get_posts', array( $this, 'downloads_on_homepage' ) );
 			add_action( 'shoestrap_inside_nav_begin', array( $this, 'add_minicart_to_navbar' ) );
@@ -310,45 +306,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			return $class;
 		}
 
-		/**
-		 * Renders the Next button on the Checkout
-		 *
-		 * @since 1.2
-		 * @global $edd_options Array of all the EDD Options
-		 * @return string
-		 */
-		function checkout_button_next() {
-			global $edd_options;
-
-			ob_start(); ?>
-
-			<input type="hidden" name="edd_action" value="gateway_select" />
-			<input type="hidden" name="page_id" value="<?php echo absint( $edd_options['purchase_page'] ); ?>"/>
-			<input type="submit" name="gateway_submit" id="edd_next_button" class="edd-submit btn btn-primary" value="<?php _e( 'Next', 'edd' ); ?>"/>
-			<?php return apply_filters( 'edd_checkout_button_next', ob_get_clean() );
-		}
-
-		/**
-		 * Renders the Purchase button on the Checkout
-		 *
-		 * @since 1.2
-		 * @global $edd_options Array of all the EDD Options
-		 * @return string
-		 */
-		function checkout_button_purchase() {
-			global $edd_options;
-			$color = isset( $edd_options[ 'checkout_color' ] ) ? $edd_options[ 'checkout_color' ] : 'gray';
-
-			if ( edd_get_cart_total() )
-				$complete_purchase = ! empty( $edd_options['checkout_label'] ) ? $edd_options['checkout_label'] : __( 'Purchase', 'edd' );
-			else
-				$complete_purchase = ! empty( $edd_options['checkout_label'] ) ? $edd_options['checkout_label'] : __( 'Free Download', 'edd' );
-
-			ob_start(); ?>
-			<input type="submit" class="edd-submit btn btn-primary btn-block btn-lg" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
-			<?php return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
-		}
-
 		function add_minicart_to_navbar() {
 			if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) :
 				global $ss_framework;
@@ -358,6 +315,62 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 				</div>
 			<?php
 			endif;
+		}
+
+		/*
+		 * Custom function to display prices
+		 */
+		function price( $el = 'h2' ) {
+			// find if there's a ZERO price in variable pricing
+			$zero_price = 0;
+			if ( edd_has_variable_prices( get_the_ID() ) == 1 ) {
+				foreach ( edd_get_variable_prices( get_the_ID() ) as $key => $price ) {
+					if ( esc_html( $price[ 'amount' ] ) == '0' ) {
+						$zero_price = 1;
+					}
+				}
+			}
+			
+			$coming_soon = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon', true ) : '';
+			$coming_soon_text = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon_text', true ) : '';
+			$element = '<' . $el . ' itemprop="price" class="edd_price">';
+
+			echo $element;
+
+			if ( $coming_soon ) :
+				if ( $coming_soon_text )
+					echo $coming_soon_text;
+				else
+					echo __( 'Coming soon', 'shoestrap-edd' );
+
+			elseif ( '0' == edd_get_download_price( get_the_ID() ) && !edd_has_variable_prices( get_the_ID() ) ) :
+				echo __( 'Free', 'shoestrap-edd' );
+				echo '<span class="hidden price">0</span>';
+
+			elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
+				_e( 'From Free', 'shoestrap_edd' );
+				echo '<span class="hidden price">0</span>';
+
+			elseif ( edd_has_variable_prices( get_the_ID() ) ) :
+				_e( 'From ', 'shoestrap_edd' );
+				edd_price( get_the_ID() );
+
+				$prices = edd_get_variable_prices( get_the_ID() );
+				// Return the lowest price
+				$price_float = 0;
+		      foreach ($prices as $key => $value)
+		        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
+		          $price_float = (float)$prices[ $key ]['amount'];
+		          $price = edd_sanitize_amount( $price_float );
+				echo '<span class="hidden price">'; echo $price; echo '</span>';
+
+			else :
+				edd_price( get_the_ID() );
+				echo '<span class="hidden price">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
+
+			endif;
+
+			echo '</' . $el . '>';
 		}
 	}
 	global $ss_edd;

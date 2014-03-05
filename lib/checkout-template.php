@@ -158,7 +158,7 @@ add_action( 'edd_purchase_form_after_cc_form', 'ss_edd_checkout_tax_fields', 999
  * @since 1.2.2
  * @return void
  */
-function edd_payment_mode_select() {
+function ss_edd_payment_mode_select() {
 	global $ss_framework;
 
 	$input_class = $ss_framework->form_input_classes();
@@ -198,7 +198,7 @@ function edd_payment_mode_select() {
 		</fieldset>
 		<fieldset id="edd_payment_mode_submit" class="edd-no-js">
 			<p id="edd-next-submit-wrap">
-				<?php echo edd_checkout_button_next(); ?>
+				<?php echo ss_edd_checkout_button_next(); ?>
 			</p>
 		</fieldset>
 	<?php if( ! edd_is_ajax_enabled() ) { ?>
@@ -475,7 +475,7 @@ function ss_edd_get_login_fields() {
 				<input type="hidden" name="edd-purchase-var" value="needs-to-login"/>
 			</p>
 			<p id="edd-user-login-submit">
-				<input type="submit" class="<?php echo $ss_framework->button_classes( 'primary', 'medium', null, 'edd-submit button' . $color ); ?>" name="edd_login_submit" value="<?php _e( 'Login', 'edd' ); ?>"/>
+				<input type="submit" class="<?php echo $ss_framework->button_classes( 'primary', 'medium', null, 'edd-submit button ' . $color ); ?>" name="edd_login_submit" value="<?php _e( 'Login', 'edd' ); ?>"/>
 			</p>
 			<?php do_action('edd_checkout_login_fields_after'); ?>
 		</fieldset><!--end #edd_login_fields-->
@@ -552,3 +552,69 @@ function ss_edd_checkout_submit() {
 }
 remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_submit', 9999 );
 add_action( 'edd_purchase_form_after_cc_form', 'ss_edd_checkout_submit', 9999 );
+
+/**
+ * Renders the Next button on the Checkout
+ *
+ * @since 1.2
+ * @global $edd_options Array of all the EDD Options
+ * @return string
+ */
+function ss_edd_checkout_button_next() {
+	global $edd_options;
+	global $ss_framework;
+
+	$input_class = $ss_framework->form_input_classes();
+	if ( ! empty( $input_class ) ) {
+		$input_class = $input_class . ' ';
+	} else {
+		$input_class = null;
+	}
+
+	$color = isset( $edd_options[ 'checkout_color' ] ) ? $edd_options[ 'checkout_color' ] : 'blue';
+	$color = ( $color == 'inherit' ) ? '' : $color;
+	$style = isset( $edd_options[ 'button_style' ] ) ? $edd_options[ 'button_style' ] : 'button';
+
+	ob_start();
+?>
+	<input type="hidden" name="edd_action" value="gateway_select" />
+	<input type="hidden" name="page_id" value="<?php echo absint( $edd_options['purchase_page'] ); ?>"/>
+	<input type="submit" name="gateway_submit" id="edd_next_button" class="<?php echo $input_class; ?>edd-submit <?php echo $color; ?> <?php echo $style; ?>" value="<?php _e( 'Next', 'edd' ); ?>"/>
+<?php
+	return apply_filters( 'edd_checkout_button_next', ob_get_clean() );
+}
+
+/**
+ * Renders the Purchase button on the Checkout
+ *
+ * @since 1.2
+ * @global $edd_options Array of all the EDD Options
+ * @return string
+ */
+function ss_edd_checkout_button_purchase() {
+	global $edd_options;
+	global $ss_framework;
+
+	$input_class = $ss_framework->form_input_classes();
+	if ( ! empty( $input_class ) ) {
+		$input_class = $input_class . ' ';
+	} else {
+		$input_class = null;
+	}
+
+	$color = isset( $edd_options[ 'checkout_color' ] ) ? $edd_options[ 'checkout_color' ] : 'blue';
+	$color = ( $color == 'inherit' ) ? '' : $color;
+	$style = isset( $edd_options[ 'button_style' ] ) ? $edd_options[ 'button_style' ] : 'button';
+
+	if ( edd_get_cart_total() ) {
+		$complete_purchase = ! empty( $edd_options['checkout_label'] ) ? $edd_options['checkout_label'] : __( 'Purchase', 'edd' );
+	} else {
+		$complete_purchase = ! empty( $edd_options['checkout_label'] ) ? $edd_options['checkout_label'] : __( 'Free Download', 'edd' );
+	}
+
+	ob_start();
+?>
+	<input type="submit" class="<?php echo $ss_framework->button_classes( 'primary', 'medium', null, 'edd-submit ' . $style ); ?>" id="edd-purchase-button" name="edd-purchase" value="<?php echo $complete_purchase; ?>"/>
+<?php
+	return apply_filters( 'edd_checkout_button_purchase', ob_get_clean() );
+}
