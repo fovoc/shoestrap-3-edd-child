@@ -25,12 +25,7 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ), 99 );
 			add_action( 'shoestrap_index_begin', array( $this, 'isotope_templates' ), 9 );
-
-			// Add wrappers on downloads archive pages.
-			if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( $ss_settings['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) {
-				add_action( 'shoestrap_index_begin', array( $this, 'helper_actions_index_begin' ), 30 );
-				add_action( 'shoestrap_index_end', array( $this, 'helper_actions_index_end' ) );
-			}
+			add_action( 'shoestrap_index_begin', array( $this, 'helper_actions' ), 13 );
 
 			// Specify the defaults for purchase links.
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
@@ -48,6 +43,14 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			if ( class_exists( 'EDD_Software_Specs' ) ) {
 				global $EDD_Software_Specs;
 				remove_action( 'edd_after_download_content', array( $EDD_Software_Specs, 'specs' ), 30 );
+			}
+		}
+
+		function helper_actions() {
+			if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && is_front_page() ) ) {
+				add_action( 'shoestrap_index_begin', array( $this, 'helper_actions_index_begin' ) );
+				add_action( 'shoestrap_index_end', array( $this, 'helper_actions_index_end' ) );
+				add_action( 'shoestrap_content_override', array( $this, 'content_override' ) );
 			}
 		}
 
@@ -384,10 +387,11 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			echo '</' . $el . '>';
 		}
+
+		function content_override() {
+			get_template_part( 'templates/content-download' );
+		}
 	}
 	global $ss_edd;
 	$ss_edd = new Shoestrap_EDD();
 }
-
-
-function shoestrap_edd_helper_actions_content_override() { get_template_part( 'templates/content-download' ); }

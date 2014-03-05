@@ -75,7 +75,7 @@ if ( $terms && ! is_wp_error( $terms ) ) {
 
 <article itemscope itemtype="http://schema.org/Product" id="edd_download_<?php echo $post->ID; ?>" <?php post_class( array( $in_cart, $variable_priced, $sm_class, $md_class, $categories, $tags ) ); ?> >
 	<div class="equal">
-		<div class="<?php echo $ss_edd->_element_class(); ?>">
+		<div class="<?php echo $ss_edd->element_class(); ?>">
 			<?php
 				if ( $style != 'panel' ) : ?>
 					<div class="download-image">
