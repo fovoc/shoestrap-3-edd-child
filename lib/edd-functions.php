@@ -11,28 +11,34 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			// Dequeue default EDD styles
 			remove_action( 'wp_enqueue_scripts', 'edd_register_styles' );
 
-			// Add the custom variables pricing dropdown before the purchase link
-			// and remove the default radio boxes.
+			// Add the custom variables pricing dropdown before the purchase link and remove the default radio boxes.
 			remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
 			add_action( 'edd_purchase_link_top', array( $this, 'purchase_variable_pricing' ), 10, 1 );
 
+			// If we're displaying products on the frontpage, remove the "Latest Posts" title.
 			if ( ( $ss_settings['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) {
 				add_action( 'shoestrap_page_header_override', 'shoestrap_blank' );
 			}
 
+			// Add necessary assets
 			add_action( 'wp_head', array( $this, 'assets' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ), 99 );
 			add_action( 'shoestrap_index_begin', array( $this, 'isotope_templates' ), 9 );
 
+			// Add wrappers on downloads archive pages.
 			if ( is_post_type_archive( 'download' ) || is_tax( 'download_category' ) || is_tax( 'download_tag' ) || ( $ss_settings['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) {
 				add_action( 'shoestrap_index_begin', array( $this, 'helper_actions_index_begin' ), 30 );
 				add_action( 'shoestrap_index_end', array( $this, 'helper_actions_index_end' ) );
 			}
 
+			// Specify the defaults for purchase links.
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
+			// Change the query for the frontpage
 			add_filter( 'pre_get_posts', array( $this, 'downloads_on_homepage' ) );
+
+			// Add the minicart to the navbar
 			add_action( 'shoestrap_inside_nav_begin', array( $this, 'add_minicart_to_navbar' ) );
 			/*
 			 * Remove EDD Specs for the bottom of the content.
@@ -85,10 +91,12 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		 * Load our custom scripts
 		 */
 		function load_scripts() {
+			global $ss_settings;
+
 			wp_enqueue_script( 'shoestrap_script', get_stylesheet_directory_uri() . '/assets/js/script.js' );
 			wp_localize_script( 'shoestrap_script', 'shoestrap_script_vars', array(
-					'equalheights'   => shoestrap_getVariable( 'shoestrap_edd_equalheights' ),
-					'infinitescroll' => shoestrap_getVariable( 'shoestrap_edd_infinite_scroll' ),
+					'equalheights'   => $ss_settings['shoestrap_edd_equalheights'],
+					'infinitescroll' => $ss_settings['shoestrap_edd_infinite_scroll'],
 					'no_filters'     =>  __( 'No filters', 'shoestrap_edd' ),
 					'msgText'        => "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_loading_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_loading_text' ) ) . "<span></div></div>",
 					'finishedMsg'    => "<div class='progress progress-striped active' style='width:220px;margin-bottom:0px;'><div class='progress-bar progress-bar-" . __( shoestrap_getVariable( 'shoestrap_edd_end_color' ) ) . "' style='width: 100%;'><span class='edd_bar_text'>" . __( shoestrap_getVariable( 'shoestrap_edd_end_text' ) ) . "<span></div></div>"
@@ -238,9 +246,9 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		 * A mini cart. Simply displays number of products and a link.
 		 */
 		function mini_shopping_cart( $global_btn_class = 'button', $size_class = 'small', $btn_class = 'primary', $price_class = 'danger', $dropdown = true ) {
-			global $edd_options, $ss_framework;
+			global $edd_options, $ss_framework, $ss_settings;
 
-			$label = shoestrap_getVariable( 'shoestrap_edd_minicart_label' );
+			$label = $ss_settings['shoestrap_edd_minicart_label'];
 
 			ob_start();
 
@@ -271,7 +279,8 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		 * on the Frontpage instead of the list of posts.
 		 */
 		function downloads_on_homepage( $query ) {
-		    if ( shoestrap_getVariable( 'shoestrap_edd_frontpage' ) == 1 && $query->is_home() && $query->is_main_query() ) {
+			global $ss_settings;
+		    if ( $ss_settings['shoestrap_edd_frontpage'] == 1 && $query->is_home() && $query->is_main_query() ) {
 		        $query->set( 'post_type', array( 'download' ) );
 		    }
 		}
@@ -286,20 +295,22 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		 * using some clear-left declarations.
 		 */
 		function get_download_class( $download_size = 'normal' ) {
-			$content_width 	= shoestrap_content_width_px();
-			$breakpoint 	= shoestrap_getVariable( 'screen_tablet' );
+			global $ss_settings, $ss_framework;
 
-			$class = 'col-sm-6 col-md-4';
+			$content_width 	= Shoestrap_Layout::content_width_px();
+			$breakpoint 	= $ss_settings['screen_tablet'];
+
+			$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 4 ) );
 
 			if ( $content_width < $breakpoint ) {
 				if ( $download_size == 'wide' ) {
-					$class = 'col-sm-12 col-md-6';
+					$class = $ss_framework->column_classes( array( 'tablet' => 12, 'medium' => 6 ) );
 				}
 			} else {
 				if ( $download_size == 'narrow' ) {
-					$class = 'col-sm-6 col-md-3';
+					$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 3 ) );
 				} elseif ( $download_size == 'wide' ) {
-					$class = 'col-sm-6';
+					$class = $ss_framework->column_classes( array( 'tablet' => 6 ) );
 				}
 			}
 
@@ -307,9 +318,10 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		}
 
 		function add_minicart_to_navbar() {
-			if ( shoestrap_getVariable( 'shoestrap_edd_navbar_cart' ) == 1 ) :
-				global $ss_framework;
-			?>
+			global $ss_settings;
+			global $ss_framework;
+
+			if ( $ss_settings['shoestrap_edd_navbar_cart'] == 1 ) : ?>
 				<div class="pull-right">
 					<?php $this->mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'success' ), $ss_framework->button_classes( 'default' ), null ); ?>
 				</div>
