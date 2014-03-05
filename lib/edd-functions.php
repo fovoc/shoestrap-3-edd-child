@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_action( 'edd_cc_form', 'edd_get_cc_form' );
-			add_action( 'edd_cc_form', array( $this, 'get_cc_form' ) );
-
 			remove_action( 'edd_purchase_form_register_fields', 'edd_get_register_fields' );
 			add_action( 'edd_purchase_form_register_fields', array( $this, 'get_register_fields' ) );
 
@@ -323,91 +320,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			}
 
 			return $class;
-		}
-
-		/**
-		 * Renders the credit card info form.
-		 *
-		 * @since 1.0
-		 * @return void
-		 */
-		function get_cc_form() {
-			ob_start(); ?>
-
-			<?php do_action( 'edd_before_cc_fields' ); ?>
-
-			<fieldset id="edd_cc_fields" class="edd-do-validate">
-				<legend><?php _e( 'Credit Card Info', 'edd' ); ?></legend>
-				<?php if( is_ssl() ) : ?>
-					<div class="alert alert-success" id="edd_secure_site_wrapper">
-						<h3><i class="el-icon-lock"></i><?php _e( 'This is a secure SSL encrypted payment.', 'edd' ); ?></h3>>
-					</div>
-				<?php endif; ?>
-				<div class="form-group" id="edd-card-number-wrap">
-					<label class="col-md-3 control-label edd-label">
-						<?php _e( 'Card Number', 'edd' ); ?>
-						<span class="edd-required-indicator">*</span>
-						<span class="card-type"></span>
-					</label>
-					<div class="col-md-9">
-						<small class="edd-description"><?php _e( 'The (typically) 16 digits on the front of your credit card.', 'edd' ); ?></small>
-						<input type="text" autocomplete="off" name="card_number" class="form-control card-number edd-input required" placeholder="<?php _e( 'Card number', 'edd' ); ?>" />
-					</div>
-				</div>
-
-				<div class="form-group" id="edd-card-cvc-wrap">
-					<label class="edd-label col-md-3 control-label">
-						<?php _e( 'CVC', 'edd' ); ?>
-						<span class="edd-required-indicator">*</span>
-					</label>
-					<div class="col-md-9">
-						<small class="edd-description"><?php _e( 'The 3 digit (back) or 4 digit (front) value on your card.', 'edd' ); ?></small>
-						<input type="text" size="4" autocomplete="off" name="card_cvc" class="form-control card-cvc edd-input required" placeholder="<?php _e( 'Security code', 'edd' ); ?>" />
-					</div>
-				</div>
-
-				<div class="form-group" id="edd-card-name-wrap">
-					<label class="edd-label col-md-3 control-label">
-						<?php _e( 'Name on the Card', 'edd' ); ?>
-						<span class="edd-required-indicator">*</span>
-					</label>
-					<div class="col-md-9">
-						<small class="edd-description"><?php _e( 'The name printed on the front of your credit card.', 'edd' ); ?></small>
-						<input type="text" autocomplete="off" name="card_name" class="form-control card-name edd-input required" placeholder="<?php _e( 'Card name', 'edd' ); ?>" />
-					</div>
-				</div>
-
-				<?php do_action( 'edd_before_cc_expiration' ); ?>
-
-				<div class="form-group card-expiration">
-					<label class="col-md-3 control-label edd-label">
-						<?php _e( 'Expiration (MM/YY)', 'edd' ); ?>
-						<span class="edd-required-indicator">*</span>
-					</label>
-					<div class="col-md-9">
-						<small class="edd-description"><?php _e( 'The date your credit card expires, typically on the front of the card.', 'edd' ); ?></small>
-						<div class="row">
-							<div class="col-md-6">
-								<small class="edd-description">Month</small>
-								<select name="card_exp_month" class="form-control card-expiry-month edd-select edd-select-small required">
-									<?php for( $i = 1; $i <= 12; $i++ ) { echo '<option value="' . $i . '">' . sprintf ('%02d', $i ) . '</option>'; } ?>
-								</select>
-							</div>
-							<div class="col-md-6">
-								<small class="edd-description">Year</small>
-								<select name="card_exp_year" class="form-control card-expiry-year edd-select edd-select-small required">
-									<?php for( $i = date('Y'); $i <= date('Y') + 10; $i++ ) { echo '<option value="' . $i . '">' . substr( $i, 2 ) . '</option>'; } ?>
-								</select>
-							</div>
-						</div>
-					</div>
-				</div>
-				<?php do_action( 'edd_after_cc_expiration' ); ?>
-			</fieldset>
-			<?php
-			do_action( 'edd_after_cc_fields' );
-
-			echo ob_get_clean();
 		}
 
 		/**
