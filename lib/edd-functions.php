@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
-			add_action( 'edd_purchase_form_after_user_info', array( $this, 'user_info_fields' ) );
-
 			remove_action( 'edd_cc_form', 'edd_get_cc_form' );
 			add_action( 'edd_cc_form', array( $this, 'get_cc_form' ) );
 
@@ -285,70 +282,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 				</a>
 			</div>
 			<?php echo ob_get_clean();
-		}
-
-		/**
-		 * Shows the User Info fields in the Personal Info box, more fields can be added
-		 * via the hooks provided.
-		 *
-		 * @since 1.3.3
-		 * @return void
-		 */
-		function user_info_fields() {
-			global $ss_framework;
-			if ( is_user_logged_in() )
-				$user_data = get_userdata( get_current_user_id() );
-			?>
-			<fieldset id="edd_checkout_user_info">
-				<legend><?php echo apply_filters( 'edd_checkout_personal_info_text', __( 'Personal Info', 'edd' ) ); ?></legend>
-				<?php do_action( 'edd_purchase_form_before_email' ); ?>
-
-				<div class="form-group" id="edd-email-wrap">
-					<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-email"' ); ?>
-						<?php _e( 'Email Address', 'edd' ); ?>
-						<?php if( edd_field_is_required( 'edd_email' ) ) { ?>
-							<span class="edd-required-indicator">*</span>
-						<?php } ?>
-					<?php echo $ss_framework->close_col( 'label' ); ?>
-
-					<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
-						<small class="edd-description"><?php _e( 'We will send the purchase receipt to this address.', 'edd' ); ?></small>
-						<input class="form-control edd-input required" type="email" name="edd_email" placeholder="<?php _e( 'Email address', 'edd' ); ?>" id="edd-email" value="<?php echo is_user_logged_in() ? $user_data->user_email : ''; ?>"/>
-					<?php echo $ss_framework->close_col( 'div' ); ?>
-				</div>
-
-				<?php do_action( 'edd_purchase_form_after_email' ); ?>
-
-				<div class="form-group" id="edd-first-name-wrap">
-					<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-first"' ); ?>
-						<?php _e( 'First Name', 'edd' ); ?>
-						<?php if( edd_field_is_required( 'edd_first' ) ) { ?>
-							<span class="edd-required-indicator">*</span>
-						<?php } ?>
-					<?php echo $ss_framework->close_col( 'label' ); ?>
-
-					<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
-						<small class="edd-description"><?php _e( 'We will use this to personalize your account experience.', 'edd' ); ?></small>>
-						<input class="form-control edd-input required" type="text" name="edd_first" placeholder="<?php _e( 'First Name', 'edd' ); ?>" id="edd-first" value="<?php echo is_user_logged_in() ? $user_data->first_name : ''; ?>"/>
-					<?php echo $ss_framework->close_col( 'div' ); ?>
-				</div>
-				<div class="form-group" id="edd-last-name-wrap">
-					<?php echo $ss_framework->open_col( 'label', array( 'medium' => 3 ), null, 'edd-label control-label', 'for="edd-last"' ); ?>
-						<?php _e( 'Last Name', 'edd' ); ?>
-						<?php if( edd_field_is_required( 'edd_last' ) ) { ?>
-							<span class="edd-required-indicator">*</span>
-						<?php } ?>
-					<?php echo $ss_framework->close_col( 'label' ); ?>
-					
-					<?php echo $ss_framework->open_col( 'div', array( 'medium' => 9 ) ); ?>
-						<small class="edd-description"><?php _e( 'We will use this as well to personalize your account experience.', 'edd' ); ?></small>>
-						<input class="form-control edd-input" type="text" name="edd_last" id="edd-last" placeholder="<?php _e( 'Last name', 'edd' ); ?>" value="<?php echo is_user_logged_in() ? $user_data->last_name : ''; ?>"/>
-					<?php echo $ss_framework->close_col( 'div' ); ?>
-				</div>
-
-				<?php do_action( 'edd_purchase_form_user_info' ); ?>
-			</fieldset>
-			<?php
 		}
 
 		/*
