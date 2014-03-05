@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
-			add_shortcode( 'download_discounts', array( $this, 'discounts_shortcode' ) );
-
 			remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
 			add_action( 'edd_payment_mode_select', array( $this, 'payment_mode_select' ) );
 
@@ -176,13 +173,14 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			$tags   = array();
 			$output = '';
 
-			while (have_posts()) : the_post();
+			while ( have_posts() ) {
+				the_post();
 				$terms = wp_get_post_terms( $post->ID, $vocabulary );
 
 				foreach ( $terms as $term ) {
 					$tags[] = $term->term_id;
 				}
-			endwhile;
+			}
 
 			$tags = array_unique( $tags );
 
@@ -299,40 +297,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 				</a>
 			</div>
 			<?php echo ob_get_clean();
-		}
-
-		/**
-		 * Discounts short code
-		 *
-		 * Displays a list of all the active discounts. The active discounts can be configured
-		 * from the Discount Codes admin screen.
-		 *
-		 * @param array $atts Shortcode attributes
-		 * @param string $content
-		 * @uses edd_get_discounts()
-		 * @return string $discounts_lists List of all the active discount codes
-		 */
-		function discounts_shortcode( $atts, $content = null ) {
-			$discounts = edd_get_discounts();
-
-			$discounts_list = '<ul id="edd_discounts_list" class="list-group">';
-
-			if ( ! empty( $discounts ) && edd_has_active_discounts() ) {
-				foreach ( $discounts as $discount ) {
-					if ( edd_is_discount_active( $discount->ID ) ) {
-						$discounts_list .= '<li class="edd_discount list-group-item">';
-						$discounts_list .= '<span class="edd_discount_name">' . edd_get_discount_code( $discount->ID ) . '</span>';
-						$discounts_list .= '<span class="edd_discount_amount pull-right label label-success">' . edd_format_discount_rate( edd_get_discount_type( $discount->ID ), edd_get_discount_amount( $discount->ID ) ) . '</span>';
-						$discounts_list .= '</li>';
-					}
-				}
-			} else {
-				$discounts_list .= '<li class="edd_discount list-group-item">' . __( 'No discounts found', 'edd' ) . '</li>';
-			}
-
-			$discounts_list .= '</ul>';
-
-			return $discounts_list;
 		}
 
 		/**
