@@ -325,62 +325,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			return $class;
 		}
 
-		/*
-		 * Custom function to display prices
-		 */
-		function price( $el = 'h2' ) {
-			// find if there's a ZERO price in variable pricing
-			$zero_price = 0;
-			if ( edd_has_variable_prices( get_the_ID() ) == 1 ) {
-				foreach ( edd_get_variable_prices( get_the_ID() ) as $key => $price ) {
-					if ( esc_html( $price[ 'amount' ] ) == '0' ) {
-						$zero_price = 1;
-					}
-				}
-			}
-			
-			$coming_soon = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon', true ) : '';
-			$coming_soon_text = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon_text', true ) : '';
-			$element = '<' . $el . ' itemprop="price" class="edd_price">';
-
-			echo $element;
-
-			if ( $coming_soon ) :
-				if ( $coming_soon_text )
-					echo $coming_soon_text;
-				else
-					echo __( 'Coming soon', 'shoestrap-edd' );
-
-			elseif ( '0' == edd_get_download_price( get_the_ID() ) && !edd_has_variable_prices( get_the_ID() ) ) :
-				echo __( 'Free', 'shoestrap-edd' );
-				echo '<span class="hidden price">0</span>';
-
-			elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
-				_e( 'From Free', 'shoestrap_edd' );
-				echo '<span class="hidden price">0</span>';
-
-			elseif ( edd_has_variable_prices( get_the_ID() ) ) :
-				_e( 'From ', 'shoestrap_edd' );
-				edd_price( get_the_ID() );
-
-				$prices = edd_get_variable_prices( get_the_ID() );
-				// Return the lowest price
-				$price_float = 0;
-		      foreach ($prices as $key => $value)
-		        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
-		          $price_float = (float)$prices[ $key ]['amount'];
-		          $price = edd_sanitize_amount( $price_float );
-				echo '<span class="hidden price">'; echo $price; echo '</span>';
-
-			else :
-				edd_price( get_the_ID() );
-				echo '<span class="hidden price">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
-
-			endif;
-
-			echo '</' . $el . '>';
-		}
-
 		/**
 		 * Renders the credit card info form.
 		 *
