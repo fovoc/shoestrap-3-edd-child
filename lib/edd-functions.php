@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
-			add_shortcode( 'edd_login', array( $this, 'login_form_shortcode' ) );
-
 			remove_action( 'edd_purchase_form_after_user_info', 'edd_user_info_fields' );
 			add_action( 'edd_purchase_form_after_user_info', array( $this, 'user_info_fields' ) );
 
@@ -288,25 +285,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 				</a>
 			</div>
 			<?php echo ob_get_clean();
-		}
-
-		/**
-		 * Login Shortcode
-		 *
-		 * Shows a login form allowing users to users to log in. This function simply
-		 * calls the edd_login_form function to display the login form.
-		 *
-		 * @param array $atts Shortcode attributes
-		 * @param string $content
-		 * @uses edd_login_form()
-		 * @return string
-		 */
-		function login_form_shortcode( $atts, $content = null ) {
-			extract( shortcode_atts( array(
-					'redirect' => '',
-				), $atts, 'edd_login' )
-			);
-			return $this->login_form( $redirect );
 		}
 
 		/**

@@ -44,3 +44,25 @@ function ss_edd_discounts_shortcode( $atts, $content = null ) {
 }
 remove_shortcode( 'download_discounts', 'edd_discounts_shortcode' );
 add_shortcode( 'download_discounts', 'ss_edd_discounts_shortcode' );
+
+/**
+ * Login Shortcode
+ *
+ * Shows a login form allowing users to users to log in. This function simply
+ * calls the edd_login_form function to display the login form.
+ *
+ * @since 1.0
+ * @param array $atts Shortcode attributes
+ * @param string $content
+ * @uses edd_login_form()
+ * @return string
+ */
+function edd_login_form_shortcode( $atts, $content = null ) {
+	extract( shortcode_atts( array(
+			'redirect' => '',
+		), $atts, 'edd_login' )
+	);
+	return ss_edd_login_form( $redirect );
+}
+remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
+add_shortcode( 'edd_login', 'ss_edd_login_form_shortcode' );
