@@ -33,9 +33,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 
 			add_filter( 'edd_purchase_link_defaults', array( $this, 'purchase_link_defaults' ) );
 
-			remove_action( 'edd_checkout_form_top', 'edd_discount_field', -1 );
-			add_action( 'edd_checkout_form_top', array( $this, 'discount_field' ), -1 );
-
 			remove_action( 'edd_purchase_form_before_submit', 'edd_checkout_final_total', 999 );
 			add_action( 'edd_purchase_form_before_submit', array( $this, 'checkout_final_total' ), 999 );
 
@@ -314,36 +311,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			}
 
 			return $class;
-		}
-
-		/**
-		 * Renders the Discount Code field which allows users to enter a discount code.
-		 * This field is only displayed if there are any active discounts on the site else
-		 * it's not displayed.
-		 *
-		 * @since 1.2.2
-		 * @return void
-		*/
-		function discount_field() {
-			if( ! isset( $_GET['payment-mode'] ) && count( edd_get_enabled_payment_gateways() ) > 1 && ! edd_is_ajax_enabled() )
-				return; // Only show once a payment method has been selected if ajax is disabled
-
-			if ( edd_has_active_discounts() && edd_get_cart_total() ) : ?>
-				<fieldset id="edd_discount_code">
-					<p id="edd_show_discount" style="display:none;">
-						<?php _e( 'Have a discount code?', 'edd' ); ?> <a href="#" class="edd_discount_link"><?php echo _x( 'Click to enter it', 'Entering a discount code', 'edd' ); ?></a>
-					</p>
-					<p id="edd-discount-code-wrap">
-						<label class="edd-label" for="edd-discount">
-							<?php _e( 'Discount', 'edd' ); ?>
-							<img src="<?php echo EDD_PLUGIN_URL; ?>assets/images/loading.gif" id="edd-discount-loader" style="display:none;"/>
-						</label>
-						<small class="edd-description"><?php _e( 'Enter a coupon code if you have one.', 'edd' ); ?></span>
-						<input class="edd-input form-control" type="text" id="edd-discount" name="edd-discount" placeholder="<?php _e( 'Enter discount', 'edd' ); ?>"/>
-					</p>
-				</fieldset>
-				<?php
-			endif;
 		}
 
 		/**
