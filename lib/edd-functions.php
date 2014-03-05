@@ -36,9 +36,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			remove_action( 'edd_payment_mode_select', 'edd_payment_mode_select' );
 			add_action( 'edd_payment_mode_select', array( $this, 'payment_mode_select' ) );
 
-			remove_action( 'edd_purchase_form_after_cc_form', 'edd_checkout_tax_fields', 999 );
-			add_action( 'edd_purchase_form_after_cc_form', array( $this, 'checkout_tax_fields' ), 999 );
-
 			remove_shortcode( 'edd_login', 'edd_login_form_shortcode' );
 			add_shortcode( 'edd_login', array( $this, 'login_form_shortcode' ) );
 
@@ -294,18 +291,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 				</a>
 			</div>
 			<?php echo ob_get_clean();
-		}
-
-		/**
-		 * Renders the billing address fields for cart taxation
-		 *
-		 * @since 1.6
-		 * @return void
-		 */
-		function checkout_tax_fields() {
-			if( edd_cart_needs_tax_address_fields() && edd_get_cart_total() ) {
-				$this->cc_address_fields();
-			}
 		}
 
 		/**
