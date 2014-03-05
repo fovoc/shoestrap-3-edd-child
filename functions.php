@@ -9,6 +9,7 @@ function shoestrap_edd_include_files() {
 	if ( class_exists( 'Easy_Digital_Downloads' ) ) {
 		require_once dirname( __FILE__ ) . '/lib/admin.php';
 		require_once dirname( __FILE__ ) . '/lib/edd-functions.php';
+		require_once dirname( __FILE__ ) . '/lib/template-functions.php';
 		require_once dirname( __FILE__ ) . '/lib/edd-shortcodes.php';
 		require_once dirname( __FILE__ ) . '/lib/edd-widgets.php';
 		require_once dirname( __FILE__ ) . '/lib/addons/edd-simple-shipping.php';
