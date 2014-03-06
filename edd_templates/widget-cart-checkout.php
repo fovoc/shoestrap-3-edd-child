@@ -1,2 +1,3 @@
-<li class="cart_item edd_subtotal list-group-item "><h4><?php echo __( 'Subtotal:', 'edd' ). " <span class='subtotal'>" . edd_currency_filter( edd_format_amount( edd_get_cart_amount( false ) ) ); ?></h4></li>
-<li class="cart_item edd_checkout list-group-item"><a class="btn btn-block btn-success" href="<?php echo edd_get_checkout_uri(); ?>"><?php _e( 'Checkout', 'edd' ); ?></a></li>
+<?php global $ss_framework; ?>
+<li class="cart_item edd_subtotal list-group-item "><h4><?php echo __( 'Subtotal:', 'edd' ). " <span class='subtotal'>" . edd_currency_filter( edd_format_amount( edd_get_cart_subtotal() ) ); ?></span></h4></li>
+<li class="cart_item edd_checkout list-group-item"><a class="<?php echo $ss_framework->button_classes( 'success' ); ?>" href="<?php echo edd_get_checkout_uri(); ?>"><?php _e( 'Checkout', 'edd' ); ?></a></li>

@@ -1,8 +1,5 @@
-<?php
-global $post;
-$tableclass = '';
-if ( edd_is_ajax_enabled() ) $tableclass = 'ajaxed'; ?>
-<table id="edd_checkout_cart" class="table table-striped table-responsive <?php echo $tableclass; ?>">
+<?php global $post; ?>
+<table id="edd_checkout_cart" class="table table-striped table-responsive <?php if ( edd_is_ajax_enabled() ) { echo ' ajaxed'; } ?>">
 	<thead>
 		<tr class="edd_cart_header_row">
 			<?php do_action( 'edd_checkout_table_header_first' ); ?>

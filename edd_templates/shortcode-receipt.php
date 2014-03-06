@@ -8,6 +8,7 @@ $payment   = get_post( $edd_receipt_args['id'] );
 $meta      = edd_get_payment_meta( $payment->ID );
 $cart      = edd_get_payment_meta_cart_details( $payment->ID, true );
 $user      = edd_get_payment_meta_user_info( $payment->ID );
+$email     = edd_get_payment_user_email( $payment->ID );
 $status    = edd_get_payment_status( $payment, true );
 ?>
 <table id="edd_purchase_receipt" class="table table-striped table-responsive table-bordered">
@@ -66,14 +67,7 @@ $status    = edd_get_payment_status( $payment, true );
 			<?php endif; ?>
 			<tr>
 				<td><strong><?php _e( 'Total Price', 'edd' ); ?>:</strong></td>
-				<td><?php
-
-					echo edd_payment_amount( $payment->ID );
-
-					if ( edd_use_taxes() && $edd_options['checkout_include_tax'] == 'yes' ) :
-						printf( ' ' . __('(includes %s tax)', 'edd'), edd_payment_tax( $payment->ID ) );
-					endif; ?>
-				</td>
+				<td><?php echo edd_payment_amount( $payment->ID ); ?></td>
 			</tr>
 		<?php endif; ?>
 
@@ -114,7 +108,7 @@ $status    = edd_get_payment_status( $payment, true );
 			<?php if ( edd_use_skus() ) { ?>
 				<th><?php _e( 'SKU', 'edd' ); ?></th>
 			<?php } ?>
-			<?php if ( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) { ?>
+			<?php if ( edd_item_quantities_enabled() ) { ?>
 				<th><?php _e( 'Quantity', 'edd' ); ?></th>
 			<?php } ?>
 			<th><?php _e( 'Price', 'edd' ); ?></th>
@@ -142,14 +136,15 @@ $status    = edd_get_payment_status( $payment, true );
 						<div class="edd_purchase_receipt_product_notes"><?php echo edd_get_product_notes( $item['id'] ); ?></div>
 					<?php endif; ?>
 
-					<?php if( edd_is_payment_complete( $payment->ID ) ) : ?>
+					<?php
+					if( edd_is_payment_complete( $payment->ID ) && edd_receipt_show_download_files( $item['id'], $edd_receipt_args ) ) : ?>
 					<ul class="edd_purchase_receipt_files">
 						<?php
 						if ( $download_files && is_array( $download_files ) ) :
 
 							foreach ( $download_files as $filekey => $file ) :
 
-								$download_url = edd_get_download_file_url( $meta['key'], $meta['email'], $filekey, $item['id'], $price_id );
+								$download_url = edd_get_download_file_url( $meta['key'], $email, $filekey, $item['id'], $price_id );
 								?>
 								<li class="edd_download_file">
 									<a href="<?php echo esc_url( $download_url ); ?>" class="edd_download_file_link"><?php echo edd_get_file_name( $file ); ?></a>
@@ -173,7 +168,7 @@ $status    = edd_get_payment_status( $payment, true );
 
 											foreach ( $download_files as $filekey => $file ) :
 
-												$download_url = edd_get_download_file_url( $meta['key'], $meta['email'], $filekey, $bundle_item ); ?>
+												$download_url = edd_get_download_file_url( $meta['key'], $email, $filekey, $bundle_item ); ?>
 												<li class="edd_download_file">
 													<a href="<?php echo esc_url( $download_url ); ?>" class="edd_download_file_link"><?php echo esc_html( $file['name'] ); ?></a>
 												</li>
@@ -200,7 +195,7 @@ $status    = edd_get_payment_status( $payment, true );
 				<?php if ( edd_use_skus() ) : ?>
 					<td><?php echo edd_get_download_sku( $item['id'] ); ?></td>
 				<?php endif; ?>
-				<?php if ( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) { ?>
+				<?php if ( edd_item_quantities_enabled() ) { ?>
 					<td><?php echo $item['quantity']; ?></td>
 				<?php } ?>
 				<td>
@@ -217,25 +212,16 @@ $status    = edd_get_payment_status( $payment, true );
 			<tr>
 				<?php
 				$colspan = '';
-				if( edd_use_skus() && function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) {
+				if( edd_use_skus() && edd_item_quantities_enabled() ) {
 					$colspan = ' colspan="3"';
-				} elseif( edd_use_skus() || ( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) ) {
+				} elseif( edd_use_skus() || edd_item_quantities_enabled() ) {
 					$colspan = ' colspan="2"';
 				}
 				?>
 				<td<?php echo $colspan; ?>><strong><?php _e( 'Total Price', 'edd' ); ?>:</strong></td>
-
-				<td>
-					<?php
-					echo edd_payment_amount( $payment->ID );
-					if ( edd_use_taxes() && ( ! edd_prices_show_tax_on_checkout() && $edd_options['prices_include_tax'] == 'yes' ) ) {
-						echo ' ' . __( '(incl. tax)', 'edd' );
-					} else if ( edd_use_taxes() && $edd_options['checkout_include_tax'] == 'yes' ) {
-						printf( ' ' . __( '(includes %s tax)', 'edd' ), edd_payment_tax( $payment->ID ) );
-					} ?>
-				</td>
+				<td><?php echo edd_payment_amount( $payment->ID ); ?></td>
 			</tr>
 		</tfoot>
 
 	</table>
-<?php endif;
+<?php endif; ?>

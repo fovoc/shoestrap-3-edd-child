@@ -6,14 +6,23 @@ $style          = $ss_settings['shoestrap_edd_box_style'];
 $download_size  = $ss_settings['shoestrap_edd_products_width'];
 $show_excerpt   = $ss_settings['shoestrap_edd_show_text_in_lists'];
 $content_width 	= $ss_layout->content_width_px( false );
-$breakpoint     = $ss_settings['screen_tablet'];
+if ( isset( $ss_settings['screen_tablet'] ) ) {
+	$breakpoint = $ss_settings['screen_tablet'];
+} else {
+	$breakpoint = 1600;
+}
 $show_excerpt   = $ss_settings['shoestrap_edd_show_text_in_lists'];
 $in_cart        = '';
 $categories     = '';
 $tags           = '';
 
 // get the layout classes
-$sm_class       = ( $content_width < $breakpoint ) ? 'col-sm-12' : 'col-sm-6';
+if ( $content_width < $breakpoint ) {
+	$sm_class = $ss_framework->column_classes( array( 'tablet' => 12 ) );
+} else {
+	$sm_class = $ss_framework->column_classes( array( 'tablet' => 6 ) );
+}
+
 $md_class       = $ss_framework->column_classes( array( 'medium' => 4 ) );
 
 if ( $content_width < $breakpoint ) {
