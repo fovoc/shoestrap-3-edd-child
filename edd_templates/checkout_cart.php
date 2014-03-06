@@ -1,4 +1,4 @@
-<?php global $post; ?>
+<?php global $post, $ss_framework; ?>
 <table id="edd_checkout_cart" class="table table-striped table-responsive <?php if ( edd_is_ajax_enabled() ) { echo ' ajaxed'; } ?>">
 	<thead>
 		<tr class="edd_cart_header_row">
@@ -49,7 +49,7 @@
 							<input type="hidden" name="edd-cart-downloads[]" value="<?php echo $item['id']; ?>"/>
 							<input type="hidden" name="edd-cart-download-<?php echo $key; ?>-options" value="<?php esc_attr_e( serialize( $item['options'] ) ); ?>"/>
 						<?php endif; ?>
-						<a href="<?php echo esc_url( edd_remove_item_url( $key, $post ) ); ?>" class="btn btn-xs btn-danger"><i class="el-icon-remove"></i></a>
+						<a href="<?php echo esc_url( edd_remove_item_url( $key, $post ) ); ?>" class="<?php echo $ss_framework->button_classes( 'danger', 'extra-small', 'block', 'btn-block expand' ); ?>"><i class="el-icon-remove"></i></a>
 					</td>
 					<?php do_action( 'edd_checkout_table_body_last', $item ); ?>
 				</tr>
@@ -73,7 +73,7 @@
 		<?php if( function_exists( 'edd_item_quanities_enabled' ) && edd_item_quanities_enabled() ) : ?>
 			<tr class="edd_cart_footer_row edd_cart_update_row">
 				<th colspan="4">
-					<input type="submit" name="edd_update_cart_submit" value="<?php _e( 'Update Cart', 'edd' ); ?>" class="btn btn-success pull-right"/>
+					<input type="submit" name="edd_update_cart_submit" value="<?php _e( 'Update Cart', 'edd' ); ?>" class="<?php echo $ss_framework->button_classes( 'success', 'medium', 'right, btn-right' ); ?>"/>
 					<input type="hidden" name="edd_action" value="update_cart"/>
 				</th>
 			</tr>

@@ -20,7 +20,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-		global $post, $ss_edd;
+		global $post, $ss_edd, $ss_framework;
 
 		if ( is_singular( 'download' ) ) {
 			$cache = wp_cache_get( 'widget_shoestrap_edd', 'widget' );
@@ -63,10 +63,16 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 			'text'        => !empty( $edd_options[ 'add_to_cart_text' ] )  ? $edd_options[ 'add_to_cart_text' ] : __( 'Purchase', 'edd' ),
 			'style'       => isset( $edd_options[ 'button_style' ] ) 	   ? $edd_options[ 'button_style' ]     : 'btn',
 			'color'       => isset( $edd_options[ 'checkout_color' ] ) 	   ? $edd_options[ 'checkout_color' ] 	: 'blue',
-			'class'       => 'btn btn-danger btn-block btn-lg edd-submit'
+			'class'       => $ss_framework->button_classes( 'danger', 'large', 'block', 'btn-block edd-submit expand' ),
 		);
 
-		$ss_edd->price();
+		if ( ! edd_has_variable_prices( $post->ID ) ) {
+			$price = edd_get_download_price( $post->ID );
+		} else {
+			$price = edd_price_range( $post->ID );
+		}
+
+		echo '<h3 style="text-align: center">' . $price . '</h3>';
 
 		echo edd_get_purchase_link( $button_args ); ?>
 

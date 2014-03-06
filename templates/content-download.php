@@ -18,20 +18,20 @@ $tags           = '';
 
 // get the layout classes
 if ( $content_width < $breakpoint ) {
-	$sm_class = $ss_framework->column_classes( array( 'tablet' => 12 ) );
+	$sm_class = $ss_framework->column_classes( array( 'tablet' => 12 ), 'string' );
 } else {
-	$sm_class = $ss_framework->column_classes( array( 'tablet' => 6 ) );
+	$sm_class = $ss_framework->column_classes( array( 'tablet' => 6 ), 'string' );
 }
 
-$md_class       = $ss_framework->column_classes( array( 'medium' => 4 ) );
+$md_class       = $ss_framework->column_classes( array( 'medium' => 4 ), 'string' );
 
 if ( $content_width < $breakpoint ) {
-	$md_class = $ss_framework->column_classes( array( 'medium' => 6 ) );
+	$md_class = $ss_framework->column_classes( array( 'medium' => 6 ), 'string' );
 } else {
 	if ( $download_size == 'narrow' ) {
-		$md_class = $ss_framework->column_classes( array( 'medium' => 3 ) );
+		$md_class = $ss_framework->column_classes( array( 'medium' => 3 ), 'string' );
 	} elseif ( $download_size == 'wide' ) {
-		$md_class = $ss_framework->column_classes( array( 'medium' => 6 ) );
+		$md_class = $ss_framework->column_classes( array( 'medium' => 6 ), 'string' );
 	}
 }
 
@@ -77,7 +77,7 @@ if ( $terms && ! is_wp_error( $terms ) ) {
 		$download_tags[] = $term->slug;
 	}
 
-	$tags = join(" ", $download_tags );
+	$tags = join( ' ', $download_tags );
 } else {
 	$tags = '';
 } ?>

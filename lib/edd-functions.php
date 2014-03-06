@@ -23,7 +23,7 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			// Add necessary assets
 			add_action( 'wp_head', array( $this, 'assets' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ), 99 );
-			add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ), 99 );
+			add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ), 105 );
 			add_action( 'shoestrap_index_begin', array( $this, 'isotope_templates' ), 9 );
 			add_action( 'shoestrap_index_begin', array( $this, 'helper_actions' ), 13 );
 
@@ -63,9 +63,6 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			// Register && Enqueue Bootstrap Multiselect
 			wp_register_script( 'shoestrap_multiselect', get_stylesheet_directory_uri() . '/assets/js/bootstrap-multiselect.js', false, null, true );
 			wp_enqueue_script( 'shoestrap_multiselect' );
-
-			// Bootstrap Multiselect stylesheet
-			wp_enqueue_style( 'shoestrap_multiselect_css', get_stylesheet_directory_uri(). '/assets/css/bootstrap-multiselect.css', false, null );
 
 			// Register && Enqueue Isotope
 			wp_register_script( 'shoestrap_isotope', get_stylesheet_directory_uri() . '/assets/js/jquery.isotope.min.js', false, null, true );
@@ -303,17 +300,17 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			$content_width 	= $ss_layout::content_width_px();
 			$breakpoint 	= $ss_settings['screen_tablet'];
 
-			$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 4 ) );
+			$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 4 ), 'string' );
 
 			if ( $content_width < $breakpoint ) {
 				if ( $download_size == 'wide' ) {
-					$class = $ss_framework->column_classes( array( 'tablet' => 12, 'medium' => 6 ) );
+					$class = $ss_framework->column_classes( array( 'tablet' => 12, 'medium' => 6 ), 'string' );
 				}
 			} else {
 				if ( $download_size == 'narrow' ) {
-					$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 3 ) );
+					$class = $ss_framework->column_classes( array( 'tablet' => 6, 'medium' => 3 ), 'string' );
 				} elseif ( $download_size == 'wide' ) {
-					$class = $ss_framework->column_classes( array( 'tablet' => 6 ) );
+					$class = $ss_framework->column_classes( array( 'tablet' => 6 ), 'string' );
 				}
 			}
 
