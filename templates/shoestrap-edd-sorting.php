@@ -1,3 +1,4 @@
+<?php global $ss_framework; ?>
 <div class="pull-left sort">
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-name dropdown-toggle" data-toggle="dropdown">
