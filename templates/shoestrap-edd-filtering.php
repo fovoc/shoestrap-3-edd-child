@@ -3,19 +3,21 @@
 /*
  * Isotope controls for filtering
  */
-global $ss_edd;
+global $ss_edd, $ss_framework;
+
 $terms = get_terms( 'download_category' );
 $count = count( $terms );
-if ( $count > 0 ) : ?>
-<div class="filter pull-right">	
-	<select multiple="multiple" style="display: none;">
-		<option value="multiselect-all" selected="selected"> <?php _e( 'All', 'shoestrap_edd' ); ?></option>
-  		<optgroup label="<?php _e( 'Categories', 'shoestrap_edd' ); ?>">
-  			<?php $ss_edd->downloads_terms_filters( 'download_category', true ); ?>
-  		</optgroup>
-  		<optgroup label="<?php _e( 'Tags', 'shoestrap_edd' ); ?>">
-  			<?php $ss_edd->downloads_terms_filters( 'download_tag', true ); ?>
-  		</optgroup>
-	</select>
-</div>
-<?php endif;
+
+$content  = '<li>';
+$content  = '<select multiple="multiple" style="display: none;">';
+$content .= '<option value="multiselect-all" selected="selected"> ' . __( 'All', 'shoestrap_edd' ) . '</option>';
+$content .= '<optgroup label="' . __( 'Categories', 'shoestrap_edd' ) . '">' . $ss_edd->downloads_terms_filters( 'download_category', false ) . '</optgroup>';
+$content .= '<optgroup label="' . __( 'Tags', 'shoestrap_edd' ) . '">' . $ss_edd->downloads_terms_filters( 'download_tag', false ) . '</optgroup>';
+$content .= '</select>';
+$content .= '</li>';
+
+if ( $count > 0 ) {
+	echo '<div class="filter pull-right right">';
+	echo $ss_framework->make_dropdown_button( 'default', 'medium', null, 'btn-name', __( 'Filters', 'shoestrap_edd' ), $content );
+	echo '</div>';
+}
