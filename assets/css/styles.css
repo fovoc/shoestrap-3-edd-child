@@ -137,3 +137,15 @@ div.overlay a {
   margin-bottom: 0;
 }
 
+.edd-cart-ajax-alert {
+  width: 100%;
+}
+
+.edd-cart-added-alert {
+  padding: 10px;
+  background: #43ac6a;
+  color: #fff;
+  width: 100%;
+  display: block;
+  text-align: center;
+}
