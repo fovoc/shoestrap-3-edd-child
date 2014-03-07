@@ -126,6 +126,7 @@ GENERAL STYLES
   list-style: none;
   list-style-type: none;
   margin-left: 0;
+  padding: 0;
 }
 
 .widget.widget_edd_cart_widget ul.edd-cart li {
@@ -135,3 +136,4 @@ GENERAL STYLES
 div.overlay a {
   margin-bottom: 0;
 }
+
