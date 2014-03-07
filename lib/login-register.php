@@ -1,11 +1,9 @@
 <?php
 
 /**
-The functions in this file are modified versions of those found in
-easy-digital-downloads/includes/login-register.php
-
-What is mostly modified here is the addition of some framework classes so that the CSS framework works without any issues.
-*/
+ * The functions in this file are modified versions of those found in easy-digital-downloads/includes/login-register.php
+ * What is mostly modified here is the addition of some framework classes so that the CSS framework works without any issues.
+ */
 
 /**
  * Login Form

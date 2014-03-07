@@ -1,3 +1,13 @@
+<?php
+/**
+ * Cart Item Template
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
+?>
 <?php global $ss_framework; ?>
 <?php echo $ss_framework->open_row( 'li' ); ?>
 	<?php echo $ss_framework->open_col( 'span', array( 'tablet' => 7 ), null, 'edd-cart-item-title' ); ?>

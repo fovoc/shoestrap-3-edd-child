@@ -1,4 +1,12 @@
 <?php
+/**
+ * Widgets
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
 
 class Shoestrap_EDD_Download_Meta extends WP_Widget {
 
@@ -39,6 +47,7 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 				echo $cache[$args['widget_id']];
 			}
 		} else {
+			// Do not show the widget if we're not on a single download.
 			return;
 		}
 

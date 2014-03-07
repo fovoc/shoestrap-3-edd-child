@@ -1,5 +1,15 @@
 <?php
 /**
+ * Profile Editor Shortcode Template
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
+?>
+<?php
+/**
  * This template is used to display the profile editor with [edd_profile_editor]
  */
 global $current_user, $ss_framework;

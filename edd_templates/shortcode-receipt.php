@@ -1,5 +1,15 @@
 <?php
 /**
+ * Receipt Shortcode Template
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
+?>
+<?php
+/**
  * This template is used to display the purchase summary with [edd_receipt]
  */
 global $edd_receipt_args, $edd_options;

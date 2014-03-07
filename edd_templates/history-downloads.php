@@ -1,4 +1,14 @@
 <?php
+/**
+ * Downloads History Template
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
+?>
+<?php
 // Retrieve all purchases for the current user
 $purchases = edd_get_users_purchases( get_current_user_id(), 20, true, 'any' );
 if ( $purchases ) :

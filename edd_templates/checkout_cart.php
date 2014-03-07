@@ -1,3 +1,13 @@
+<?php
+/**
+ * Checkout Cart Template
+ *
+ * @package      Shoestrap Easy Digital Downloads Child Theme
+ * @author       Shoestrap - http://shoestrap.org
+ * @link         http://www.shoestrap.org
+ * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
+*/
+?>
 <?php global $post, $ss_framework; ?>
 <table id="edd_checkout_cart" class="table table-striped table-responsive <?php if ( edd_is_ajax_enabled() ) { echo ' ajaxed'; } ?>">
 	<thead>
