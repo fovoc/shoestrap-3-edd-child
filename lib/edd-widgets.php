@@ -82,7 +82,17 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 		if ( ! edd_has_variable_prices( $post->ID ) ) {
 			$price = edd_get_download_price( $post->ID );
 		} else {
-			$price = edd_price_range( $post->ID );
+			$low   = edd_get_lowest_price_option( $post->ID );
+			$high  = edd_get_highest_price_option( $post->ID );
+
+			// Check if both high and low are the same.
+			// This can be true if for example we have 2 variations with the same price
+			// but one of them is recurring while the other is not.
+			// In this case, only show one of the 2 prices and not a range.
+			$price = edd_currency_filter( edd_format_amount( $low ) );
+			if ( $low != $high ) {
+				$price = __( 'From ', 'shoestrap_edd' ) . $price;
+			}
 		}
 
 		echo '<h3 style="text-align: center">' . $price . '</h3>';
