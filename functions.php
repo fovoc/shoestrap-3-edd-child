@@ -7,7 +7,6 @@
 
 function shoestrap_edd_include_files() {
 	if ( class_exists( 'Easy_Digital_Downloads' ) ) {
-		require_once dirname( __FILE__ ) . '/lib/admin.php';
 		require_once dirname( __FILE__ ) . '/lib/class-Shoestrap_EDD.php';
 		require_once dirname( __FILE__ ) . '/lib/checkout-template.php';
 		require_once dirname( __FILE__ ) . '/lib/login-register.php';
