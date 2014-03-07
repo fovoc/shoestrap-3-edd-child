@@ -41,7 +41,6 @@ function shoestrap_module_edd_options( $sections ) {
     'default'   => 'default',
     'options'   => array(
       'default' => 'Default',
-      'well'    => 'Well',
       'panel'   => 'Panel'
     ),
   );

@@ -91,7 +91,7 @@ if ( $terms && ! is_wp_error( $terms ) ) {
 						<a href="<?php echo get_permalink(); ?>"><img src="<?php echo $image['url']; ?>" /></a>
 						<div class="overlay">
 							<?php if ( edd_has_variable_prices( $post->ID ) ) : ?>
-								<a href="<?php echo get_permalink(); ?>" class="btn btn-primary"><?php _e( 'Choose Option', 'shoestrap_edd' ); ?></a>
+								<a href="<?php echo get_permalink(); ?>" class="<?php echo $ss_framework->button_classes( 'primary' ); ?>"><?php _e( 'Choose Option', 'shoestrap_edd' ); ?></a>
 							<?php else : ?>
 								<?php echo edd_get_purchase_link(); ?>
 							<?php endif; ?>

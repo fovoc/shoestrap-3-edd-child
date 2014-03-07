@@ -185,16 +185,14 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		}
 
 		function element_class() {
-			global $ss_settings;
+			global $ss_settings, $ss_framework;
 
 			$style = $ss_settings['shoestrap_edd_box_style'];
 
-			if ( $style == 'well' ) {
-				$maindivclass = 'well well-sm';
-			} elseif ( $style == 'panel' ) {
-				$maindivclass = 'panel panel-default';
+			if ( $style == 'panel' ) {
+				$maindivclass = $ss_framework->panel_classes();
 			} else {
-				$maindivclass = 'thumbnail';
+				$maindivclass = 'thumbnail th';
 			}
 
 			return $maindivclass;	
@@ -342,45 +340,53 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 					}
 				}
 			}
-			
-			$coming_soon = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon', true ) : '';
-			$coming_soon_text = isset( $post->ID ) ? get_post_meta( $post->ID, 'edd_coming_soon_text', true ) : '';
-			$element = '<' . $el . ' itemprop="price" class="edd_price">';
 
-			echo $element;
+			if ( isset( $post->ID ) ) {
+				$coming_soon      = get_post_meta( $post->ID, 'edd_coming_soon', true );
+				$coming_soon_text = get_post_meta( $post->ID, 'edd_coming_soon_text', true );
+			} else {
+				$coming_soon = false;
+				$coming_soon_text = false;
+			}
 
-			if ( $coming_soon ) :
-				if ( $coming_soon_text )
+			echo '<' . $el . ' itemprop="price" class="edd_price">';
+
+			if ( $coming_soon ) {
+				if ( $coming_soon_text ) {
 					echo $coming_soon_text;
-				else
+				} else {
 					echo __( 'Coming soon', 'shoestrap-edd' );
+				}
 
-			elseif ( '0' == edd_get_download_price( get_the_ID() ) && !edd_has_variable_prices( get_the_ID() ) ) :
-				echo __( 'Free', 'shoestrap-edd' );
-				echo '<span class="hidden price">0</span>';
+			} elseif ( '0' == edd_get_download_price( get_the_ID() ) && ! edd_has_variable_prices( get_the_ID() ) ) {
+				_e( 'Free', 'shoestrap-edd' );
+				echo '<span style="display: none;" class="price">0</span>';
 
-			elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) :
+			} elseif ( edd_has_variable_prices( get_the_ID() ) && $zero_price == 1 ) {
 				_e( 'From Free', 'shoestrap_edd' );
-				echo '<span class="hidden price">0</span>';
+				echo '<span style="display: none;" class="price">0</span>';
 
-			elseif ( edd_has_variable_prices( get_the_ID() ) ) :
+			} elseif ( edd_has_variable_prices( get_the_ID() ) ) {
 				_e( 'From ', 'shoestrap_edd' );
 				edd_price( get_the_ID() );
 
 				$prices = edd_get_variable_prices( get_the_ID() );
 				// Return the lowest price
 				$price_float = 0;
-		      foreach ($prices as $key => $value)
-		        if ( ( ( (float)$prices[ $key ]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) 
-		          $price_float = (float)$prices[ $key ]['amount'];
-		          $price = edd_sanitize_amount( $price_float );
-				echo '<span class="hidden price">'; echo $price; echo '</span>';
 
-			else :
+				foreach ($prices as $key => $value) {
+					if ( ( ( (float)$prices[$key]['amount'] ) < $price_float ) or ( $price_float == 0 ) ) {
+						$price_float = (float)$prices[$key]['amount'];
+					}
+				}
+
+				echo '<span class="price" style="display: none;">' . edd_sanitize_amount( $price_float ) . '</span>';
+
+			} else {
 				edd_price( get_the_ID() );
-				echo '<span class="hidden price">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
 
-			endif;
+				echo '<span class="price" style="display: none;">'; echo edd_get_download_price( get_the_ID() ); echo '</span>';
+			}
 
 			echo '</' . $el . '>';
 		}

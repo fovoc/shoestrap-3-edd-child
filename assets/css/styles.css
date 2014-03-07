@@ -131,3 +131,7 @@ GENERAL STYLES
 .widget.widget_edd_cart_widget ul.edd-cart li {
   clear: both;
 }
+
+div.overlay a {
+  margin-bottom: 0;
+}
