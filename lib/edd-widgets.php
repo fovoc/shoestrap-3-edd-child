@@ -1,11 +1,13 @@
 <?php
 
 class Shoestrap_EDD_Download_Meta extends WP_Widget {
+
 	private $fields = array(
 		'title'          => 'Title (optional)',
 	);
 
 	function __construct() {
+
 		$widget_ops = array(
 			'classname' 	=> 'widget_shoestrap_edd',
 			'description'	=> __( 'Use this widget to add meta details for single products', 'shoestrap_edd' )
@@ -36,6 +38,8 @@ class Shoestrap_EDD_Download_Meta extends WP_Widget {
 			if ( isset( $cache[$args['widget_id']] ) ) {
 				echo $cache[$args['widget_id']];
 			}
+		} else {
+			return;
 		}
 
 		ob_start();
