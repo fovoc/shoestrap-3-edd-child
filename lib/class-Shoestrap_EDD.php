@@ -19,7 +19,7 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 		function __construct() {
 			global $ss_settings;
 
-			add_filter( 'redux/options/' . REDUX_OPT_NAME . '/sections', array( $this, 'options' ), 1 );
+			add_filter( 'redux/options/' . SHOESTRAP_OPT_NAME . '/sections', array( $this, 'options' ), 1 );
 
 			// Dequeue default EDD styles
 			remove_action( 'wp_enqueue_scripts', 'edd_register_styles' );
