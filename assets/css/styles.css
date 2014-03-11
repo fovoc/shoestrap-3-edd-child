@@ -149,3 +149,9 @@ div.overlay a {
   display: block;
   text-align: center;
 }
+
+.edd_price_options ul {
+  list-style: none;
+  list-style-type: none;
+  padding: 0;
+}

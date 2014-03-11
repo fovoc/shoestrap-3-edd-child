@@ -24,9 +24,11 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			// Dequeue default EDD styles
 			remove_action( 'wp_enqueue_scripts', 'edd_register_styles' );
 
-			// Add the custom variables pricing dropdown before the purchase link and remove the default radio boxes.
-			remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
-			add_action( 'edd_purchase_link_top', array( $this, 'purchase_variable_pricing' ), 10, 1 );
+			if ( isset( $ss_settings['edd_variation_type'] ) &&  $ss_settings['edd_variation_type'] == 'dropdown' ) {
+				// Add the custom variables pricing dropdown before the purchase link and remove the default radio boxes.
+				remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing', 10, 1 );
+				add_action( 'edd_purchase_link_top', array( $this, 'purchase_variable_pricing' ), 10, 1 );
+			}
 
 			// If we're displaying products on the frontpage, remove the "Latest Posts" title.
 			if ( ( $ss_settings['shoestrap_edd_frontpage'] == 1 && is_front_page() ) ) {
@@ -188,6 +190,18 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 					'danger'  => 'Danger'
 				),
 				'required'  => array( 'shoestrap_edd_infinite_scroll','=',array( '1' ) ),
+			);
+
+			$fields[] = array(
+				'title'     => __( 'Variations Style.', 'shoestrap_edd' ),
+				'desc'      => '',
+				'id'        => 'edd_variation_type',
+				'default'   => 'dropdown',
+				'type'      => 'button_set',
+				'options'   => array(
+					'radio'    => 'Radio Select',
+					'dropdown' => 'Dropdown select',
+				),
 			);
 
 			$section['fields'] = $fields;
