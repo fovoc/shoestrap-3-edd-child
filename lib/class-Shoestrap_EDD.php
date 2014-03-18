@@ -487,7 +487,7 @@ if ( ! class_exists( 'Shoestrap_EDD' ) ) {
 			global $ss_framework;
 
 			if ( $ss_settings['shoestrap_edd_navbar_cart'] == 1 ) : ?>
-				<div class="pull-right">
+				<div class="<?php echo $ss_framework->float_class( 'right' ); ?>">
 					<?php $this->mini_shopping_cart( $ss_framework->button_classes( null, null, null, 'navbar-btn' ), null, $ss_framework->button_classes( 'success' ), $ss_framework->button_classes( 'default' ), null ); ?>
 				</div>
 			<?php

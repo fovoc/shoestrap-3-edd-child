@@ -15,7 +15,7 @@ $content .= '<optgroup label="' . __( 'Tags', 'shoestrap_edd' ) . '">' . $ss_edd
 $content .= '</select>';
 
 if ( $count > 0 ) {
-	echo '<div class="filter pull-right right">';
+	echo '<div class="filter '. $ss_framework->float_class( 'right' ) .'">';
 	echo $content;
 	echo '</div>';
 }

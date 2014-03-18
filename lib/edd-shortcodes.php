@@ -13,6 +13,7 @@
  * @return string $discounts_lists List of all the active discount codes
  */
 function ss_edd_discounts_shortcode( $atts, $content = null ) {
+	global $ss_framework;
 	$discounts = edd_get_discounts();
 
 	$discounts_list = '<ul id="edd_discounts_list" class="list-group">';
@@ -26,7 +27,7 @@ function ss_edd_discounts_shortcode( $atts, $content = null ) {
 				$discounts_list .= '<li class="edd_discount list-group-item">';
 
 					$discounts_list .= '<span class="edd_discount_name">' . edd_get_discount_code( $discount->ID ) . '</span>';
-					$discounts_list .= '<span class="edd_discount_amount pull-right label label-success">' . edd_format_discount_rate( edd_get_discount_type( $discount->ID ), edd_get_discount_amount( $discount->ID ) ) . '</span>';
+					$discounts_list .= '<span class="edd_discount_amount label label-success '. $ss_framework->float_class( 'right' ) .'">' . edd_format_discount_rate( edd_get_discount_type( $discount->ID ), edd_get_discount_amount( $discount->ID ) ) . '</span>';
 
 				$discounts_list .= '</li>';
 
