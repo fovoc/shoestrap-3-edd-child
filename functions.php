@@ -17,3 +17,25 @@ function shoestrap_edd_include_files() {
 	}
 }
 add_action( 'shoestrap_include_files', 'shoestrap_edd_include_files' );
+
+
+function shoestrap_edd_updater() {
+
+	$args = array(
+		'remote_api_url' => 'http://shoestrap.org',
+		'item_name'      => 'Shoestrap 3 EDD Child',
+		'version'        => '1.1',
+		'author'         => 'aristath, fovoc',
+		'mode'           => 'theme',
+		'title'          => 'Shoestrap 3 EDD Child Theme License',
+		'field_name'     => 'shoestrap_edd_license',
+		'description'    => 'The licence key provided with Shoestrap 3 EDD Child Theme.',
+		'single_license' => false
+	);
+
+	if ( class_exists( 'SS_EDD_SL_Updater' ) ) {
+		$updater = new SS_EDD_SL_Updater( $args );
+	}
+
+}
+add_action( 'admin_init', 'shoestrap_edd_updater' );
