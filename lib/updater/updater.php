@@ -1,5 +1,25 @@
 <?php
 
+if ( !class_exists( 'EDD_SL_Theme_Updater' ) ) {
+	// Load our custom theme updater
+	include( dirname( __FILE__ ) . '/EDD_SL_Theme_Updater.php' );
+}
+
+function shoestrap_edd_theme_updater() {
+
+	$license = trim( get_option( 'shoestrap_edd_license_key' ) );
+
+	$edd_updater = new EDD_SL_Theme_Updater( array(
+			'remote_api_url' 	=> 'http://shoestrap.org',
+			'version' 			=> '1.2',
+			'license' 			=> $license,
+			'item_name' 		=> 'Shoestrap 3 EDD Child',
+			'author'			=> 'aristath, fovoc'
+		)
+	);
+}
+add_action( 'admin_init', 'shoestrap_edd_theme_updater' );
+
 /**
  * Add page to menu under "Settings"
  */
