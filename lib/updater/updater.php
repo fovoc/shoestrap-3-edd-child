@@ -47,6 +47,7 @@ if ( ! function_exists( 'ss_updater_settings_page' ) ) {
 			}
 
 			?>
+			<style>tr td.plugin-title { border-left: 3px solid #faebcc; } tr.valid td.plugin-title { border-left: 3px solid #3c763d; } tr.invalid. td.plugin-title { border-left: 3px solid #a94442; } input.button-activate { border: none; background: none; color: #31708f; padding: 0; } input.button-deactivate { border: none; background: none; color: #a94442; padding: 0; } tr td { border-bottom: 1px solid rgb(229, 229, 229); } tr.valid { background: #dff0d8; } tr.invalid { background: #f2dede; }</style>
 
 			<table class="wp-list-table widefat plugins">
 				<thead>
@@ -93,9 +94,9 @@ if ( ! function_exists( 'shoestrap_edd_license_form' ) ) {
 
 						<?php if ( false !== $license ) : ?>
 							<?php if ( $status !== false && $status == 'valid' ) : ?>
-								<input type="submit" class="button-secondary" name="shoestrap_edd_license_deactivate" value="<?php _e( 'Deactivate License', 'shoestrap_edd' ); ?>"/>
+								<input type="submit" class="button-deactivate" name="shoestrap_edd_license_deactivate" value="<?php _e( 'Deactivate License', 'shoestrap_edd' ); ?>"/>
 							<?php else : ?>
-								<input type="submit" class="button-secondary" name="shoestrap_edd_license_activate" value="<?php _e( 'Activate License', 'shoestrap_edd' ); ?>"/>
+								<input type="submit" class="button-activate" name="shoestrap_edd_license_activate" value="<?php _e( 'Activate License', 'shoestrap_edd' ); ?>"/>
 							<?php endif; ?>
 						<?php endif; ?>
 					</div>
@@ -103,7 +104,6 @@ if ( ! function_exists( 'shoestrap_edd_license_form' ) ) {
 
 				<td>
 					<input id="shoestrap_edd_license_key" name="shoestrap_edd_license_key" type="text" class="regular-text" value="<?php echo esc_attr( $license ); ?>" />
-					<label class="description" for="shoestrap_edd_license_key"><?php _e( 'Enter your license key', 'shoestrap_edd' ); ?></label>
 				</td>
 
 				<td>
